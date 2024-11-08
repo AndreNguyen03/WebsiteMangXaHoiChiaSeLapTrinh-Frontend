@@ -9,4 +9,10 @@
   .askquestion-input-explain-tittle {
     @apply text-gray-500 text-sm;
   }
+  .askquestion-input-container {
+    @apply border rounded p-4 shadow;
+  }
+  .askquestion-input-text-area {
+    @apply focus:outline-orange-200 focus:outline-none focus:border-slate-400;
+  }
 }
