@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .askquestion-input-tittle {
+    @apply block text-gray-700 text-base font-bold;
+  }
+  .askquestion-input-explain-tittle {
+    @apply text-gray-500 text-sm;
+  }
+}

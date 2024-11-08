@@ -64,13 +64,18 @@ const HomeMainBar = () => {
       time: "Jan 5",
     },
   ];
+
+  const user = 1;
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Interesting posts for you</h1>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
+        <Link
+          to={user === null ? "/Login" : "/AskQuestion"}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        >
           Ask Question
-        </button>
+        </Link>
       </div>
       <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
         <QuestionList QuestionList={questionsList} />

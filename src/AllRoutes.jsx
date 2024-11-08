@@ -4,6 +4,7 @@ import Login from "./pages/Auth/Login";
 import SignUp from "./pages/Auth/SignUp";
 import Home from "./pages/Home/Home";
 import Question from "./pages/Questions/Question";
+import AskQuestion from "./pages/AskQuestion/AskQuestion";
 
 const AllRoutes = () => {
   return (
@@ -12,6 +13,7 @@ const AllRoutes = () => {
       <Route path="/Login" element={<Login></Login>}></Route>
       <Route path="/SignUp" element={<SignUp></SignUp>}></Route>
       <Route path="/Questions" element={<Question></Question>}></Route>
+      <Route path="/AskQuestion" element={<AskQuestion></AskQuestion>}></Route>
     </Routes>
   );
 };
