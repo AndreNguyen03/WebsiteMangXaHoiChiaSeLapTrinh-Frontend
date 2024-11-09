@@ -13,7 +13,7 @@ const Question = ({ question }) => {
       </div>
       <div className="w-11/12  p-4">
         <Link
-          to={`/Question/${question.id}`}
+          to={`/Questions/${question.id}`}
           className="text-blue-500 font-medium"
         >
           {question.questionTitle}
