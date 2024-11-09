@@ -1,18 +1,13 @@
 import React from "react";
+import logo from "../../assets/logo.png";
 
 const SignUp = () => {
   return (
     <div className="flex-grow h-screen container mx-auto px-4 py-8 flex">
       <div className="w-1/2 flex flex-col justify-center items-start">
-        <img
-          src="https://placehold.co/100x100"
-          alt="Stack Overflow logo"
-          className="mb-4"
-        />
-        <h1 className="text-3xl font-bold mb-4">
-          stack<span className="text-black">overflow</span>
-        </h1>
-        <ul className="space-y-2 mb-4">
+        <img src={logo} alt="Stack Overflow logo" className="h-32 mb-4" />
+
+        <ul className="space-y-2 ml-4 mb-4">
           <li className="flex items-center text-lg">
             <i className="fas fa-question-circle text-blue-500 mr-2"></i>
             Get unstuck - ask a question!

@@ -7,6 +7,6 @@
     @apply container mx-auto px-4 py-2 flex justify-between items-center;
   }
   .nav-item-btn {
-    @apply text-gray-700 hover:text-gray-900 mx-2 hover:bg-gray-200;
+    @apply text-gray-700 hover:text-gray-900 mx-2 hover:bg-gray-200 hover:p-2 hover:rounded-full;
   }
 }

@@ -1,17 +1,14 @@
 import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../../assets/logo_long.png";
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
 
   return (
     <div className="flex flex-col items-center mt-10">
-      <img
-        src="https://placehold.co/50x50"
-        alt="Stack Overflow logo"
-        className="h-12 mb-6"
-      />
+      <img src={logo} alt="Stack Overflow logo" className="h-36 mb-6" />
       <div className="w-full max-w-sm bg-white rounded-lg shadow-md p-6">
         <button className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg flex items-center justify-center mb-4">
           <i className="fab fa-google mr-2"></i> Log in with Google

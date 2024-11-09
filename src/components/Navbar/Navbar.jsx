@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Avatar from "../Avatar/Avatar.jsx";
+import logo from "../../assets/logo_side.png";
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -9,13 +10,13 @@ const Navbar = () => {
   return (
     <>
       <nav className="bg-white shadow-sm w-screen m-0">
-        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center ">
-            <Link to="/" className="nav-item-btn">
-              <img
-                src="https://placehold.co/150x50"
-                alt="Stack Overflow Logo"
-              />
+            <Link
+              to="/"
+              className="text-gray-700 hover:text-gray-900 mx-2 hover:bg-gray-200 hover:border-transparent hover:rounded-full"
+            >
+              <img src={logo} className="h-16" alt="Stack Overflow Logo" />
             </Link>
             <div className="ml-8">
               <Link to="/" className="nav-item-btn">
