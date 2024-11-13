@@ -1,0 +1,166 @@
+/* Questions.css */
+
+/* Base Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  
+  /* Container Styles */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  /* Sidebar Styles */
+  .sidebar {
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding: 20px;
+    height: 100vh;
+  }
+  
+  /* Main Content Styles */
+  .main {
+    padding: 20px;
+  }
+  
+  /* Question Details Page */
+  .question-details-page {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  /* Question Header */
+  .question-details-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  /* Question Vote Section */
+  .question-votes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+  
+  .question-votes svg.size-6 {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+  
+  .question-votes p {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 10px;
+  }
+  
+  /* Question Body */
+  .question-body {
+    font-size: 16px;
+    margin: 10px 0;
+    color: #444;
+  }
+  
+  /* Tags */
+  .question-details-tags {
+    display: flex;
+    gap: 5px;
+    margin: 10px 0;
+  }
+  
+  .question-details-tags p {
+    background-color: #e1ecf4;
+    color: #39739d;
+    font-size: 14px;
+    padding: 5px 8px;
+    border-radius: 3px;
+  }
+  
+  /* Action Buttons */
+  .question-action-user {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .question-action-user button {
+    background: none;
+    border: none;
+    color: #0077cc;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .user-link {
+    color: #0077cc;
+    text-decoration: none;
+  }
+  
+  /* Answer Section */
+  .display-answer {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-left: 3px solid #0077cc;
+    margin-top: 15px;
+    border-radius: 5px;
+  }
+  
+  .display-answer p {
+    font-size: 15px;
+    margin: 10px 0;
+  }
+  
+  /* Answer Buttons */
+  .question-action-user button {
+    background-color: transparent;
+    border: none;
+    color: #0077cc;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .ans-tag {
+    color: #0077cc;
+    text-decoration: none;
+    font-size: 14px;
+    margin: 0 5px;
+  }
+  
+  .ans-tag:hover {
+    text-decoration: underline;
+  }
+  
+  /* Form Styles */
+  form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+  }
+  
+  form button {
+    background-color: #0077cc;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  form button:hover {
+    background-color: #005fa3;
+  }
+  
