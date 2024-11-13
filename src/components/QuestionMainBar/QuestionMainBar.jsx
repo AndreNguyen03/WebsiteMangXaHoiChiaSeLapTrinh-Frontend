@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import QuestionList from "../HomeMainBar/QuestionList";
+import QuestionSorting from "./QuestionSorting";
 
 const QuestionMainBar = () => {
   const questionsList = [
@@ -65,6 +67,22 @@ const QuestionMainBar = () => {
     },
   ];
   const user = 1;
+
+  const [posts, setPosts] = useState([]);
+  const [sorting, setSorting] = useState("Newest");
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5114/api/Posts/postshome") // Gọi API
+      .then((response) => {
+        console.log(response.data);
+        setPosts(response.data); // Lưu dữ liệu sản phẩm từ API vào state
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the posts!", error);
+      });
+  }, []);
+
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
@@ -76,17 +94,14 @@ const QuestionMainBar = () => {
           Ask Question
         </Link>
       </div>
-      <div className="flex items-center justify-between space-x-4 mb-4">
-        <span className="text-lg">{questionsList.length} questions</span>
-        <div className="flex items-center space-x-2">
-          <div className="border border-gray-400 p-2 rounded">
-            <button className="px-3 py-1 bg-gray-200 rounded border border-gray-300">
-              Newest
-            </button>
-            <button className="px-3 py-1">Active</button>
-            <button className="px-3 py-1">Unanswered</button>
-          </div>
-          <button className="flex items-center p-3 border border-blue-500 rounded text-blue-500">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-4">
+        <span className="text-lg">{posts.length} questions</span>
+        <div className="flex flex-col sm:flex-row items-center gap-2">
+          <QuestionSorting
+            active={sorting}
+            onChange={setSorting}
+          ></QuestionSorting>
+          <button className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -106,7 +121,13 @@ const QuestionMainBar = () => {
         </div>
       </div>
       <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
-        <QuestionList QuestionList={questionsList} />
+        {posts.length > 0 ? (
+          <QuestionList posts={posts} />
+        ) : (
+          <p className="text-gray-600 text-center p-4">
+            There's currently no question available. Please check back later.
+          </p>
+        )}
       </div>
     </>
   );

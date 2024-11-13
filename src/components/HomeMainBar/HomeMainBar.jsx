@@ -94,7 +94,13 @@ const HomeMainBar = () => {
         </Link>
       </div>
       <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
-        <QuestionList posts={posts} />
+        {posts.length > 0 ? (
+          <QuestionList posts={posts} />
+        ) : (
+          <p className="text-gray-600 text-center p-4">
+            There's currently no question available. Please check back later.
+          </p>
+        )}
       </div>
     </>
   );

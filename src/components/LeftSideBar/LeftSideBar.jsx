@@ -1,15 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const LeftSideBar = () => {
+  const location = useLocation().pathname;
+
+  const getClassName = (path) =>
+    `flex items-center space-x-2 ${
+      location === path
+        ? "flex items-center space-x-2 text-blue-300 font-bold"
+        : "flex items-center space-x-2 text-gray-700 hover:text-gray-900"
+    }`;
+
   return (
     <>
       <nav className="space-y-4">
         {/* Home */}
-        <Link
-          to="/"
-          className="flex items-center space-x-2 text-gray-700 hover:text-gray-900"
-        >
+        <Link to="/" className={getClassName("/")}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -24,10 +30,7 @@ const LeftSideBar = () => {
         </Link>
         <hr class="h-0.5 border-t-0 bg-gray-200 dark:bg-white/10" />
         {/* Questions */}
-        <Link
-          to="/questions"
-          className="flex items-center space-x-2  text-gray-700 hover:text-gray-900"
-        >
+        <Link to="/questions" className={getClassName("/questions")}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -46,10 +49,7 @@ const LeftSideBar = () => {
         <hr class="h-0.5 border-t-0 bg-gray-200 dark:bg-white/10" />
 
         {/* Tags */}
-        <Link
-          to="/tags"
-          className="flex items-center space-x-2 text-gray-700 hover:text-gray-900"
-        >
+        <Link to="/tags" className={getClassName("/tags")}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -68,10 +68,7 @@ const LeftSideBar = () => {
         <hr class="h-0.5 border-t-0 bg-gray-200 dark:bg-white/10" />
 
         {/* Users */}
-        <Link
-          to="/users"
-          className="flex items-center space-x-2 text-gray-700 hover:text-gray-900"
-        >
+        <Link to="/users" className={getClassName("/users")}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
