@@ -6,15 +6,23 @@ import RightSideBar from "../../components/RightSideBar/RightSideBar";
 const Home = () => {
   return (
     <div className="container mx-auto flex mt-4 h-screen">
-      <aside className="w-1/6 bg-white p-8  shadow-2xl sidebar">
-        <LeftSideBar></LeftSideBar>
+      {/* LeftSideBar - Luôn nằm bên trái */}
+      <aside className="hidden md:block md:w-1/6 bg-white p-8 shadow-2xl sidebar">
+        <LeftSideBar />
       </aside>
-      <main className="w-3/4 bg-white p-4 shadow-xl ml-4">
-        <HomeMainBar></HomeMainBar>
-      </main>
-      <aside className="w-1/4 bg-white p-4 shadow-2xl ml-4">
-        <RightSideBar></RightSideBar>
-      </aside>
+
+      {/* Wrapper cho HomeMainBar và RightSideBar */}
+      <div className="flex flex-col md-lg:flex-row w-full md-lg:w-5/6">
+        {/* HomeMainBar - Chiếm 3/4 không gian khi md-lg */}
+        <main className="w-full md-lg:w-3/4 bg-white p-4 shadow-xl">
+          <HomeMainBar />
+        </main>
+
+        {/* RightSideBar - Nhảy xuống dưới HomeMainBar khi màn hình từ md-lg trở xuống */}
+        <aside className="w-full md-lg:w-1/4 bg-white p-4 shadow-2xl mt-4 md-lg:mt-0 md-lg:ml-4">
+          <RightSideBar />
+        </aside>
+      </div>
     </div>
   );
 };

@@ -7,8 +7,8 @@ const LeftSideBar = () => {
   const getClassName = (path) =>
     `flex items-center space-x-2 ${
       location === path
-        ? "flex items-center space-x-2 text-blue-300 font-bold"
-        : "flex items-center space-x-2 text-gray-700 hover:text-gray-900"
+        ? "flex items-center space-x-2 text-blue-300 flex-shrink-0 font-bold"
+        : "flex items-center space-x-2 text-gray-700 flex-shrink-0 hover:text-gray-900"
     }`;
 
   return (
@@ -35,7 +35,7 @@ const LeftSideBar = () => {
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            className="size-6"
+            className="size-6 flex-shrink-0"
           >
             <path
               fillRule="evenodd"

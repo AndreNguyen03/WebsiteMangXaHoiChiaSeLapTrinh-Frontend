@@ -27,6 +27,10 @@ module.exports = withMT({
           900: '#5d2b14',
         },
       },
+      screens: {
+        'sm-md': '700px', // Giữa sm và md
+        'md-lg': '900px', // Giữa md và lg
+      },
     },
   },
   plugins: [fluid],
