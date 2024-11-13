@@ -2,6 +2,7 @@ import React from "react";
 import "./Question.css";
 import Avatar from "../Avatar/Avatar.jsx";
 import { Link, useLocation } from "react-router-dom";
+import { formatDistanceToNow } from "date-fns";
 
 const Question = ({ question }) => {
   const location = useLocation().pathname;
@@ -9,8 +10,10 @@ const Question = ({ question }) => {
   return (
     <div className="flex items-baseline mb-4">
       <div className="w-2/12 h-full flex-col py-4 justify-items-end ">
-        <p className="question-properties">{question.votes} votes</p>
-        <p className="question-properties">{question.noOfAnswers} answers</p>
+        <p className="question-properties">
+          {question.upvote - question.downvote} votes
+        </p>
+        <p className="question-properties">{question.answers.length} answers</p>
         <p className="question-properties">{question.views} views</p>
       </div>
       <div className="w-11/12 p-4">
@@ -18,18 +21,16 @@ const Question = ({ question }) => {
           to={`/Questions/${question.id}`}
           className="text-blue-500 font-medium"
         >
-          {question.questionTitle}
+          {question.title}
         </Link>
         {location === "/questions" ? (
-          <span className="block text-gray-600 text-sm">
-            {question.questionBody}
-          </span>
+          <span className="block text-gray-600 text-sm">{question.body}</span>
         ) : (
           <></>
         )}
         <div className="flex items-center text-xs text-gray-600 mt-1">
-          {question.questionTags.map((tag) => (
-            <span className="question-tags">{tag}</span>
+          {question.posttags.map((tag) => (
+            <span className="question-tags">{tag.tag.tagname}</span>
           ))}
 
           <span className="ml-auto">
@@ -38,8 +39,12 @@ const Question = ({ question }) => {
               alt="avatar"
               className="mr-2 relative inline-block size-6 !rounded-full object-cover object-center"
             />
-            {question.userPosted}
-            <span className="text-gray-400 ml-2">asked on {question.time}</span>
+            {question.user.username}
+            <span className="text-gray-400 ml-2">
+              {formatDistanceToNow(new Date(question.createdAt), {
+                addSuffix: true,
+              })}
+            </span>
           </span>
         </div>
       </div>

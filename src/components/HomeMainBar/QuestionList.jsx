@@ -1,10 +1,10 @@
 import React from "react";
 import Question from "./Question";
 
-const QuestionList = ({ QuestionList }) => {
+const QuestionList = ({ posts }) => {
   return (
     <>
-      {QuestionList.map((question) => (
+      {posts.map((question) => (
         <>
           <Question key={question.id} question={question} />
           <hr class=" h-0.5 border-t-0 bg-gray-100" />

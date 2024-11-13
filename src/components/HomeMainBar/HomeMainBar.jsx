@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import QuestionList from "./QuestionList";
+import axios from "axios";
 
 const HomeMainBar = () => {
   const questionsList = [
@@ -66,6 +67,21 @@ const HomeMainBar = () => {
   ];
 
   const user = 1;
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5114/api/Posts/postshome") // Gọi API
+      .then((response) => {
+        console.log(response.data);
+        setPosts(response.data); // Lưu dữ liệu sản phẩm từ API vào state
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the posts!", error);
+      });
+  }, []);
+
   return (
     <>
       <div className="mb-4 flex justify-between items-center">
@@ -78,7 +94,7 @@ const HomeMainBar = () => {
         </Link>
       </div>
       <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
-        <QuestionList QuestionList={questionsList} />
+        <QuestionList posts={posts} />
       </div>
     </>
   );
