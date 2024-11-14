@@ -49,20 +49,27 @@ const UpdateUserInfoModal = ({ openModal, setOpenModal }) => {
   };
 
   return (
-    <Modal dismissible show={openModal} onClose={() => setOpenModal(false)}>
-      <Modal.Header>Terms of Service</Modal.Header>
-      <Modal.Body>
+    <Modal
+      size="2xl"
+      dismissible
+      className=""
+      show={openModal}
+      onClose={() => setOpenModal(false)}
+    >
+      <Modal.Header>Edit Profile</Modal.Header>
+      <Modal.Body className="">
         <ProfileForm
           formData={formData}
           handleInputChange={handleInputChange}
           handleProfileUpdate={handleProfileUpdate}
         />
 
-        <div className="pt-4 border-t">
+        <div className="pt-4 mt-4 border-t">
           <Button
-            type="button"
-            variant="outline"
-            className="w-full"
+            outline
+            size="md"
+            gradientDuoTone="cyanToBlue"
+            className="w-full "
             onClick={() => setShowPasswordChange(!showPasswordChange)}
           >
             Change Password
@@ -77,12 +84,6 @@ const UpdateUserInfoModal = ({ openModal, setOpenModal }) => {
           )}
         </div>
       </Modal.Body>
-      <Modal.Footer className="flex flex-row justify-end">
-        <Button onClick={() => setOpenModal(false)}>I accept</Button>
-        <Button color="gray" onClick={() => setOpenModal(false)}>
-          Decline
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };

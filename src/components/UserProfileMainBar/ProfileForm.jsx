@@ -46,7 +46,11 @@ const ProfileForm = ({ formData, handleInputChange, handleProfileUpdate }) => {
         />
       </div>
 
-      <Button type="submit" className="w-full">
+      <Button
+        gradientMonochrome="lime"
+        type="submit"
+        className="w-full text-white"
+      >
         Save Changes
       </Button>
     </form>

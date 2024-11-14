@@ -8,7 +8,7 @@ const PasswordChangeForm = ({
   handlePasswordChange,
 }) => {
   return (
-    <form onSubmit={handlePasswordChange} className="mt-4 space-y-4">
+    <form onSubmit={handlePasswordChange} className="mt-4 space-y-2">
       <div className="space-y-2">
         <label htmlFor="currentPassword" className="text-sm font-medium">
           Current Password
@@ -60,9 +60,16 @@ const PasswordChangeForm = ({
         />
       </div>
 
-      <Button type="submit" className="w-full">
-        Update Password
-      </Button>
+      <div className="mt-10">
+        <Button
+          type="submit"
+          gradientMonochrome="lime"
+          size="md"
+          className="w-full text-white"
+        >
+          Update Password
+        </Button>
+      </div>
     </form>
   );
 };
