@@ -6,9 +6,9 @@ const LeftSideBar = () => {
 
   const getClassName = (path) =>
     `flex items-center space-x-2 ${
-      location === path
-        ? "flex items-center space-x-2 text-blue-300 flex-shrink-0 font-bold"
-        : "flex items-center space-x-2 text-gray-700 flex-shrink-0 hover:text-gray-900"
+      location === path || location.startsWith(`${path}/`)
+        ? "text-blue-400 font-bold"
+        : "text-gray-700 hover:text-gray-900"
     }`;
 
   return (
