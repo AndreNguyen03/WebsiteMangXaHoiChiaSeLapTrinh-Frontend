@@ -1,9 +1,18 @@
 import React from "react";
+import { Button } from "flowbite-react";
 
 const TagBox = ({ tags }) => {
   return (
-    <div className="glassmorphism p-4 mt-6">
-      <h3 className="text-lg font-semibold mb-3">Watched Tags</h3>
+    <div
+      className="h-full w-full bg-gray-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100
+ p-4 mt-6"
+    >
+      <div className="flex justify-between mb-3">
+        <h3 className="text-lg font-semibold">Watched Tags</h3>
+        <Button outline gradientDuoTone="cyanToBlue" size="xs" pill>
+          Edit
+        </Button>
+      </div>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag, index) => (
           <span

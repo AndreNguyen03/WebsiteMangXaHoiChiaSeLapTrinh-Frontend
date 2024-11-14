@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-white shadow-sm w-screen m-0">
+      <nav className="bg-white shadow-sm w-screen m-0 sticky top-0 z-50">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center ">
             <Link

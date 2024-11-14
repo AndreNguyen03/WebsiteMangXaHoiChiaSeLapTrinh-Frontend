@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar } from "flowbite-react";
 import TagBox from "./TagBox";
 import { Button } from "flowbite-react";
+import PostBox from "./PostBox";
 
 const UserProfileMainBar = () => {
   const user = {
@@ -14,15 +15,94 @@ const UserProfileMainBar = () => {
     watchedTags: ["react", "javascript", "tailwindcss", "node.js", "next.js"],
   };
 
+  const posts = [
+    {
+      id: 2673,
+      type: "B",
+      title: "How do I remove a submodule?",
+      date: "Apr 23, 2013",
+    },
+    {
+      id: 2527,
+      type: "B",
+      title: "How to get just one file from another branch",
+      date: "Mar 2, 2010",
+    },
+    {
+      id: 1971,
+      type: "B",
+      title: "How to remove old and unused Docker images",
+      date: "Sep 22, 2015",
+    },
+    {
+      id: 1848,
+      type: "A",
+      title: "Skip Git commit hooks",
+      date: "Aug 29, 2011",
+    },
+    {
+      id: 1777,
+      type: "A",
+      title: "GitHub relative link in Markdown file",
+      date: "Oct 5, 2011",
+    },
+    {
+      id: 1755,
+      type: "A",
+      title: "How to list branches that contain a given commit?",
+      date: "Sep 14, 2009",
+    },
+    {
+      id: 1719,
+      type: "A",
+      title: "Where is the global git config data stored?",
+      date: "Jan 22, 2010",
+    },
+    {
+      id: 1461,
+      type: "A",
+      title: "How to merge a specific commit in Git",
+      date: "May 19, 2009",
+    },
+    {
+      id: 1373,
+      type: "A",
+      title: "Eclipse/Java code completion not working",
+      date: "May 26, 2009",
+    },
+    {
+      id: 1365,
+      type: "A",
+      title: "Need to reset git branch to origin version",
+      date: "Feb 15, 2012",
+    },
+    // New items added below
+    {
+      id: 3001,
+      type: "A",
+      title: "Understanding JavaScript Closures",
+      date: "Oct 10, 2023",
+    },
+    {
+      id: 3002,
+      type: "B",
+      title: "Introduction to React Hooks",
+      date: "Oct 11, 2023",
+    },
+  ];
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="p-8">
+      <div
+        className="h-full w-full bg-blue-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 border border-gray-100
+ p-4 flex flex-col md:flex-row justify-between "
+      >
         <div className="flex flex-col md:flex-row items-center md:items-start">
-          <Avatar img={user.avatarUrl} alt={user.name} />
+          <Avatar size="xl" bordered img={user.avatarUrl} alt={user.name} />
           <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
             <h1 className="text-3xl font-bold">{user.name}</h1>
             <p className="text-gray-600 mt-1">{user.username}</p>
-            <div className="flex items-center justify-center md:justify-start mt-4">
+            <div className="flex gap-1 items-center justify-center md:justify-start mt-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -43,7 +123,7 @@ const UserProfileMainBar = () => {
               </span>
             </div>
             <div className="flex items-center justify-center md:justify-start mt-2 space-x-6">
-              <div className="flex items-center">
+              <div className="flex gap-1 items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -63,7 +143,7 @@ const UserProfileMainBar = () => {
                   {user.questionsCount} Questions
                 </span>
               </div>
-              <div className="flex items-center">
+              <div className="flex gap-1 items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -89,7 +169,7 @@ const UserProfileMainBar = () => {
         <Button
           pill
           gradientMonochrome="cyan"
-          className="mt-6 px-4 py-2 text-white flex items-baseline justify-center w-full md:w-auto"
+          className="mt-4 md:mt-0 p-2 text-white align-top h-10 items-center w-full md:w-auto"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -109,6 +189,7 @@ const UserProfileMainBar = () => {
         </Button>
       </div>
       <TagBox tags={user.watchedTags} />
+      <PostBox posts={posts} />
     </div>
   );
 };
