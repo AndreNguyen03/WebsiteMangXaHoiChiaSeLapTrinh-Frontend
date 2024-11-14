@@ -5,16 +5,16 @@ import QuestionMainBar from "../../components/QuestionMainBar/QuestionMainBar";
 
 const Question = () => {
   return (
-    <div className="container mx-auto gap-4 flex mt-4 h-screen">
+    <div className="container mx-auto gap-4 flex mt-4 h-fit">
       {/* LeftSideBar - Luôn nằm bên trái */}
-      <aside className="hidden md:block md:w-1/6 p-8 shadow-2xl sidebar">
+      <aside className="hidden md:block md:w-1/6 shadow-2xl flex-grow bg-white">
         <LeftSideBar />
       </aside>
 
       {/* Wrapper cho HomeMainBar và RightSideBar */}
-      <div className="flex flex-col md-lg:flex-row w-full md-lg:w-5/6">
+      <div className="flex flex-col md-lg:flex-row w-full h-fit md-lg:w-5/6">
         {/* HomeMainBar - Chiếm 3/4 không gian khi md-lg */}
-        <main className="w-full md-lg:w-3/4 bg-white p-4 shadow-xl">
+        <main className="w-full md-lg:w-3/4 bg-white md-lg:min-h-screen p-4 shadow-xl">
           <QuestionMainBar />
         </main>
 

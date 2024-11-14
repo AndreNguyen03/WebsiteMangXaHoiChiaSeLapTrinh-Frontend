@@ -12,7 +12,7 @@ const LeftSideBar = () => {
     }`;
 
   return (
-    <nav className="space-y-4 sticky top-20">
+    <nav className="space-y-4 sticky top-20 px-5 py-2">
       {/* Home */}
       <Link to="/" className={getClassName("/")}>
         <svg
