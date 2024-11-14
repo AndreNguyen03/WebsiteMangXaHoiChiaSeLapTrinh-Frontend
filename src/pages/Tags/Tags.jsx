@@ -5,10 +5,10 @@ import TagMainBar from "../../components/TagMainBar/TagMainBar";
 const Tags = () => {
   return (
     <div className="container mx-auto flex mt-4 h-screen">
-      <aside className="hidden md:block md:w-1/6 bg-white p-8 shadow-2xl sidebar">
+      <aside className="hidden md:block md:w-1/6 p-8 shadow-2xl sidebar">
         <LeftSideBar></LeftSideBar>
       </aside>
-      <main className="w-full bg-white pt-4  shadow-xl ml-4">
+      <main className="w-5/6 bg-white pt-4  shadow-xl ml-4">
         <TagMainBar></TagMainBar>
       </main>
     </div>

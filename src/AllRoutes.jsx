@@ -7,6 +7,7 @@ import Question from "./pages/Questions/Question";
 import AskQuestion from "./pages/AskQuestion/AskQuestion";
 import DisplayQuestion from "./pages/DisplayQuestions/DisplayQuestion";
 import Tags from "./pages/Tags/Tags";
+import QuestionsWithTag from "./pages/QuestionsWithTag/QuestionsWithTag";
 
 const AllRoutes = () => {
   return (
@@ -18,6 +19,10 @@ const AllRoutes = () => {
       <Route path="/AskQuestion" element={<AskQuestion></AskQuestion>}></Route>
       <Route path="/Questions/:id" element={<DisplayQuestion />}></Route>
       <Route path="/Tags" element={<Tags></Tags>}></Route>
+      <Route
+        path="/Questions/tags/:tag"
+        element={<QuestionsWithTag></QuestionsWithTag>}
+      ></Route>
     </Routes>
   );
 };
