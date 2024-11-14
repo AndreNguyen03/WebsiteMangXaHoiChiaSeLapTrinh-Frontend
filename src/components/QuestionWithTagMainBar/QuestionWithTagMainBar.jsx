@@ -1,10 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import QuestionList from "../HomeMainBar/QuestionList";
-import QuestionSorting from "../QuestionMainBar/QuestionSorting";
+import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
+
+const sortingOptions = ["Newest", "Name", "Unanswered"];
 
 const QuestionWithTagMainBar = () => {
   const user = 1;
@@ -53,14 +55,19 @@ const QuestionWithTagMainBar = () => {
         <Button
           outline
           gradientDuoTone="greenToBlue"
-          size="sm"
+          size="md"
           pill
           onClick={handleWatchTag}
         >
           Watching
         </Button>
       ) : (
-        <Button className="bg-blue-500" size="sm" pill onClick={handleWatchTag}>
+        <Button
+          gradientMonochrome="cyan"
+          size="md"
+          pill
+          onClick={handleWatchTag}
+        >
           Watch
         </Button>
       )}
@@ -68,10 +75,11 @@ const QuestionWithTagMainBar = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 my-4">
         <span className="text-lg">{posts.length} questions</span>
         <div className="flex flex-col sm:flex-row items-center gap-2">
-          <QuestionSorting
+          <SortingGroupBar
+            sortingOptions={sortingOptions}
             active={sorting}
             onChange={setSorting}
-          ></QuestionSorting>
+          ></SortingGroupBar>
           <button className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
