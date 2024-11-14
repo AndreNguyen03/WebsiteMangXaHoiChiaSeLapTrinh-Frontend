@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import QuestionList from "../HomeMainBar/QuestionList";
-import QuestionSorting from "./QuestionSorting";
+import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
+
+const sortingOptions = ["Newest", "Name", "Unanswered"];
 
 const QuestionMainBar = () => {
   const questionsList = [
@@ -97,10 +99,11 @@ const QuestionMainBar = () => {
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-4">
         <span className="text-lg">{posts.length} questions</span>
         <div className="flex flex-col sm:flex-row items-center gap-2">
-          <QuestionSorting
+          <SortingGroupBar
+            sortingOptions={sortingOptions}
             active={sorting}
             onChange={setSorting}
-          ></QuestionSorting>
+          ></SortingGroupBar>
           <button className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"

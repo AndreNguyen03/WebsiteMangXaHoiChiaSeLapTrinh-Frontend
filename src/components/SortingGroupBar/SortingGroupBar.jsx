@@ -1,11 +1,9 @@
 import React from "react";
 
-const TagSorting = ({ active, onChange }) => {
-  const options = ["Popular", "Active", "New"];
-
+const SortingGroupBar = ({ sortingOptions, active, onChange }) => {
   return (
     <div className="flex gap-1 p-1 bg-tag-background bg-gray-100 rounded-lg">
-      {options.map((option) => (
+      {sortingOptions.map((option) => (
         <button
           key={option}
           onClick={() => onChange(option)}
@@ -22,4 +20,4 @@ const TagSorting = ({ active, onChange }) => {
   );
 };
 
-export default TagSorting;
+export default SortingGroupBar;

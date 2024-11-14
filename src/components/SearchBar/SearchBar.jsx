@@ -1,7 +1,6 @@
 import React from "react";
-import { TextInput } from "flowbite-react";
 
-const TagSearch = ({ value, onChange }) => {
+const SearchBar = ({ value, onChange, placeholder }) => {
   const icon = (
     <svg
       class="h-8 w-8 text-red-500"
@@ -34,11 +33,11 @@ const TagSearch = ({ value, onChange }) => {
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Filter by tag name"
-        className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 transition-all"
+        placeholder={placeholder}
+        className="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:ring-blue-400 focus:outline-none focus:ring-2 transition-all"
       />
     </div>
   );
 };
 
-export default TagSearch;
+export default SearchBar;

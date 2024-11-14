@@ -1,8 +1,10 @@
 import React from "react";
-import TagSearch from "./TagSearch";
-import TagSorting from "./TagSorting";
+import SearchBar from "../SearchBar/SearchBar";
+import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import Tag from "./Tag";
 import { useState, useEffect } from "react";
+
+const sortingOptions = ["Popular", "Active", "Name"];
 
 const tags = [
   {
@@ -57,10 +59,18 @@ const TagMainBar = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="flex-1">
-              <TagSearch value={search} onChange={setSearch} />
+              <SearchBar
+                value={search}
+                onChange={setSearch}
+                placeholder="Filter by tag name"
+              />
             </div>
-            <div>
-              <TagSorting active={sorting} onChange={setSorting} />
+            <div className="flex justify-center">
+              <SortingGroupBar
+                sortingOptions={sortingOptions}
+                active={sorting}
+                onChange={setSorting}
+              />
             </div>
           </div>
 
