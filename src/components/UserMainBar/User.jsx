@@ -29,23 +29,28 @@ const User = ({ user }) => {
     };
   }, []);
 
+  const formatDate = (dateString) => {
+    const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
-    <Link to={`/users/${user.name}`}>
+    <Link to={`/users/${user.id}`}>
       <Avatar
-        img="https://placehold.co/50"
+        img={user.gravatar}
         size={avatarSize}
         className="justify-evenly border p-2 shadow-none transition-shadow duration-300 cursor-pointer hover:shadow-lg hover:shadow-gray-400"
       >
         <div className="space-y-1 font-medium">
-          <div>{user.name}</div>
+          <div>{user.username}</div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            Joined in {user.dateCreated}
+            Joined in {formatDate(user.createdAt)}
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {user.numberOfQuestions} questions
+            {user.posts.length} questions
           </div>
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {user.numberOfAnswers} answers
+            {user.answers.length} answers
           </div>
         </div>
       </Avatar>

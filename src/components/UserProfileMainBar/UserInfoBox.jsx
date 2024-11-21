@@ -4,9 +4,9 @@ import { Avatar } from "flowbite-react";
 const UserInfoBox = ({ user }) => {
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start">
-      <Avatar size="xl" bordered img={user.avatarUrl} alt={user.name} />
+      <Avatar size="xl" bordered img={user.gravatar} alt={user.username} />
       <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
-        <h1 className="text-3xl font-bold">{user.name}</h1>
+        <h1 className="text-3xl font-bold">{user.username}</h1>
         <p className="text-gray-600 mt-1">{user.username}</p>
         <div className="flex gap-1 items-center justify-center md:justify-start mt-4">
           <svg

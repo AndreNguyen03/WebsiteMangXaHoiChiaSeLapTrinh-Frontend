@@ -1,20 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TagBox from "./TagBox";
 import { Button } from "flowbite-react";
 import PostBox from "./PostBox";
 import UserInfoBox from "./UserInfoBox";
 import UpdateUserInfoModal from "./UpdateUserInfoModal";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 const UserProfileMainBar = () => {
-  const user = {
-    name: "John Doe",
-    username: "@johndoe",
-    avatarUrl: "https://i.pravatar.cc/300",
-    joinDate: "January 15, 2022",
-    questionsCount: 42,
-    answersCount: 128,
-    watchedTags: ["react", "javascript", "tailwindcss", "node.js", "next.js"],
-  };
+  const { userID } = useParams();
+
+  // const user = {
+  //   name: "John Doe",
+  //   username: "@johndoe",
+  //   avatarUrl: "https://i.pravatar.cc/300",
+  //   joinDate: "January 15, 2022",
+  //   questionsCount: 42,
+  //   answersCount: 128,
+  //   watchedTags: ["react", "javascript", "tailwindcss", "node.js", "next.js"],
+  // };
+
+  const [user, setUser] = useState({});
+
+  console.log(userID);
+
+  useEffect(() => {
+    if (userID) {
+      // Kiểm tra `userID` trước khi gọi API
+      axios
+        .get(`http://localhost:5114/api/Users/${userID}`)
+        .then((response) => {
+          console.log("API response:", response.data);
+          setUser(response.data);
+        })
+        .catch((error) => console.error("Error fetching user data:", error));
+    }
+  }, [userID]); // Dependency chính xác
+  console.log("UserID is:" + user.ID);
 
   const posts = [
     {

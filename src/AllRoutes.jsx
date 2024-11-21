@@ -22,11 +22,14 @@ const AllRoutes = () => {
       <Route path="/Questions/:id" element={<DisplayQuestion />}></Route>
       <Route path="/Tags" element={<Tags></Tags>}></Route>
       <Route
-        path="/Questions/tags/:tag"
+        path="/Questions/tags/:tagID"
         element={<QuestionsWithTag></QuestionsWithTag>}
       ></Route>
       <Route path="/Users" element={<Users></Users>}></Route>
-      <Route path="/Users/:user" element={<UserProfile></UserProfile>}></Route>
+      <Route
+        path="/Users/:userID"
+        element={<UserProfile></UserProfile>}
+      ></Route>
     </Routes>
   );
 };

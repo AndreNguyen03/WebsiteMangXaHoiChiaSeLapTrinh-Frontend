@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import QuestionList from "../HomeMainBar/QuestionList";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import axios from "axios";
@@ -11,6 +11,9 @@ const sortingOptions = ["Newest", "Name", "Unanswered"];
 const QuestionWithTagMainBar = () => {
   const user = 1;
   const [isUserWatchingTag, setUserWatchingTag] = useState(false);
+
+  const { tagId } = useParams();
+  console.log(tagId);
 
   const [posts, setPosts] = useState([]);
   const [sorting, setSorting] = useState("Newest");

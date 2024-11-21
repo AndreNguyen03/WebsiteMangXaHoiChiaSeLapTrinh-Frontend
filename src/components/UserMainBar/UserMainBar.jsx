@@ -3,6 +3,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import User from "./User";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const sortingOptions = ["New Users", "Name", "Most Answers", "Most Questions"];
 
@@ -38,16 +39,31 @@ const UserMainBar = () => {
   const [search, setSearch] = useState("");
   const [sorting, setSorting] = useState("New Users");
 
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5114/api/Users") // Gọi API
+      .then((response) => {
+        console.log(response.data);
+        setUsers(response.data); // Lưu dữ liệu sản phẩm từ API vào state
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the users!", error);
+      });
+  }, []);
+
   const filteredUsers = users
-    .filter((user) => user.name.toLowerCase().includes(search.toLowerCase()))
+    .filter((user) =>
+      user.username.toLowerCase().includes(search.toLowerCase())
+    )
     .sort((a, b) => {
-      if (sorting === "Name") return a.name.localeCompare(b.name);
+      if (sorting === "Name") return a.username.localeCompare(b.username);
       if (sorting === "New Users")
-        return new Date(b.dateCreated) - new Date(a.dateCreated);
+        return new Date(b.createdAt) - new Date(a.createdAt);
       if (sorting === "Most Answers")
-        return b.numberOfAnswers - a.numberOfAnswers;
-      if (sorting === "Most Questions")
-        return b.numberOfQuestions - a.numberOfQuestions;
+        return b.answers.length - a.answers.length;
+      if (sorting === "Most Questions") return b.posts.length - a.posts.length;
       return 0; // Default case if no sorting matches
     });
 
@@ -76,7 +92,7 @@ const UserMainBar = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {filteredUsers.map((user) => (
-              <User key={user.name} user={user} />
+              <User key={user.id} user={user} />
             ))}
           </div>
         </div>

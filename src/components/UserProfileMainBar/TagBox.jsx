@@ -14,14 +14,18 @@ const TagBox = ({ tags }) => {
         </Button>
       </div>
       <div className="flex flex-wrap gap-2">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors duration-200"
-          >
-            {tag}
-          </span>
-        ))}
+        {/* {tags.length > 0 ? (
+          tags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors duration-200"
+            >
+              {tag}
+            </span>
+          ))
+        ) : (
+          <p className="text-gray-500">No tags available</p>
+        )} */}
       </div>
     </div>
   );
