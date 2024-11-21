@@ -2,9 +2,21 @@ import React from "react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo_long.png";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../features/Auth/Auth";
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const authState = useSelector((state) => state.auth);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(login({ username, password }));
+  };
 
   return (
     <div className="flex flex-col items-center mt-10">
@@ -21,6 +33,8 @@ const Login = () => {
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               type="email"
               className="w-full border border-gray-300 rounded-lg py-2 px-4 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
@@ -29,6 +43,8 @@ const Login = () => {
             <label className="block text-gray-700">Password</label>
             <div className="relative">
               <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 className="w-full border border-gray-300 rounded-lg py-2 px-4 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
@@ -44,6 +60,7 @@ const Login = () => {
             </a>
           </div>
           <button
+            onClick={handleSubmit}
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg"
           >
@@ -59,6 +76,8 @@ const Login = () => {
           </Link>
         </p>
       </div>
+      {authState.status === "loading" && <p>Loading...</p>}
+      {authState.error && <p style={{ color: "red" }}>{authState.error}</p>}
     </div>
   );
 };
