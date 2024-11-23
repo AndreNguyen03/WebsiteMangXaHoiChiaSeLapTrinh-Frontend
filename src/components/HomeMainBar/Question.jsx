@@ -3,6 +3,8 @@ import "./Question.css";
 import Avatar from "../Avatar/Avatar.jsx";
 import { Link, useLocation } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Question = ({ question }) => {
   const location = useLocation().pathname;
@@ -29,13 +31,15 @@ const Question = ({ question }) => {
           <></>
         )}
         <div className="flex items-center text-xs text-gray-600 mt-1">
-          {question.posttags.map((tag) => (
-            <span className="question-tags">{tag.tag.tagname}</span>
+          {question.posttags.map((tag, index) => (
+            <span key={index} className="question-tags">
+              {tag.tag.tagname}
+            </span>
           ))}
 
           <span className="ml-auto">
             <img
-              src="https://docs.material-tailwind.com/img/face-2.jpg"
+              src={question.user.gravatar}
               alt="avatar"
               className="mr-2 relative inline-block size-6 !rounded-full object-cover object-center"
             />

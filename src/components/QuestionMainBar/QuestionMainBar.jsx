@@ -7,67 +7,6 @@ import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 const sortingOptions = ["Newest", "Name", "Unanswered"];
 
 const QuestionMainBar = () => {
-  const questionsList = [
-    {
-      id: 1,
-      votes: 3,
-      views: 1,
-      noOfAnswers: 2,
-      questionTitle: "How does a function work in JavaScript?",
-      questionBody: "Can someone explain the basics of how functions work?",
-      questionTags: ["javascript", "functions", "beginner"],
-      userPosted: "mano",
-      time: "Jan 1",
-    },
-    {
-      id: 2,
-      votes: 0,
-      views: 3,
-      noOfAnswers: 0,
-      questionTitle: "Difference between Java and JavaScript?",
-      questionBody:
-        "I often hear people mention Java and JavaScript. Are they the same?",
-      questionTags: ["java", "javascript", "differences"],
-      userPosted: "mano",
-      time: "Jan 2",
-    },
-    {
-      id: 3,
-      votes: 1,
-      views: 5,
-      noOfAnswers: 1,
-      questionTitle: "What is the purpose of MongoDB?",
-      questionBody:
-        "Why should I use MongoDB instead of a relational database?",
-      questionTags: ["mongodb", "database", "NoSQL"],
-      userPosted: "mano",
-      time: "Jan 3",
-    },
-    {
-      id: 4,
-      votes: 2,
-      views: 10,
-      noOfAnswers: 3,
-      questionTitle: "How to handle asynchronous code in Node.js?",
-      questionBody:
-        "I’m having trouble understanding async functions and promises in Node.js.",
-      questionTags: ["node js", "asynchronous", "promises"],
-      userPosted: "alex",
-      time: "Jan 4",
-    },
-    {
-      id: 5,
-      votes: 5,
-      views: 20,
-      noOfAnswers: 5,
-      questionTitle:
-        "What is React and how does it differ from vanilla JavaScript? blablablablablablablablablablablablabla",
-      questionBody: "Is React really necessary for front-end development?",
-      questionTags: ["react js", "javascript", "frontend"],
-      userPosted: "jane",
-      time: "Jan 5",
-    },
-  ];
   const user = 1;
 
   const [posts, setPosts] = useState([]);
@@ -75,10 +14,25 @@ const QuestionMainBar = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5114/api/Posts/postshome") // Gọi API
+      .get("http://localhost:5114/api/Posts") // Gọi API
       .then((response) => {
         console.log(response.data);
-        setPosts(response.data); // Lưu dữ liệu sản phẩm từ API vào state
+
+        // Chuyển đổi dữ liệu API theo định dạng custom
+        const mappedData = response.data.map((post) => ({
+          id: post.id, // Đổi id thành customId
+          title: post.title, // Đổi title thành customTitle
+          body: post.tryAndExpecting, // Đổi content thành customContent
+          createdAt: post.createdAt, // Đổi createdAt thành customDate
+          views: post.views, // Đổi views thành customViews
+          upvote: post.upvote, // Đổi upvote thành customUpvote
+          downvote: post.downvote, // Đổi downvote thành customDownvote
+          posttags: post.posttags, // Đổi posttags thành customTags
+          user: post.user, // Đổi user thành customUser
+          answers: post.answers, // Đổi answers thành customAnswers
+        }));
+
+        setPosts(mappedData); // Lưu vào state custom
       })
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);

@@ -24,10 +24,28 @@ const QuestionWithTagMainBar = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5114/api/Posts/postshome") // Gọi API
+      .get(`http://localhost:5114/api/Posts/getbytagid?id=${tagId}`) // Gọi API
       .then((response) => {
         console.log(response.data);
-        setPosts(response.data); // Lưu dữ liệu sản phẩm từ API vào state
+
+        // Chuyển đổi dữ liệu API theo định dạng custom
+        const mappedData = response.data.map((post) => ({
+          id: post.id, // Đổi id thành customId
+          title: post.title, // Đổi title thành customTitle
+          body: post.tryAndExpecting, // Đổi content thành customContent
+          createdAt: post.createdAt, // Đổi createdAt thành customDate
+          views: post.views, // Đổi views thành customViews
+          upvote: post.upvote, // Đổi upvote thành customUpvote
+          downvote: post.downvote, // Đổi downvote thành customDownvote
+          posttags: post.posttags, // Đổi posttags thành customTags
+          user: {
+            gravatar: "https://placehold.co/600x400/png",
+            username: "test",
+          }, // Đổi user thành customUser
+          answers: post.answers, // Đổi answers thành customAnswers
+        }));
+
+        setPosts(mappedData); // Lưu vào state custom
       })
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);
