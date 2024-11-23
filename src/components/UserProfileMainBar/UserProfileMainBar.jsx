@@ -31,7 +31,15 @@ const UserProfileMainBar = () => {
         .get(`http://localhost:5114/api/Users/${userID}`)
         .then((response) => {
           console.log("API response:", response.data);
-          setUser(response.data);
+          const mappedData = {
+            id: response.data.id, // Đổi id thành customId
+            username: response.data.username, // Đổi title thành customTitle
+            gravatar: response.data.gravatar, // Đổi content thành customContent
+            createdAt: response.data.createdAt, // Đổi content thành customContent
+            email: response.data.email,
+            // Đổi content thành customContent
+          };
+          setUser(mappedData);
         })
         .catch((error) => console.error("Error fetching user data:", error));
     }

@@ -25,7 +25,7 @@ const Question = ({ question }) => {
         >
           {question.title}
         </Link>
-        {location === "/questions" ? (
+        {location.startsWith("/questions") ? (
           <span className="block text-gray-600 text-sm">{question.body}</span>
         ) : (
           <></>

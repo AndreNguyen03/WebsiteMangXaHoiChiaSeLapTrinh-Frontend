@@ -2,12 +2,17 @@ import React from "react";
 import { Avatar } from "flowbite-react";
 
 const UserInfoBox = ({ user }) => {
+  const formatDate = (dateString) => {
+    const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start">
       <Avatar size="xl" bordered img={user.gravatar} alt={user.username} />
       <div className="md:ml-8 mt-4 md:mt-0 text-center md:text-left">
         <h1 className="text-3xl font-bold">{user.username}</h1>
-        <p className="text-gray-600 mt-1">{user.username}</p>
+        <p className="text-gray-600 mt-1">{user.email}</p>
         <div className="flex gap-1 items-center justify-center md:justify-start mt-4">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +29,9 @@ const UserInfoBox = ({ user }) => {
             />
           </svg>
 
-          <span className="text-sm text-gray-600">Joined {user.joinDate}</span>
+          <span className="text-sm text-gray-600">
+            Joined {formatDate(user.createdAt)}
+          </span>
         </div>
         <div className="flex items-center justify-center md:justify-start mt-2 space-x-6">
           <div className="flex gap-1 items-center">

@@ -18,6 +18,8 @@ const QuestionWithTagMainBar = () => {
   const [posts, setPosts] = useState([]);
   const [sorting, setSorting] = useState("Newest");
 
+  const [tag, setTag] = useState({});
+
   const handleWatchTag = () => {
     setUserWatchingTag(!isUserWatchingTag);
   };
@@ -52,11 +54,31 @@ const QuestionWithTagMainBar = () => {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5114/api/Tags/${tagId}`) // Gọi API
+      .then((response) => {
+        console.log(response.data);
+
+        // Chuyển đổi dữ liệu API theo định dạng custom
+        const mappedData = {
+          id: response.data.id, // Đổi id thành customId
+          tagname: response.data.tagname, // Đổi title thành customTitle
+          description: response.data.description, // Đổi content thành customContent
+        };
+
+        setTag(mappedData); // Lưu vào state custom
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the posts!", error);
+      });
+  }, [tagId]);
+
   return (
     <>
       <div className="grid grid-rows-2 mb-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">Tag name</h1>
+          <h1 className="text-xl font-bold">{tag.tagname}</h1>
           <Link
             to={user === null ? "/Login" : "/AskQuestion"}
             className="bg-blue-500 text-white px-4 py-2 rounded-lg"
@@ -64,12 +86,7 @@ const QuestionWithTagMainBar = () => {
             Ask Question
           </Link>
         </div>
-        <p className="line-clamp-2">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Impedit nisi
-          ipsum eaque ut aperiam, nemo culpa, iure maxime quae blanditiis labore
-          praesentium asperiores autem, earum est perferendis soluta tenetur.
-          Ullam!
-        </p>
+        <p className="line-clamp-2">{tag.description}</p>
       </div>
 
       {isUserWatchingTag ? (
