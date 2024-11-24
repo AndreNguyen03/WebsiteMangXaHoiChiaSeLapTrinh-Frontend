@@ -4,7 +4,7 @@ import UserProfileMainBar from "../../components/UserProfileMainBar/UserProfileM
 
 const UserProfile = () => {
   return (
-    <div className="container mx-auto flex mt-4 h-fit">
+    <div className="container w-screen mx-auto flex mt-4 h-fit">
       <aside className="hidden md:block md:w-1/6 bg-white shadow-2xl flex-grow">
         <LeftSideBar></LeftSideBar>
       </aside>

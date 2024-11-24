@@ -5,7 +5,7 @@ import RightSideBar from "../../components/RightSideBar/RightSideBar";
 
 const Home = () => {
   return (
-    <div className="container mx-auto gap-4 flex mt-4 h-fit">
+    <div className="container w-screen mx-auto gap-4 flex mt-4 ">
       {/* LeftSideBar - Luôn nằm bên trái */}
       <aside className="hidden md:block md:w-1/6 bg-white shadow-2xl">
         <LeftSideBar />

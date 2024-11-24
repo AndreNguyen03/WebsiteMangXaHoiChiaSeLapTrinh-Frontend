@@ -4,7 +4,7 @@ import TagManageMainBar from "../../../components/Admin/TagManageMainBar/TagMana
 
 const TagManagement = () => {
   return (
-    <div className="flex relative min-h-screen">
+    <div className="flex w-screen relative min-h-screen">
       <div className="bg-blue-900 flex-grow">
         <SideMenu></SideMenu>
       </div>

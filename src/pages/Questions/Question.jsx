@@ -5,7 +5,7 @@ import QuestionMainBar from "../../components/QuestionMainBar/QuestionMainBar";
 
 const Question = () => {
   return (
-    <div className="container mx-auto gap-4 flex mt-4 h-fit">
+    <div className="container w-screen mx-auto gap-4 flex mt-4 h-fit">
       {/* LeftSideBar - Luôn nằm bên trái */}
       <aside className="hidden md:block md:w-1/6 shadow-2xl flex-grow bg-white">
         <LeftSideBar />
