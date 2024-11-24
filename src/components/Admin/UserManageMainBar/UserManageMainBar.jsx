@@ -4,97 +4,22 @@ import SearchBar from "../../SearchBar/SearchBar";
 import { Table, Button } from "flowbite-react";
 import axios from "axios";
 
-const users = [
-  {
-    name: "Neil Sims",
-    email: "neil.sims@flowbite.com",
-    position: "Front-end developer",
-    country: "United States",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Roberta Casas",
-    email: "roberta.casas@flowbite.com",
-    position: "Designer",
-    country: "Spain",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Michael Gough",
-    email: "michael.gough@flowbite.com",
-    position: "React developer",
-    country: "United Kingdom",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Jese Leos",
-    email: "jese.leos@flowbite.com",
-    position: "Marketing",
-    country: "United States",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Bonnie Green",
-    email: "bonnie.green@flowbite.com",
-    position: "UI/UX Engineer",
-    country: "Australia",
-    status: "Offline",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Thomas Lean",
-    email: "thomas.lean@flowbite.com",
-    position: "Vue developer",
-    country: "Germany",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Helene Engels",
-    email: "helene.engels@flowbite.com",
-    position: "Product owner",
-    country: "Canada",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Lana Byrd",
-    email: "lana.byrd@flowbite.com",
-    position: "Designer",
-    country: "United States",
-    status: "Active",
-    img: "https://placehold.co/40x40",
-  },
-  {
-    name: "Leslie Livingston",
-    email: "leslie.livingston@flowbite.com",
-    position: "Web developer",
-    country: "France",
-    status: "Offline",
-    img: "https://placehold.co/40x40",
-  },
-];
-
-const columns = [
-  { headerName: "User ID", key: "id" },
-  { headerName: "Username", key: "username" },
-  { headerName: "Avatar", key: "gravatar" },
-  { headerName: "Created At", key: "createdAt", isDate: true },
-  { headerName: "Updated At", key: "updatedAt", isDate: true },
-  ...(showActions
-    ? [{ headerName: "Edit", key: "actions", isAction: true }]
-    : []),
-];
-
 const UserManageMainBar = () => {
   const [showActions, setShowActions] = useState(false);
   const [search, setSearch] = useState("");
 
   const [users, setUsers] = useState([]);
+
+  const columns = [
+    { headerName: "User ID", key: "id" },
+    { headerName: "Username", key: "username" },
+    { headerName: "Avatar", key: "gravatar" },
+    { headerName: "Created At", key: "createdAt", isDate: true },
+    { headerName: "Updated At", key: "updatedAt", isDate: true },
+    ...(showActions
+      ? [{ headerName: "Edit", key: "actions", isAction: true }]
+      : []),
+  ];
 
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
@@ -132,7 +57,7 @@ const UserManageMainBar = () => {
           <SearchBar
             value={search}
             onChange={setSearch}
-            placeholder="Filter by tag name"
+            placeholder="Search users..."
           />
         </div>
         <div className="flex gap-2 justify-center">
@@ -197,14 +122,16 @@ const UserManageMainBar = () => {
 
       <div className="overflow-x-auto">
         <Table hoverable striped className="">
-          {columns.map((column, index) => (
-            <Table.HeadCell
-              key={index}
-              className="bg-blue-200 text-gray-600 text-xs"
-            >
-              {column.headerName}
-            </Table.HeadCell>
-          ))}
+          <Table.Head>
+            {columns.map((column, index) => (
+              <Table.HeadCell
+                key={index}
+                className="bg-blue-200 text-gray-600 text-xs"
+              >
+                {column.headerName}
+              </Table.HeadCell>
+            ))}
+          </Table.Head>
           <Table.Body className="divide-y">
             {users.map((user) => (
               <Table.Row

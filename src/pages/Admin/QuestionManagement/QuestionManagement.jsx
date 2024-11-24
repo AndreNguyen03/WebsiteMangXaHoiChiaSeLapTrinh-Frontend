@@ -8,7 +8,7 @@ const QuestionManagement = () => {
       <div className="bg-blue-900 flex-grow">
         <SideMenu></SideMenu>
       </div>
-      <main className="w-full bg-white pt-4 h-fit shadow-xl ">
+      <main className="w-full bg-white  h-fit shadow-xl ">
         <QuestionManageMainBar></QuestionManageMainBar>
       </main>
     </div>
