@@ -4,9 +4,11 @@ import SideMenu from "../../../components/Admin/SideMenu/SideMenu";
 
 const UserManagement = () => {
   return (
-    <div className="flex h-fit">
-      <SideMenu></SideMenu>
-      <main className="w-full bg-white pt-4 h-fit shadow-xl ">
+    <div className="flex relative min-h-screen ">
+      <div className="bg-blue-900 flex-grow">
+        <SideMenu></SideMenu>
+      </div>
+      <main className="w-fit min-w-full bg-white min-h-screen h-fit shadow-xl ">
         <UserManageMainBar></UserManageMainBar>
       </main>
     </div>

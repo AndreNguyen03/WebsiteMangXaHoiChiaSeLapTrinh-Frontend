@@ -28,7 +28,7 @@ const SideMenu = () => {
 
   return (
     <div
-      className={`h-fit min-h-screen bg-blue-900 text-white ${
+      className={`sticky top-20  text-white ${
         isOpen ? "w-64" : "w-16"
       } transition-width duration-300`}
     >

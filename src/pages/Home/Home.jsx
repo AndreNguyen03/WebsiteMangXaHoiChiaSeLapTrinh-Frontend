@@ -12,9 +12,9 @@ const Home = () => {
       </aside>
 
       {/* Wrapper cho HomeMainBar và RightSideBar */}
-      <div className="flex flex-col md-lg:flex-row w-full md-lg:min-h-screen md-lg:w-5/6">
+      <div className="flex flex-col md-lg:flex-row w-full h-fit min-h-screen md-lg:w-5/6">
         {/* HomeMainBar - Chiếm 3/4 không gian khi md-lg */}
-        <main className="w-full md-lg:w-3/4 bg-white p-4 shadow-xl">
+        <main className="w-full md-lg:w-3/4 bg-white p-4 flex-grow shadow-xl">
           <HomeMainBar />
         </main>
 
