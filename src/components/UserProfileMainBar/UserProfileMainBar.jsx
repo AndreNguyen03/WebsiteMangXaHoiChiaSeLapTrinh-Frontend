@@ -9,17 +9,6 @@ import axios from "axios";
 
 const UserProfileMainBar = () => {
   const { userID } = useParams();
-
-  // const user = {
-  //   name: "John Doe",
-  //   username: "@johndoe",
-  //   avatarUrl: "https://i.pravatar.cc/300",
-  //   joinDate: "January 15, 2022",
-  //   questionsCount: 42,
-  //   answersCount: 128,
-  //   watchedTags: ["react", "javascript", "tailwindcss", "node.js", "next.js"],
-  // };
-
   const [user, setUser] = useState({});
 
   console.log(userID);
@@ -36,6 +25,8 @@ const UserProfileMainBar = () => {
             username: response.data.username, // Đổi title thành customTitle
             gravatar: response.data.gravatar, // Đổi content thành customContent
             createdAt: response.data.createdAt, // Đổi content thành customContent
+            questionsCount: response.data.posts.length,
+            answersCount: response.data.answers.length,
             email: response.data.email,
             // Đổi content thành customContent
           };

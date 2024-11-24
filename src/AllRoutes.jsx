@@ -10,6 +10,7 @@ import Tags from "./pages/Tags/Tags";
 import QuestionsWithTag from "./pages/QuestionsWithTag/QuestionsWithTag";
 import Users from "./pages/Users/Users";
 import UserProfile from "./pages/UserProfile/UserProfile";
+import HomeDashboard from "./pages/Admin/HomeDashboard";
 
 const AllRoutes = () => {
   return (
@@ -30,6 +31,7 @@ const AllRoutes = () => {
         path="/Users/:userID"
         element={<UserProfile></UserProfile>}
       ></Route>
+      <Route path="/Admin" element={<HomeDashboard></HomeDashboard>}></Route>
     </Routes>
   );
 };
