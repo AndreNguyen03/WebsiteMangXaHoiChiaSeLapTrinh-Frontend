@@ -10,7 +10,13 @@ import Tags from "./pages/Tags/Tags";
 import QuestionsWithTag from "./pages/QuestionsWithTag/QuestionsWithTag";
 import Users from "./pages/Users/Users";
 import UserProfile from "./pages/UserProfile/UserProfile";
-import HomeDashboard from "./pages/Admin/HomeDashboard";
+import HomeDashboard from "./pages/Admin/HomeDashboard/HomeDashboard";
+import QuestionManagement from "./pages/Admin/QuestionManagement/QuestionManagement";
+import AnswerManagement from "./pages/Admin/AnswerManagement/AnswerManagement";
+import CommentManagement from "./pages/Admin/CommentManagement/CommentManagement";
+import TagManagement from "./pages/Admin/TagManagement/TagManagement";
+import UserManagement from "./pages/Admin/UserManagement/UserManagement";
+import RoleManagement from "./pages/Admin/RoleManagement/RoleManagement";
 
 const AllRoutes = () => {
   return (
@@ -32,6 +38,30 @@ const AllRoutes = () => {
         element={<UserProfile></UserProfile>}
       ></Route>
       <Route path="/Admin" element={<HomeDashboard></HomeDashboard>}></Route>
+      <Route
+        path="/Admin/questions"
+        element={<QuestionManagement></QuestionManagement>}
+      ></Route>
+      <Route
+        path="/Admin/answers"
+        element={<AnswerManagement></AnswerManagement>}
+      ></Route>
+      <Route
+        path="/Admin/comments"
+        element={<CommentManagement></CommentManagement>}
+      ></Route>
+      <Route
+        path="/Admin/tags"
+        element={<TagManagement></TagManagement>}
+      ></Route>
+      <Route
+        path="/Admin/users"
+        element={<UserManagement></UserManagement>}
+      ></Route>
+      <Route
+        path="/Admin/roles"
+        element={<RoleManagement></RoleManagement>}
+      ></Route>
     </Routes>
   );
 };
