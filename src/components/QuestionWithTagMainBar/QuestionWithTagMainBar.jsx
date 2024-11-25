@@ -74,6 +74,22 @@ const QuestionWithTagMainBar = () => {
       });
   }, [tagId]);
 
+  const filteredPosts = posts.sort((a, b) => {
+    if (sorting === "Newest") {
+      // Sắp xếp theo thời gian mới nhất
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    }
+    if (sorting === "Name") {
+      // Sắp xếp theo tên bài viết
+      return a.title.localeCompare(b.title);
+    }
+    if (sorting === "Unanswered") {
+      // Sắp xếp các bài chưa được trả lời (answers = 0)
+      return a.answers.length - b.answers.length;
+    }
+    return 0; // Mặc định không thay đổi thứ tự
+  });
+
   return (
     <>
       <div className="grid grid-rows-2 mb-4">
@@ -138,8 +154,8 @@ const QuestionWithTagMainBar = () => {
         </div>
       </div>
       <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
-        {posts.length > 0 ? (
-          <QuestionList posts={posts} />
+        {filteredPosts.length > 0 ? (
+          <QuestionList posts={filteredPosts} />
         ) : (
           <p className="text-gray-600 text-center p-4">
             There's currently no question available. Please check back later.
