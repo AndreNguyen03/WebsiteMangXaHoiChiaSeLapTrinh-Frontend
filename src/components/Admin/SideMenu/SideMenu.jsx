@@ -20,7 +20,6 @@ const SideMenu = () => {
     { icon: HomeIcon, label: "Home", to: "/admin" },
     { icon: QuestionsIcon, label: "Questions", to: "/admin/questions" },
     { icon: AnswersIcon, label: "Answers", to: "/admin/answers" },
-    { icon: CommentsIcon, label: "Comments", to: "/admin/comments" },
     { icon: TagsIcon, label: "Tags", to: "/admin/tags" },
     { icon: UsersIcon, label: "Users", to: "/admin/users" },
     { icon: RolesIcon, label: "Roles", to: "/admin/roles" },
@@ -44,7 +43,9 @@ const SideMenu = () => {
       <Link to="/" className="bg-white flex justify-center items-center ">
         <img
           src={isOpen ? logo : logosmall}
-          className={isOpen ? "h-16" : "h-8"}
+          className={`${
+            isOpen ? "h-16" : "h-8"
+          } transition-height duration-300`}
           alt="Stack Overflow Logo"
         />
       </Link>
