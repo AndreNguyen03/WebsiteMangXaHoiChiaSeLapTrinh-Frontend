@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import QuestionList from "./QuestionList";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const HomeMainBar = () => {
   const user = 1;
@@ -36,26 +37,49 @@ const HomeMainBar = () => {
   }, []);
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="mb-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">Interesting posts for you</h1>
-        <Link
-          to={user === null ? "/Login" : "/AskQuestion"}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        <motion.h1
+          className="text-xl font-bold"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
         >
-          Ask Question
-        </Link>
+          Interesting posts for you
+        </motion.h1>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Link
+            to={user === null ? "/Login" : "/AskQuestion"}
+            className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white px-4 py-2 rounded-lg"
+          >
+            Ask Question
+          </Link>
+        </motion.div>
       </div>
-      <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
+      <motion.div
+        className="bg-white rounded shadow-sm border-gray-300 border mb-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         {posts.length > 0 ? (
           <QuestionList posts={posts} />
         ) : (
-          <p className="text-gray-600 text-center p-4">
+          <motion.p
+            className="text-gray-600 text-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             There's currently no question available. Please check back later.
-          </p>
+          </motion.p>
         )}
-      </div>
-    </>
+      </motion.div>
+    </motion.div>
   );
 };
 
