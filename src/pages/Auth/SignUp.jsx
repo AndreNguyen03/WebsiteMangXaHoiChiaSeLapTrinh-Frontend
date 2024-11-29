@@ -1,70 +1,163 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../assets/logo.png";
+import { useNavigate, Link } from "react-router-dom";
+import { TextInput } from "flowbite-react";
+import { motion } from "framer-motion";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handleSubmit = () => {
+    navigate(`/VerifyCode?email=${encodeURIComponent(email)}&type=signup`);
+  };
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+      },
+    },
+  };
   return (
-    <div className="flex-grow h-screen container mx-auto px-4 py-8 flex">
-      <div className="w-1/2 flex flex-col justify-center items-start">
-        <img src={logo} alt="Stack Overflow logo" className="h-32 mb-4" />
-
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex-grow h-screen container mx-auto px-4 py-8 flex"
+    >
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="w-1/2 flex flex-col justify-center items-start"
+      >
+        <motion.img
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          src={logo}
+          alt="Stack Overflow logo"
+          className="h-32 mb-4"
+        />
         <ul className="space-y-2 ml-4 mb-4">
-          <li className="flex items-center text-lg">
-            <i className="fas fa-question-circle text-blue-500 mr-2"></i>
-            Get unstuck - ask a question!
-          </li>
-          <li className="flex items-center text-lg">
-            <i className="fas fa-tag text-blue-500 mr-2"></i>
-            Save your favorite posts, tags and filters
-          </li>
-          <li className="flex items-center text-lg">
-            <i className="fas fa-trophy text-blue-500 mr-2"></i>
-            Answer questions and earn reputation
-          </li>
+          {[
+            { icon: "question-circle", text: "Get unstuck - ask a question!" },
+            { icon: "tag", text: "Save your favorite posts, tags and filters" },
+            { icon: "trophy", text: "Answer questions and earn reputation" },
+          ].map((item, index) => (
+            <motion.li
+              key={index}
+              variants={itemVariants}
+              className="flex items-center text-lg hover:translate-x-2 transition-transform duration-200"
+            >
+              <i className={`fas fa-${item.icon} text-blue-500 mr-2`}></i>
+              {item.text}
+            </motion.li>
+          ))}
         </ul>
-      </div>
-      <div className="w-1/2 flex justify-center items-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h2 className="text-2xl font-bold mb-4">Create your account</h2>
-
-          <form>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Email</label>
-              <input type="email" className="w-full border rounded px-3 py-2" />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Password</label>
-              <input
-                type="password"
-                className="w-full border rounded px-3 py-2"
+      </motion.div>
+      <motion.div
+        initial={{ x: 100, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="w-1/2 flex justify-center items-center"
+      >
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md hover:shadow-xl transition-shadow duration-300"
+        >
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-2xl font-bold mb-4"
+          >
+            Create your account
+          </motion.h2>
+          <form onSubmit={handleSubmit}>
+            <motion.div
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              className="mb-4"
+            >
+              <label htmlFor="email" className="block text-gray-700 mb-2">
+                Email
+              </label>
+              <TextInput
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Nhập email..."
+                required
+                className="mt-1 transition-all duration-200 focus:scale-[1.02]"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Must contain 8+ characters, including at least 1 letter and 1
-                number.
-              </p>
-            </div>
-            <button
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+              className="mb-4"
+            >
+              <label className="block text-gray-700 mb-2">Password</label>
+              <TextInput
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Tạo mật khẩu..."
+                required
+                className="mt-1 transition-all duration-200 focus:scale-[1.02]"
+              />
+            </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="submit"
-              className="w-full bg-blue-500 text-white py-2 rounded mb-4"
+              className="w-full bg-blue-500 text-white py-2 rounded mb-4 hover:bg-blue-600 transition-colors duration-200"
             >
               Sign up
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
-              className="w-full border border-gray-300 text-gray-700 py-2 rounded mb-4 flex items-center justify-center"
+              className="w-full border border-gray-300 text-gray-700 py-2 rounded mb-4 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
             >
               <i className="fab fa-google mr-2"></i> Sign up with Google
-            </button>
+            </motion.button>
           </form>
-          <p className="text-center text-sm text-gray-700 mt-4">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-center text-sm text-gray-700 mt-4"
+          >
             Already have an account?{" "}
-            <a href="#" className="text-blue-500">
+            <Link
+              to="/Login"
+              className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
+            >
               Log in
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
+            </Link>
+          </motion.p>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
-
 export default SignUp;
