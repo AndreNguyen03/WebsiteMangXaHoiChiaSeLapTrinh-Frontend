@@ -3,36 +3,33 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import QuestionList from "../HomeMainBar/QuestionList";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
+import { motion, AnimatePresence } from "framer-motion";
 
 const sortingOptions = ["Newest", "Name", "Unanswered"];
 
 const QuestionMainBar = () => {
   const user = 1;
-
   const [posts, setPosts] = useState([]);
   const [sorting, setSorting] = useState("Newest");
 
   useEffect(() => {
     axios
-      .get("http://localhost:5114/api/Posts") // Gọi API
+      .get("http://localhost:5114/api/Posts")
       .then((response) => {
         console.log(response.data);
-
-        // Chuyển đổi dữ liệu API theo định dạng custom
         const mappedData = response.data.map((post) => ({
-          id: post.id, // Đổi id thành customId
-          title: post.title, // Đổi title thành customTitle
-          body: post.tryAndExpecting, // Đổi content thành customContent
-          createdAt: post.createdAt, // Đổi createdAt thành customDate
-          views: post.views, // Đổi views thành customViews
-          upvote: post.upvote, // Đổi upvote thành customUpvote
-          downvote: post.downvote, // Đổi downvote thành customDownvote
-          posttags: post.posttags, // Đổi posttags thành customTags
-          user: post.user, // Đổi user thành customUser
-          answers: post.answers, // Đổi answers thành customAnswers
+          id: post.id,
+          title: post.title,
+          body: post.tryAndExpecting,
+          createdAt: post.createdAt,
+          views: post.views,
+          upvote: post.upvote,
+          downvote: post.downvote,
+          posttags: post.posttags,
+          user: post.user,
+          answers: post.answers,
         }));
-
-        setPosts(mappedData); // Lưu vào state custom
+        setPosts(mappedData);
       })
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);
@@ -41,40 +38,67 @@ const QuestionMainBar = () => {
 
   const filteredPosts = posts.sort((a, b) => {
     if (sorting === "Newest") {
-      // Sắp xếp theo thời gian mới nhất
       return new Date(b.createdAt) - new Date(a.createdAt);
     }
     if (sorting === "Name") {
-      // Sắp xếp theo tên bài viết
       return a.title.localeCompare(b.title);
     }
     if (sorting === "Unanswered") {
-      // Sắp xếp các bài chưa được trả lời (answers = 0)
       return a.answers.length - b.answers.length;
     }
-    return 0; // Mặc định không thay đổi thứ tự
+    return 0;
   });
 
   return (
-    <>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="mb-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">All Questions</h1>
-        <Link
-          to={user === null ? "/Login" : "/AskQuestion"}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        <motion.h1
+          className="text-xl font-bold"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
         >
-          Ask Question
-        </Link>
+          All Questions
+        </motion.h1>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Link
+            to={user === null ? "/Login" : "/AskQuestion"}
+            className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white px-4 py-2 rounded-lg"
+          >
+            Ask Question
+          </Link>
+        </motion.div>
       </div>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-4">
-        <span className="text-lg">{posts.length} questions</span>
-        <div className="flex flex-col sm:flex-row items-center gap-2">
+
+      <motion.div
+        className="flex flex-col sm:flex-row items-center justify-between gap-2 mb-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+      >
+        <motion.span className="text-lg" whileHover={{ scale: 1.05 }}>
+          {posts.length} questions
+        </motion.span>
+        <motion.div
+          className="flex flex-col sm:flex-row items-center gap-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+        >
           <SortingGroupBar
             sortingOptions={sortingOptions}
             active={sorting}
             onChange={setSorting}
-          ></SortingGroupBar>
-          <button className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500">
+          />
+          <motion.button
+            className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500 hover:bg-blue-50 transition-colors duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -90,19 +114,32 @@ const QuestionMainBar = () => {
               />
             </svg>
             Filter
-          </button>
-        </div>
-      </div>
-      <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
-        {filteredPosts.length > 0 ? (
-          <QuestionList posts={filteredPosts} />
-        ) : (
-          <p className="text-gray-600 text-center p-4">
-            There's currently no question available. Please check back later.
-          </p>
-        )}
-      </div>
-    </>
+          </motion.button>
+        </motion.div>
+      </motion.div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          className="bg-white rounded shadow-sm border-gray-300 border mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          {filteredPosts.length > 0 ? (
+            <QuestionList posts={filteredPosts} />
+          ) : (
+            <motion.p
+              className="text-gray-600 text-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              There's currently no question available. Please check back later.
+            </motion.p>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

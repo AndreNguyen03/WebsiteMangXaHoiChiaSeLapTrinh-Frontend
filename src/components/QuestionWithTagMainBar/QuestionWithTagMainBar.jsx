@@ -5,6 +5,7 @@ import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const sortingOptions = ["Newest", "Name", "Unanswered"];
 
@@ -91,50 +92,96 @@ const QuestionWithTagMainBar = () => {
   });
 
   return (
-    <>
-      <div className="grid grid-rows-2 mb-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="grid grid-rows-2 mb-4"
+        initial={{ y: -20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">{tag.tagname}</h1>
-          <Link
-            to={user === null ? "/Login" : "/AskQuestion"}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          <motion.h1
+            className="text-xl font-bold"
+            initial={{ x: -20 }}
+            animate={{ x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
-            Ask Question
-          </Link>
+            {tag.tagname}
+          </motion.h1>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              to={user === null ? "/Login" : "/AskQuestion"}
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            >
+              Ask Question
+            </Link>
+          </motion.div>
         </div>
-        <p className="line-clamp-2">{tag.description}</p>
-      </div>
-
-      {isUserWatchingTag ? (
-        <Button
-          outline
-          gradientDuoTone="greenToBlue"
-          size="md"
-          pill
-          onClick={handleWatchTag}
+        <motion.p
+          className="line-clamp-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
-          Watching
-        </Button>
-      ) : (
-        <Button
-          gradientMonochrome="cyan"
-          size="md"
-          pill
-          onClick={handleWatchTag}
-        >
-          Watch
-        </Button>
-      )}
+          {tag.description}
+        </motion.p>
+      </motion.div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 my-4">
-        <span className="text-lg">{posts.length} questions</span>
+      <motion.div
+        initial={{ scale: 0.95 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.5 }}
+      >
+        {isUserWatchingTag ? (
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              outline
+              gradientDuoTone="greenToBlue"
+              size="md"
+              pill
+              onClick={handleWatchTag}
+            >
+              Watching
+            </Button>
+          </motion.div>
+        ) : (
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              gradientMonochrome="cyan"
+              size="md"
+              pill
+              onClick={handleWatchTag}
+            >
+              Watch
+            </Button>
+          </motion.div>
+        )}
+      </motion.div>
+
+      <motion.div
+        className="flex flex-col sm:flex-row items-center justify-between gap-2 my-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+      >
+        <motion.span className="text-lg" whileHover={{ scale: 1.05 }}>
+          {posts.length} questions
+        </motion.span>
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <SortingGroupBar
             sortingOptions={sortingOptions}
             active={sorting}
             onChange={setSorting}
-          ></SortingGroupBar>
-          <button className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500">
+          />
+          <motion.button
+            className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500 hover:bg-blue-50 transition-colors duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -150,19 +197,32 @@ const QuestionWithTagMainBar = () => {
               />
             </svg>
             Filter
-          </button>
+          </motion.button>
         </div>
-      </div>
-      <div className="bg-white rounded shadow-sm border-gray-300 border mb-4">
-        {filteredPosts.length > 0 ? (
-          <QuestionList posts={filteredPosts} />
-        ) : (
-          <p className="text-gray-600 text-center p-4">
-            There's currently no question available. Please check back later.
-          </p>
-        )}
-      </div>
-    </>
+      </motion.div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          className="bg-white rounded shadow-sm border-gray-300 border mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.7 }}
+        >
+          {filteredPosts.length > 0 ? (
+            <QuestionList posts={filteredPosts} />
+          ) : (
+            <motion.p
+              className="text-gray-600 text-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              There's currently no question available. Please check back later.
+            </motion.p>
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
