@@ -2,18 +2,25 @@ import React from "react";
 import { useState, useEffect } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
 import { Table, Button } from "flowbite-react";
+import ToastNotification from "../../ToastNotification/ToastNotification";
+import UpdateUserModal from "./UpdateUserModal";
 import axios from "axios";
 
 const UserManageMainBar = () => {
   const [showActions, setShowActions] = useState(false);
   const [search, setSearch] = useState("");
-
   const [users, setUsers] = useState([]);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [toastType, setToastType] = useState(""); // "success" hoặc "error"
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   const columns = [
     { headerName: "User ID", key: "id" },
     { headerName: "Username", key: "username" },
     { headerName: "Avatar", key: "gravatar" },
+    { headerName: "Email", key: "email" },
     { headerName: "Created At", key: "createdAt", isDate: true },
     { headerName: "Updated At", key: "updatedAt", isDate: true },
     ...(showActions
@@ -26,7 +33,7 @@ const UserManageMainBar = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  useEffect(() => {
+  const fetchUsers = () => {
     axios
       .get("http://localhost:5114/api/Users") // Gọi API
       .then((response) => {
@@ -47,7 +54,27 @@ const UserManageMainBar = () => {
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);
       });
+  };
+
+  useEffect(() => {
+    fetchUsers();
   }, []);
+
+  const handleEditClick = (user) => {
+    setSelectedUser(user);
+    setShowUpdateModal(true);
+  };
+
+  const handleShowToast = (type, message) => {
+    setToastType(type);
+    setToastMessage(message);
+    setShowToast(true);
+
+    // Tự động ẩn toast sau 3 giây
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
 
   return (
     <div className="p-4">
@@ -61,7 +88,7 @@ const UserManageMainBar = () => {
           />
         </div>
         <div className="flex gap-2 justify-center">
-          <Button className="" gradientDuoTone="cyanToBlue">
+          {/* <Button className="" gradientDuoTone="cyanToBlue">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -77,7 +104,7 @@ const UserManageMainBar = () => {
               />
             </svg>
             Add user
-          </Button>
+          </Button> */}
           <Button outline className="" gradientDuoTone="cyanToBlue">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -143,11 +170,16 @@ const UserManageMainBar = () => {
                 </Table.Cell>
                 <Table.Cell>{user.username}</Table.Cell>
                 <Table.Cell>{user.gravatar}</Table.Cell>
+                <Table.Cell>{user.email}</Table.Cell>
                 <Table.Cell>{formatDate(user.createdAt)}</Table.Cell>
                 <Table.Cell>{formatDate(user.updatedAt)}</Table.Cell>
                 {showActions && (
                   <Table.Cell className="flex gap-2">
-                    <Button outline gradientDuoTone="tealToLime">
+                    <Button
+                      outline
+                      gradientDuoTone="tealToLime"
+                      onClick={() => handleEditClick(user)}
+                    >
                       Edit
                     </Button>
                     <Button outline gradientDuoTone="pinkToOrange">
@@ -160,6 +192,22 @@ const UserManageMainBar = () => {
           </Table.Body>
         </Table>
       </div>
+      <UpdateUserModal
+        show={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+        userData={selectedUser}
+        onUpdate={fetchUsers}
+        onShowToast={handleShowToast}
+      />
+      {showToast && (
+        <div className="fixed bottom-4 right-4">
+          <ToastNotification
+            type={toastType}
+            message={toastMessage}
+            onClose={() => setShowToast(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };

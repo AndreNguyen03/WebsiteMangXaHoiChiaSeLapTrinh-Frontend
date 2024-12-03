@@ -2,12 +2,19 @@ import React from "react";
 import { useState, useEffect } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
 import { Table, Button } from "flowbite-react";
-import UpdateAnswerModal from "../../../pages/Admin/AnswerManagement/UpdateAnswerModal";
+import UpdateAnswerModal from "./UpdateAnswerModal";
 import axios from "axios";
+import ToastNotification from "../../ToastNotification/ToastNotification";
 
 const AnswerManageMainBar = () => {
   const [showActions, setShowActions] = useState(false);
   const [search, setSearch] = useState("");
+  const [answers, setAnswers] = useState([]);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [toastType, setToastType] = useState(""); // "success" hoặc "error"
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
 
   const columns = [
     { headerName: "Answer ID", key: "id" },
@@ -26,11 +33,7 @@ const AnswerManageMainBar = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const [answers, setAnswers] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-
-  useEffect(() => {
+  const fetchAnswers = () => {
     axios
       .get("http://localhost:5114/api/Answers") // Gọi API
       .then((response) => {
@@ -51,7 +54,27 @@ const AnswerManageMainBar = () => {
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);
       });
+  };
+
+  useEffect(() => {
+    fetchAnswers();
   }, []);
+
+  const handleEditClick = (answer) => {
+    setSelectedAnswer(answer);
+    setShowUpdateModal(true);
+  };
+
+  const handleShowToast = (type, message) => {
+    setToastType(type);
+    setToastMessage(message);
+    setShowToast(true);
+
+    // Tự động ẩn toast sau 3 giây
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
 
   return (
     <div className="p-4">
@@ -155,10 +178,7 @@ const AnswerManageMainBar = () => {
                     <Button
                       outline
                       gradientDuoTone="tealToLime"
-                      onClick={() => {
-                        setSelectedAnswer(answer);
-                        setOpenModal(true);
-                      }}
+                      onClick={() => handleEditClick(answer)}
                     >
                       Edit
                     </Button>
@@ -174,10 +194,21 @@ const AnswerManageMainBar = () => {
       </div>
 
       <UpdateAnswerModal
-        selectedAnswer={selectedAnswer}
-        openModal={openModal}
-        setOpenModal={setOpenModal}
+        show={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+        answerData={selectedAnswer}
+        onUpdate={fetchAnswers}
+        onShowToast={handleShowToast}
       />
+      {showToast && (
+        <div className="fixed bottom-4 right-4">
+          <ToastNotification
+            type={toastType}
+            message={toastMessage}
+            onClose={() => setShowToast(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
