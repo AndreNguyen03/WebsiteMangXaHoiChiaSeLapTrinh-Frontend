@@ -66,7 +66,7 @@ const QuestionManageMainBar = () => {
           />
         </div>
         <div className="flex gap-2 justify-center">
-          <Button className="" gradientDuoTone="cyanToBlue">
+          {/* <Button className="" gradientDuoTone="cyanToBlue">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -82,7 +82,7 @@ const QuestionManageMainBar = () => {
               />
             </svg>
             Add questions
-          </Button>
+          </Button> */}
           <Button outline className="" gradientDuoTone="cyanToBlue">
             <svg
               xmlns="http://www.w3.org/2000/svg"

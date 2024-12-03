@@ -25,7 +25,7 @@ const PasswordChangeForm = ({
 
       <div className="flex justify-end">
         <Link
-          to="/forgot-password"
+          to="/ForgotPassword"
           className="text-sm text-blue-500 hover:text-blue-600"
         >
           Forgot Password?

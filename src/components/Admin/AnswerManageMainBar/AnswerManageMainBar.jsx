@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
 import { Table, Button } from "flowbite-react";
+import UpdateAnswerModal from "../../../pages/Admin/AnswerManagement/UpdateAnswerModal";
 import axios from "axios";
 
 const AnswerManageMainBar = () => {
@@ -26,6 +27,8 @@ const AnswerManageMainBar = () => {
   };
 
   const [answers, setAnswers] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
     axios
@@ -62,7 +65,7 @@ const AnswerManageMainBar = () => {
           />
         </div>
         <div className="flex gap-2 justify-center">
-          <Button className="" gradientDuoTone="cyanToBlue">
+          {/* <Button className="" gradientDuoTone="cyanToBlue">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -78,7 +81,7 @@ const AnswerManageMainBar = () => {
               />
             </svg>
             Add answers
-          </Button>
+          </Button> */}
           <Button outline className="" gradientDuoTone="cyanToBlue">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -149,7 +152,14 @@ const AnswerManageMainBar = () => {
                 <Table.Cell>{formatDate(answer.updatedAt)}</Table.Cell>
                 {showActions && (
                   <Table.Cell className="flex gap-2">
-                    <Button outline gradientDuoTone="tealToLime">
+                    <Button
+                      outline
+                      gradientDuoTone="tealToLime"
+                      onClick={() => {
+                        setSelectedAnswer(answer);
+                        setOpenModal(true);
+                      }}
+                    >
                       Edit
                     </Button>
                     <Button outline gradientDuoTone="pinkToOrange">
@@ -162,6 +172,12 @@ const AnswerManageMainBar = () => {
           </Table.Body>
         </Table>
       </div>
+
+      <UpdateAnswerModal
+        selectedAnswer={selectedAnswer}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+      />
     </div>
   );
 };

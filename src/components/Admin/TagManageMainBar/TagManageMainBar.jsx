@@ -1,12 +1,22 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
-import { Table, Button } from "flowbite-react";
+import AddTagModal from "./AddTagModal";
+import UpdateTagModal from "./UpdateTagModal";
+import ToastNotification from "../../ToastNotification/ToastNotification";
+import { Table, Button, Toast } from "flowbite-react";
 import axios from "axios";
 
 const TagManageMainBar = () => {
   const [showActions, setShowActions] = useState(false);
   const [search, setSearch] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedTag, setSelectedTag] = useState(null);
+  const [toastType, setToastType] = useState(""); // "success" hoặc "error"
+  const [toastMessage, setToastMessage] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [tags, setTags] = useState([]);
 
   const columns = [
     { headerName: "Tag ID", key: "id" },
@@ -22,27 +32,41 @@ const TagManageMainBar = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const [tags, setTags] = useState([]);
-
-  useEffect(() => {
+  const fetchTags = () => {
     axios
-      .get("http://localhost:5114/api/Tags") // Gọi API
+      .get("http://localhost:5114/api/Tags")
       .then((response) => {
-        console.log(response.data);
-
-        // Chuyển đổi dữ liệu API theo định dạng custom
         const mappedData = response.data.map((tag) => ({
-          id: tag.id, // Đổi id thành customId
-          tagname: tag.tagname, // Đổi title thành customTitle
-          description: tag.description, // Đổi createdAt thành customDate
+          id: tag.id,
+          tagname: tag.tagname,
+          description: tag.description,
         }));
-
-        setTags(mappedData); // Lưu vào state custom
+        setTags(mappedData);
       })
       .catch((error) => {
-        console.error("There was an error fetching the tags!", error);
+        console.error("Error fetching tags:", error);
       });
+  };
+
+  useEffect(() => {
+    fetchTags();
   }, []);
+
+  const handleEditClick = (tag) => {
+    setSelectedTag(tag);
+    setShowUpdateModal(true);
+  };
+
+  const handleShowToast = (type, message) => {
+    setToastType(type);
+    setToastMessage(message);
+    setShowToast(true);
+
+    // Tự động ẩn toast sau 3 giây
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+  };
 
   return (
     <div className="p-4">
@@ -56,7 +80,11 @@ const TagManageMainBar = () => {
           />
         </div>
         <div className="flex gap-2 justify-center">
-          <Button className="" gradientDuoTone="cyanToBlue">
+          <Button
+            className=""
+            gradientDuoTone="cyanToBlue"
+            onClick={() => setShowAddModal(true)}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -140,7 +168,11 @@ const TagManageMainBar = () => {
                 <Table.Cell>{tag.description}</Table.Cell>
                 {showActions && (
                   <Table.Cell className="flex gap-2">
-                    <Button outline gradientDuoTone="tealToLime">
+                    <Button
+                      outline
+                      gradientDuoTone="tealToLime"
+                      onClick={() => handleEditClick(tag)}
+                    >
                       Edit
                     </Button>
                     <Button outline gradientDuoTone="pinkToOrange">
@@ -153,6 +185,27 @@ const TagManageMainBar = () => {
           </Table.Body>
         </Table>
       </div>
+      <AddTagModal
+        onShowToast={handleShowToast}
+        show={showAddModal}
+        onClose={() => setShowAddModal(false)}
+      />
+      <UpdateTagModal
+        show={showUpdateModal}
+        onClose={() => setShowUpdateModal(false)}
+        tagData={selectedTag}
+        onUpdate={fetchTags}
+        onShowToast={handleShowToast}
+      />
+      {showToast && (
+        <div className="fixed bottom-4 right-4">
+          <ToastNotification
+            type={toastType}
+            message={toastMessage}
+            onClose={() => setShowToast(false)}
+          />
+        </div>
+      )}
     </div>
   );
 };
