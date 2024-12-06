@@ -12,8 +12,9 @@ const UserProfileMainBar = () => {
   const { userID } = useParams();
   const [user, setUser] = useState({});
   const authState = useSelector((state) => state.auth);
-
-  console.log(userID);
+  const [posts, setPosts] = useState([]);
+  const [answers, setAnwsers] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
 
   useEffect(() => {
     if (userID) {
@@ -21,7 +22,6 @@ const UserProfileMainBar = () => {
       axios
         .get(`http://localhost:5114/api/Users/${userID}`)
         .then((response) => {
-          console.log("API response:", response.data);
           const mappedData = {
             id: response.data.id, // Đổi id thành customId
             username: response.data.username, // Đổi title thành customTitle
@@ -37,88 +37,60 @@ const UserProfileMainBar = () => {
         .catch((error) => console.error("Error fetching user data:", error));
     }
   }, [userID]); // Dependency chính xác
-  console.log("UserID is:" + user.ID);
 
-  const posts = [
-    {
-      id: 2673,
-      type: "B",
-      title: "How do I remove a submodule?",
-      date: "Apr 23, 2013",
-    },
-    {
-      id: 2527,
-      type: "B",
-      title: "How to get just one file from another branch",
-      date: "Mar 2, 2010",
-    },
-    {
-      id: 1971,
-      type: "B",
-      title: "How to remove old and unused Docker images",
-      date: "Sep 22, 2015",
-    },
-    {
-      id: 1848,
-      type: "A",
-      title: "Skip Git commit hooks",
-      date: "Aug 29, 2011",
-    },
-    {
-      id: 1777,
-      type: "A",
-      title: "GitHub relative link in Markdown file",
-      date: "Oct 5, 2011",
-    },
-    {
-      id: 1755,
-      type: "A",
-      title: "How to list branches that contain a given commit?",
-      date: "Sep 14, 2009",
-    },
-    {
-      id: 1719,
-      type: "A",
-      title: "Where is the global git config data stored?",
-      date: "Jan 22, 2010",
-    },
-    {
-      id: 1461,
-      type: "A",
-      title: "How to merge a specific commit in Git",
-      date: "May 19, 2009",
-    },
-    {
-      id: 1373,
-      type: "A",
-      title: "Eclipse/Java code completion not working",
-      date: "May 26, 2009",
-    },
-    {
-      id: 1365,
-      type: "A",
-      title: "Need to reset git branch to origin version",
-      date: "Feb 15, 2012",
-    },
-    // New items added below
-    {
-      id: 3001,
-      type: "A",
-      title: "Understanding JavaScript Closures",
-      date: "Oct 10, 2023",
-    },
-    {
-      id: 3002,
-      type: "B",
-      title: "Introduction to React Hooks",
-      date: "Oct 11, 2023",
-    },
-  ];
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5114/api/Answers/answerByUserId?id=${userID}`) // Gọi API
+      .then((response) => {
+        console.log(response.data);
+
+        // Chuyển đổi dữ liệu API theo định dạng custom
+        const mappedData = response.data.map((answer) => ({
+          id: answer.postId, // Đổi id thành customId
+          title: answer.post.title, // Đổi title thành customTitle
+          date: answer.post.createdAt, // Đổi createdAt thành customDate
+          type: "A",
+        }));
+
+        setAnwsers(mappedData); // Lưu vào state custom
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the answers!", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5114/api/Posts/getbyuserid?id=${userID}`) // Gọi API
+      .then((response) => {
+        console.log(response.data);
+
+        // Chuyển đổi dữ liệu API theo định dạng custom
+        const mappedData = response.data.map((post) => ({
+          id: post.id, // Đổi id thành customId
+          title: post.title, // Đổi title thành customTitle
+          date: post.createdAt, // Đổi createdAt thành customDate
+          type: "Q",
+        }));
+
+        setPosts(mappedData); // Lưu vào state custom
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the answers!", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    // Gộp hai mảng posts và answers
+    const combinedData = [...posts, ...answers];
+
+    setAllPosts(combinedData);
+  }, [posts, answers]); // Lắng nghe sự thay đổi của cả `posts` và `answers`
 
   const [openModal, setOpenModal] = useState(false);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="container min-h-screen mx-auto px-4 py-8 max-w-4xl">
       <div
         className="h-full w-full bg-blue-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 border border-gray-100
  p-4 flex flex-col md:flex-row justify-between "
@@ -152,7 +124,7 @@ const UserProfileMainBar = () => {
         )}
       </div>
       <TagBox tags={user.watchedTags} />
-      <PostBox posts={posts} />
+      <PostBox posts={allPosts} />
       <UpdateUserInfoModal
         openModal={openModal}
         setOpenModal={setOpenModal}

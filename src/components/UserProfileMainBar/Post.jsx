@@ -7,7 +7,7 @@ const Post = ({ post }) => {
       <div className="flex-shrink-0 w-12 h-12 bg-[#34c759] rounded-lg flex items-center justify-center text-white font-medium">
         {post.type}
       </div>
-      <Link to="#" className="ml-4 flex-1 min-w-0">
+      <Link to={`/Questions/${post.id}`} className="ml-4 flex-1 min-w-0">
         <p className="text-[#1d1d1f] hover:text-blue-400 font-medium line-clamp-1">
           {post.title}
         </p>
