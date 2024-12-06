@@ -1,13 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { setAuthCookies, getAuthCookies, clearAuthCookies } from "../Cookies/CookiesHelper";
 
 // API endpoint
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = 'http://localhost:5114/api/Auth';
+const authCookies = getAuthCookies();
 
 // Thunk để xử lý đăng nhập
-export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
+export const login = createAsyncThunk('Auth/Login', async (credentials, thunkAPI) => {
     try {
-      const response = await axios.post(`${API_URL}/Login`, credentials);
+      const response = await axios.post(`${API_URL}/login`, credentials);
+      setAuthCookies(response.data.userId, response.data.jwtToken); 
       return response.data; // Trả về token từ backend
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -18,9 +21,9 @@ export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI
   const authSlice = createSlice({
     name: 'auth',
     initialState: {
-      user: null, // Thông tin người dùng
-      token: null, // JWT token
-      isAuthenticated: false,
+      user: authCookies.userID,
+      token: authCookies.token,
+      isAuthenticated: !!authCookies.token,
       status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
       error: null,
     },
@@ -29,6 +32,7 @@ export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI
         state.user = null;
         state.token = null;
         state.isAuthenticated = false;
+        clearAuthCookies();
       },
     },
     extraReducers: (builder) => {
@@ -39,6 +43,7 @@ export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI
         })
         .addCase(login.fulfilled, (state, action) => {
           state.status = 'succeeded';
+          state.user = authCookies.userID,
           state.token = action.payload.token;
           state.isAuthenticated = true;
           state.error = null;

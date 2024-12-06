@@ -137,7 +137,11 @@ const QuestionWithTagMainBar = () => {
         transition={{ duration: 0.3, delay: 0.5 }}
       >
         {isUserWatchingTag ? (
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div
+            className="w-fit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Button
               outline
               gradientDuoTone="greenToBlue"
@@ -149,7 +153,11 @@ const QuestionWithTagMainBar = () => {
             </Button>
           </motion.div>
         ) : (
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div
+            className="w-fit"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             <Button
               gradientMonochrome="cyan"
               size="md"

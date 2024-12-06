@@ -188,6 +188,7 @@ const TagManageMainBar = () => {
       <AddTagModal
         onShowToast={handleShowToast}
         show={showAddModal}
+        onAdd={fetchTags}
         onClose={() => setShowAddModal(false)}
       />
       <UpdateTagModal

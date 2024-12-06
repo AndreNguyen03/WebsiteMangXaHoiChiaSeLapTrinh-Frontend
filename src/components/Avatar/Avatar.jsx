@@ -1,10 +1,10 @@
 import React from "react";
 
-const Avatar = () => {
+const Avatar = ({ gravatar }) => {
   return (
     <img
-      src="https://docs.material-tailwind.com/img/face-2.jpg"
-      alt="avatar"
+      src={gravatar}
+      alt="https://placehold.co/600x400.png"
       class="relative inline-block h-12 w-12 !rounded-full object-cover object-center"
     />
   );

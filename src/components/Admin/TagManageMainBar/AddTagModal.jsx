@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, TextInput, Toast } from "flowbite-react";
 import axios from "axios";
 
-const AddTagModal = ({ show, onClose, onShowToast }) => {
+const AddTagModal = ({ show, onClose, onAdd, onShowToast }) => {
   const [tagname, setTagname] = useState("");
   const [description, setDescription] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -17,6 +17,7 @@ const AddTagModal = ({ show, onClose, onShowToast }) => {
       .then((response) => {
         onClose(); // Đóng modal trước khi hiện toast
         onShowToast("success", "Tag added successfully!");
+        onAdd(); // Làm mới dữ liệu
       })
       .catch((error) => {
         onShowToast("error", "Failed to add tag. Please try again.");

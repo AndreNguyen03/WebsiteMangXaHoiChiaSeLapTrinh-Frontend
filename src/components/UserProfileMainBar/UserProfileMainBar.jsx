@@ -6,10 +6,12 @@ import UserInfoBox from "./UserInfoBox";
 import UpdateUserInfoModal from "./UpdateUserInfoModal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const UserProfileMainBar = () => {
   const { userID } = useParams();
   const [user, setUser] = useState({});
+  const authState = useSelector((state) => state.auth);
 
   console.log(userID);
 
@@ -122,28 +124,32 @@ const UserProfileMainBar = () => {
  p-4 flex flex-col md:flex-row justify-between "
       >
         <UserInfoBox user={user}></UserInfoBox>
-        <Button
-          onClick={() => setOpenModal(true)}
-          pill
-          gradientMonochrome="cyan"
-          className="mt-4 md:mt-0 p-2 text-white align-top h-10 items-center w-full md:w-auto"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5"
+        {userID == authState.user ? (
+          <Button
+            onClick={() => setOpenModal(true)}
+            pill
+            gradientMonochrome="cyan"
+            className="mt-4 md:mt-0 p-2 text-white align-top h-10 items-center w-full md:w-auto"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-            />
-          </svg>
-          Edit Profile
-        </Button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+              />
+            </svg>
+            Edit Profile
+          </Button>
+        ) : (
+          <></>
+        )}
       </div>
       <TagBox tags={user.watchedTags} />
       <PostBox posts={posts} />

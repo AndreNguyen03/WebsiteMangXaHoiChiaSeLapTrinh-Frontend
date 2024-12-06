@@ -1,11 +1,39 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Avatar from "../Avatar/Avatar.jsx";
 import logo from "../../assets/logo_side.png";
 import "./Navbar.css";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
+import { logout } from "../../features/Auth/Auth";
 
 const Navbar = () => {
-  var User = null;
+  const authState = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
+  const [user, setUser] = useState({});
+
+  const Logout = () => {
+    dispatch(logout());
+    Navigate("/Login");
+  };
+
+  useEffect(() => {
+    if (authState.user) {
+      axios
+        .get(`http://localhost:5114/api/Users/${authState.user}`)
+        .then((response) => {
+          setUser({
+            id: response.data.id,
+            username: response.data.username,
+            gravatar: response.data.gravatar,
+          });
+        })
+        .catch((error) => console.error("Error fetching user data:", error));
+    } else {
+      setUser(null);
+    }
+  }, [authState.isAuthenticated, authState.user]);
 
   return (
     <>
@@ -51,17 +79,19 @@ const Navbar = () => {
                 placeholder="Search..."
               />
             </div>
-            {User == null ? (
+            {authState.isAuthenticated && user ? (
+              <>
+                <Link to={`/users/${user.id}`}>
+                  <Avatar gravatar={user.gravatar} />
+                </Link>
+                <button className="nav-item-btn" onClick={Logout}>
+                  Log out
+                </button>
+              </>
+            ) : (
               <Link to="/Login" className="nav-item-btn">
                 Log in
               </Link>
-            ) : (
-              <>
-                <Link to="/" className="">
-                  <Avatar></Avatar>
-                </Link>
-                <button className="nav-item-btn">Log out</button>
-              </>
             )}
           </div>
         </div>

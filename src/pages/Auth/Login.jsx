@@ -1,19 +1,27 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo_long.png";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../features/Auth/Auth";
 import { motion } from "framer-motion";
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Sử dụng useNavigate để điều hướng
   const authState = useSelector((state) => state.auth);
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(login({ username, password }));
+    dispatch(login({ email, password }));
   };
+
+  // Điều hướng đến trang Home khi isAuthenticated === true
+  useEffect(() => {
+    if (authState.isAuthenticated) {
+      navigate("/"); // Đường dẫn trang Home
+    }
+  }, [authState.isAuthenticated, navigate]);
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -70,8 +78,8 @@ const Login = () => {
           <motion.div variants={itemVariants} className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               type="email"
               className="w-full border border-gray-300 rounded-lg py-2 px-4 mt-1 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all duration-300"
             />
