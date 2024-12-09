@@ -66,7 +66,7 @@ const UserInfoBox = ({ user }) => {
             />
           </motion.svg>
           <span className="text-sm text-gray-600">
-            Joined {formatDate(user.createdAt)}
+            Tham gia ngày {formatDate(user.createdAt)}
           </span>
         </motion.div>
         <motion.div
@@ -96,7 +96,7 @@ const UserInfoBox = ({ user }) => {
               />
             </motion.svg>
             <span className="text-sm text-gray-600">
-              {user.questionsCount} Questions
+              {user.questionsCount} Câu hỏi
             </span>
           </motion.div>
           <motion.div
@@ -120,7 +120,7 @@ const UserInfoBox = ({ user }) => {
               />
             </motion.svg>
             <span className="text-sm text-gray-600">
-              {user.answersCount} Answers
+              {user.answersCount} Câu trả lời
             </span>
           </motion.div>
         </motion.div>

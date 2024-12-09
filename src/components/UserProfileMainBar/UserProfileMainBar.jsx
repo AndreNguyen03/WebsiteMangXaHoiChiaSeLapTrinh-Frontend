@@ -1,97 +1,87 @@
 import React, { useState, useEffect } from "react";
-import TagBox from "./TagBox";
 import { Button } from "flowbite-react";
-import PostBox from "./PostBox";
-import UserInfoBox from "./UserInfoBox";
-import UpdateUserInfoModal from "./UpdateUserInfoModal";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { useSelector } from "react-redux";
+import axios from "axios";
 import { motion } from "framer-motion";
 
-const UserProfileMainBar = () => {
-  const { userID } = useParams();
-  const [user, setUser] = useState({});
-  const authState = useSelector((state) => state.auth);
-  const [posts, setPosts] = useState([]);
-  const [answers, setAnwsers] = useState([]);
-  const [allPosts, setAllPosts] = useState([]);
-  const [watchedTags, setWatchedTags] = useState([]);
+// Các thành phần con
+import TagBox from "./TagBox"; // Hộp hiển thị tag
+import PostBox from "./PostBox"; // Hộp hiển thị bài đăng
+import UserInfoBox from "./UserInfoBox"; // Hộp hiển thị thông tin người dùng
+import UpdateUserInfoModal from "./UpdateUserInfoModal"; // Modal chỉnh sửa thông tin
 
-  //getuserinfo
+const UserProfileMainBar = () => {
+  const { userID } = useParams(); // Lấy `userID` từ tham số URL
+  const authState = useSelector((state) => state.auth); // Lấy thông tin đăng nhập từ Redux
+  const [user, setUser] = useState({}); // State lưu thông tin người dùng
+  const [posts, setPosts] = useState([]); // State lưu bài viết của người dùng
+  const [answers, setAnswers] = useState([]); // State lưu câu trả lời của người dùng
+  const [allPosts, setAllPosts] = useState([]); // State lưu bài viết và câu trả lời (kết hợp)
+  const [watchedTags, setWatchedTags] = useState([]); // State lưu tag đang theo dõi
+  const [openModal, setOpenModal] = useState(false); // State để mở modal chỉnh sửa
+
+  // Lấy thông tin người dùng
   useEffect(() => {
     if (userID) {
-      // Kiểm tra `userID` trước khi gọi API
       axios
         .get(`http://localhost:5114/api/Users/${userID}`)
         .then((response) => {
           const mappedData = {
-            id: response.data.id, // Đổi id thành customId
-            username: response.data.username, // Đổi title thành customTitle
-            gravatar: response.data.gravatar, // Đổi content thành customContent
-            createdAt: response.data.createdAt, // Đổi content thành customContent
+            id: response.data.id,
+            username: response.data.username,
+            gravatar: response.data.gravatar,
+            createdAt: response.data.createdAt,
             questionsCount: response.data.posts.length,
             answersCount: response.data.answers.length,
             email: response.data.email,
-            // Đổi content thành customContent
           };
           setUser(mappedData);
         })
-        .catch((error) => console.error("Error fetching user data:", error));
+        .catch((error) =>
+          console.error("Lỗi khi lấy thông tin người dùng:", error)
+        );
     }
-  }, [userID]); // Dependency chính xác
+  }, [userID]);
 
-  //getuseranwsers
+  // Lấy câu trả lời của người dùng
   useEffect(() => {
     axios
-      .get(`http://localhost:5114/api/Answers/answerByUserId?id=${userID}`) // Gọi API
+      .get(`http://localhost:5114/api/Answers/answerByUserId?id=${userID}`)
       .then((response) => {
-        console.log(response.data);
-
-        // Chuyển đổi dữ liệu API theo định dạng custom
         const mappedData = response.data.map((answer) => ({
-          id: answer.postId, // Đổi id thành customId
-          title: answer.post.title, // Đổi title thành customTitle
-          date: answer.post.createdAt, // Đổi createdAt thành customDate
-          type: "A",
+          id: answer.postId,
+          title: answer.post.title,
+          date: answer.createdAt,
+          type: "A", // "A" biểu thị câu trả lời
         }));
-
-        setAnwsers(mappedData); // Lưu vào state custom
+        setAnswers(mappedData);
       })
-      .catch((error) => {
-        console.error("There was an error fetching the answers!", error);
-      });
-  }, []);
+      .catch((error) => console.error("Lỗi khi lấy câu trả lời:", error));
+  }, [userID]);
 
-  //getuserposts
+  // Lấy bài viết của người dùng
   useEffect(() => {
     axios
-      .get(`http://localhost:5114/api/Posts/getbyuserid?id=${userID}`) // Gọi API
+      .get(`http://localhost:5114/api/Posts/getbyuserid?id=${userID}`)
       .then((response) => {
-        console.log(response.data);
-
-        // Chuyển đổi dữ liệu API theo định dạng custom
         const mappedData = response.data.map((post) => ({
-          id: post.id, // Đổi id thành customId
-          title: post.title, // Đổi title thành customTitle
-          date: post.createdAt, // Đổi createdAt thành customDate
-          type: "Q",
+          id: post.id,
+          title: post.title,
+          date: post.createdAt,
+          type: "Q", // "Q" biểu thị bài viết
         }));
-
-        setPosts(mappedData); // Lưu vào state custom
+        setPosts(mappedData);
       })
-      .catch((error) => {
-        console.error("There was an error fetching the answers!", error);
-      });
-  }, []);
+      .catch((error) => console.error("Lỗi khi lấy bài viết:", error));
+  }, [userID]);
 
+  // Gộp bài viết và câu trả lời
   useEffect(() => {
-    // Gộp hai mảng posts và answers
-    const combinedData = [...posts, ...answers];
+    setAllPosts([...posts, ...answers]);
+  }, [posts, answers]);
 
-    setAllPosts(combinedData);
-  }, [posts, answers]); // Lắng nghe sự thay đổi của cả `posts` và `answers`
-
+  // Lấy tag đang theo dõi
   useEffect(() => {
     axios
       .get(
@@ -104,9 +94,8 @@ const UserProfileMainBar = () => {
         }));
         setWatchedTags(mappedData);
       })
-      .catch((error) => console.error("Error fetching watched tag", error));
+      .catch((error) => console.error("Lỗi khi lấy tag đang theo dõi:", error));
   }, [userID]);
-  const [openModal, setOpenModal] = useState(false);
 
   return (
     <motion.div
@@ -115,44 +104,35 @@ const UserProfileMainBar = () => {
       transition={{ duration: 0.5 }}
       className="container min-h-screen mx-auto px-4 py-8 max-w-4xl"
     >
+      {/* Hộp thông tin người dùng */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="h-full w-full bg-blue-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 border border-gray-100 p-4 flex flex-col md:flex-row justify-between"
+        className="h-full w-full bg-blue-200 rounded-md bg-opacity-30 border border-gray-100 p-4 flex flex-col md:flex-row justify-between"
       >
         <UserInfoBox user={user} />
-        {userID == authState.user ? (
+        {userID === authState.user && (
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               onClick={() => setOpenModal(true)}
               pill
               gradientMonochrome="cyan"
-              className="mt-4 md:mt-0 p-2 text-white align-top h-10 items-center w-full md:w-auto"
+              className="mt-4 md:mt-0 p-2 text-white"
             >
-              <motion.svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5"
-                whileHover={{ rotate: 180 }}
-                transition={{ duration: 0.3 }}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                />
-              </motion.svg>
-              Edit Profile
+              Chỉnh sửa
             </Button>
           </motion.div>
-        ) : null}
+        )}
       </motion.div>
+
+      {/* Hộp tag đang theo dõi */}
       <TagBox tags={watchedTags} />
+
+      {/* Hộp bài viết và câu trả lời */}
       <PostBox posts={allPosts} />
+
+      {/* Modal chỉnh sửa thông tin người dùng */}
       <UpdateUserInfoModal openModal={openModal} setOpenModal={setOpenModal} />
     </motion.div>
   );

@@ -1,10 +1,10 @@
-import React from "react";
-import Post from "./Post";
-import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-const sortingOptions = ["All", "Questions", "Answers"];
+import Post from "./Post";
+import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
+
+const sortingOptions = ["Tất cả", "Câu hỏi", "Câu trả lời"];
 
 const container = {
   hidden: { opacity: 0 },
@@ -17,7 +17,23 @@ const container = {
 };
 
 const PostBox = ({ posts }) => {
-  const [sorting, setSorting] = useState("All");
+  const [sorting, setSorting] = useState("Tất cả");
+
+  // Hàm để sắp xếp bài đăng
+  const sortPosts = (posts, sorting) => {
+    switch (sorting) {
+      case "Câu hỏi":
+        return posts.filter((post) => post.type === "Q");
+      case "Câu trả lời":
+        return posts.filter((post) => post.type === "A");
+      case "Tất cả":
+      default:
+        return posts;
+    }
+  };
+
+  // Lọc danh sách bài đăng
+  const sortedPosts = sortPosts(posts, sorting);
 
   return (
     <motion.div
@@ -36,7 +52,7 @@ const PostBox = ({ posts }) => {
           whileHover={{ scale: 1.05 }}
           className="text-lg text-center font-semibold"
         >
-          All Posts
+          Tất cả bài đăng
         </motion.h3>
         <motion.div
           whileHover={{ scale: 1.05 }}
@@ -55,7 +71,7 @@ const PostBox = ({ posts }) => {
         animate="show"
         className="divide-y divide-[#e5e5e5]"
       >
-        {posts.map((post, index) => (
+        {sortedPosts.map((post, index) => (
           <Post key={index} post={post} />
         ))}
       </motion.div>
