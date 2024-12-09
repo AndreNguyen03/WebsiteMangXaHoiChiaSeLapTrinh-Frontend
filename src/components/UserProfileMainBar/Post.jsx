@@ -1,21 +1,38 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Post = ({ post }) => {
   return (
-    <div className="flex items-center p-4 hover:bg-[#f5f5f7] transition-colors duration-200">
-      <div className="flex-shrink-0 w-12 h-12 bg-[#34c759] rounded-lg flex items-center justify-center text-white font-medium">
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      whileHover={{ scale: 1.02, backgroundColor: "#f5f5f7" }}
+      className="flex items-center p-4 transition-colors duration-200"
+    >
+      <motion.div
+        whileHover={{ rotate: 360 }}
+        transition={{ duration: 0.5 }}
+        className="flex-shrink-0 w-12 h-12 bg-[#34c759] rounded-lg flex items-center justify-center text-white font-medium"
+      >
         {post.type}
-      </div>
-      <Link to={`/Questions/${post.id}`} className="ml-4 flex-1 min-w-0">
-        <p className="text-[#1d1d1f] hover:text-blue-400 font-medium line-clamp-1">
-          {post.title}
-        </p>
-      </Link>
-      <div className="ml-4 flex-shrink-0">
+      </motion.div>
+      <motion.div whileHover={{ x: 5 }} className="ml-4 flex-1 min-w-0">
+        <Link to={`/Questions/${post.id}`}>
+          <p className="text-[#1d1d1f] hover:text-blue-400 font-medium line-clamp-1">
+            {post.title}
+          </p>
+        </Link>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="ml-4 flex-shrink-0"
+      >
         <span className="text-[#86868b] text-sm">{post.date}</span>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

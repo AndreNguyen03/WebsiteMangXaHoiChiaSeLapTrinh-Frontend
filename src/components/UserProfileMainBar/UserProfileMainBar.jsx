@@ -7,6 +7,7 @@ import UpdateUserInfoModal from "./UpdateUserInfoModal";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
 
 const UserProfileMainBar = () => {
   const { userID } = useParams();
@@ -15,7 +16,9 @@ const UserProfileMainBar = () => {
   const [posts, setPosts] = useState([]);
   const [answers, setAnwsers] = useState([]);
   const [allPosts, setAllPosts] = useState([]);
+  const [watchedTags, setWatchedTags] = useState([]);
 
+  //getuserinfo
   useEffect(() => {
     if (userID) {
       // Kiểm tra `userID` trước khi gọi API
@@ -38,6 +41,7 @@ const UserProfileMainBar = () => {
     }
   }, [userID]); // Dependency chính xác
 
+  //getuseranwsers
   useEffect(() => {
     axios
       .get(`http://localhost:5114/api/Answers/answerByUserId?id=${userID}`) // Gọi API
@@ -59,6 +63,7 @@ const UserProfileMainBar = () => {
       });
   }, []);
 
+  //getuserposts
   useEffect(() => {
     axios
       .get(`http://localhost:5114/api/Posts/getbyuserid?id=${userID}`) // Gọi API
@@ -87,49 +92,69 @@ const UserProfileMainBar = () => {
     setAllPosts(combinedData);
   }, [posts, answers]); // Lắng nghe sự thay đổi của cả `posts` và `answers`
 
+  useEffect(() => {
+    axios
+      .get(
+        `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${userID}`
+      )
+      .then((response) => {
+        const mappedData = response.data.map((tag) => ({
+          id: tag.id,
+          name: tag.tagname,
+        }));
+        setWatchedTags(mappedData);
+      })
+      .catch((error) => console.error("Error fetching watched tag", error));
+  }, [userID]);
   const [openModal, setOpenModal] = useState(false);
 
   return (
-    <div className="container min-h-screen mx-auto px-4 py-8 max-w-4xl">
-      <div
-        className="h-full w-full bg-blue-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 border border-gray-100
- p-4 flex flex-col md:flex-row justify-between "
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container min-h-screen mx-auto px-4 py-8 max-w-4xl"
+    >
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="h-full w-full bg-blue-200 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 border border-gray-100 p-4 flex flex-col md:flex-row justify-between"
       >
-        <UserInfoBox user={user}></UserInfoBox>
+        <UserInfoBox user={user} />
         {userID == authState.user ? (
-          <Button
-            onClick={() => setOpenModal(true)}
-            pill
-            gradientMonochrome="cyan"
-            className="mt-4 md:mt-0 p-2 text-white align-top h-10 items-center w-full md:w-auto"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-5"
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => setOpenModal(true)}
+              pill
+              gradientMonochrome="cyan"
+              className="mt-4 md:mt-0 p-2 text-white align-top h-10 items-center w-full md:w-auto"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-              />
-            </svg>
-            Edit Profile
-          </Button>
-        ) : (
-          <></>
-        )}
-      </div>
-      <TagBox tags={user.watchedTags} />
+              <motion.svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-5"
+                whileHover={{ rotate: 180 }}
+                transition={{ duration: 0.3 }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+                />
+              </motion.svg>
+              Edit Profile
+            </Button>
+          </motion.div>
+        ) : null}
+      </motion.div>
+      <TagBox tags={watchedTags} />
       <PostBox posts={allPosts} />
-      <UpdateUserInfoModal
-        openModal={openModal}
-        setOpenModal={setOpenModal}
-      ></UpdateUserInfoModal>
-    </div>
+      <UpdateUserInfoModal openModal={openModal} setOpenModal={setOpenModal} />
+    </motion.div>
   );
 };
 
