@@ -6,6 +6,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
 import { motion, AnimatePresence } from "framer-motion";
+import AskQuestionButton from "../HomeMainBar/AskQuestionButton";
 
 const sortingOptions = ["Newest", "Name", "Unanswered"];
 
@@ -112,14 +113,7 @@ const QuestionWithTagMainBar = () => {
           >
             {tag.tagname}
           </motion.h1>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              to={user === null ? "/Login" : "/AskQuestion"}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200"
-            >
-              Ask Question
-            </Link>
-          </motion.div>
+          <AskQuestionButton />
         </div>
         <motion.p
           className="line-clamp-2"

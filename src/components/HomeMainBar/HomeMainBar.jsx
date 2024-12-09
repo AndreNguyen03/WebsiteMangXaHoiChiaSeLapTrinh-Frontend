@@ -1,38 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import QuestionList from "./QuestionList";
 import axios from "axios";
 import { motion } from "framer-motion";
 
+import QuestionList from "./QuestionList";
+import AskQuestionButton from "./AskQuestionButton";
+
 const HomeMainBar = () => {
   const user = 1;
-
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5114/api/Posts") // Gọi API
+      .get("http://localhost:5114/api/Posts/gethomepost") // Gọi API
       .then((response) => {
         console.log(response.data);
 
         // Chuyển đổi dữ liệu API theo định dạng custom
         const mappedData = response.data.map((post) => ({
-          id: post.id, // Đổi id thành customId
-          title: post.title, // Đổi title thành customTitle
-          body: post.tryAndExpecting, // Đổi content thành customContent
-          createdAt: post.createdAt, // Đổi createdAt thành customDate
-          views: post.views, // Đổi views thành customViews
-          upvote: post.upvote, // Đổi upvote thành customUpvote
-          downvote: post.downvote, // Đổi downvote thành customDownvote
-          posttags: post.posttags, // Đổi posttags thành customTags
-          user: post.user, // Đổi user thành customUser
-          answers: post.answers, // Đổi answers thành customAnswers
+          id: post.id,
+          title: post.title,
+          body: post.tryAndExpecting,
+          createdAt: post.createdAt,
+          views: post.views,
+          upvote: post.upvote,
+          downvote: post.downvote,
+          posttags: post.posttags,
+          user: post.user,
+          answers: post.answers,
         }));
 
-        setPosts(mappedData); // Lưu vào state custom
+        setPosts(mappedData); // Lưu vào state
       })
       .catch((error) => {
-        console.error("There was an error fetching the posts!", error);
+        console.error("Đã xảy ra lỗi khi lấy bài đăng!", error);
       });
   }, []);
 
@@ -49,16 +50,9 @@ const HomeMainBar = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Interesting posts for you
+          Các bài đăng thú vị dành cho bạn
         </motion.h1>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link
-            to={user === null ? "/Login" : "/AskQuestion"}
-            className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white px-4 py-2 rounded-lg"
-          >
-            Ask Question
-          </Link>
-        </motion.div>
+        <AskQuestionButton />
       </div>
       <motion.div
         className="bg-white rounded shadow-sm border-gray-300 border mb-4"
@@ -75,7 +69,7 @@ const HomeMainBar = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            There's currently no question available. Please check back later.
+            Hiện tại không có câu hỏi nào. Vui lòng quay lại sau.
           </motion.p>
         )}
       </motion.div>

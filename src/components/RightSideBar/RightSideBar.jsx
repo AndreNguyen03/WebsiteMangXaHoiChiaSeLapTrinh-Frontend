@@ -1,61 +1,86 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./RightSideBar.css";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import HotQuestion from "./HotQuestion";
+import { useSelector } from "react-redux";
+import TagBox from "../UserProfileMainBar/TagBox";
 
 const RightSideBar = () => {
+  const [hotPosts, sethotPosts] = useState([]);
+  const [watchedTags, setWatchedTags] = useState([]);
+  const authState = useSelector((state) => state.auth);
+
+  //gethosposts
+  useEffect(() => {
+    axios
+      .get("http://localhost:5114/api/Posts/GetMostAnsweredQuestion") // Gọi API
+      .then((response) => {
+        // Chuyển đổi dữ liệu API theo định dạng custom
+        const mappedData = response.data.map((post) => ({
+          id: post.id,
+          title: post.title,
+          answers: post.answers,
+        }));
+
+        sethotPosts(mappedData); // Lưu vào state custom
+      })
+      .catch((error) => {
+        console.error("Đã xảy ra lỗi khi lấy bài đăng!", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (authState.user) {
+      axios
+        .get(
+          `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${authState.user}`
+        )
+        .then((response) => {
+          const mappedData = response.data.map((tag) => ({
+            id: tag.id,
+            name: tag.tagname,
+          }));
+          setWatchedTags(mappedData);
+        })
+        .catch((error) => console.error("Error fetching watched tag", error));
+    } else {
+      setWatchedTags(null);
+    }
+  }, [authState.isAuthenticated, authState.user]);
+
   return (
     <>
       <div className="bg-orange-50 rounded shadow-sm">
-        <h2 className="sidebar-item-tittle">Hello World!</h2>
+        <h2 className="sidebar-item-tittle">Xin chào thế giới!</h2>
         <div className="p-4">
           <p className="text-gray-600 text-sm">
-            This is a collaboratively edited question and answer site for{" "}
-            <strong>professional and enthusiast programmers</strong>. It's 100%
-            free.
+            Đây là một trang hỏi đáp được chỉnh sửa cộng đồng dành cho{" "}
+            <strong>các lập trình viên chuyên nghiệp và đam mê</strong>. Miễn
+            phí 100%.
           </p>
           <div className="flex mt-4 space-x-4">
             <Link to="/About" className="text-blue-500">
-              About
+              Về chúng tôi
             </Link>
             <Link to="/Help" className="text-blue-500">
-              Help
+              Trợ giúp
             </Link>
           </div>
         </div>
-        <h2 className="sidebar-item-tittle">Hot Meta Posts</h2>
+        <h2 className="sidebar-item-tittle">Các bài viết nổi bật</h2>
         <div className="p-4">
-          <div className="flex items-start mb-2">
-            <span className="font-bold mr-2">25</span>
-            <a href="#" className="text-blue-600 hover:underline">
-              If a Staging Ground post gets edited and posted, doesn't it need
-              to indicate...
-            </a>
-          </div>
-          <div className="flex items-start">
-            <span className="font-bold mr-2">14</span>
-            <a href="#" className="text-blue-600 hover:underline">
-              What to do, when an obvious syntax error makes the whole
-              staging-ground...
-            </a>
-          </div>
+          {hotPosts.map((post) => (
+            <HotQuestion key={post.id} post={post} />
+          ))}
         </div>
       </div>
-      <div className="bg-white border border-gray-300 rounded mt-6">
-        <div className="flex justify-between items-center p-4 bg-gray-100">
-          <h2 className="font-bold">Watched Tags</h2>
-          <a href="#" className="text-blue-600 hover:underline">
-            edit
-          </a>
-        </div>
-        <div className="flex flex-wrap gap-2 p-4">
-          <span className="sidebar-item-watched-tag">c#</span>
-          <span className="sidebar-item-watched-tag">css</span>
-          <span className="sidebar-item-watched-tag">html</span>
-          <span className="sidebar-item-watched-tag">javascript</span>
-          <span className="sidebar-item-watched-tag">python</span>
-          <span className="sidebar-item-watched-tag">reactjs</span>
-        </div>
-      </div>
+      {authState.isAuthenticated ? (
+        <TagBox tags={watchedTags}></TagBox>
+      ) : (
+        <> </>
+      )}
     </>
   );
 };

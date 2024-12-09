@@ -4,6 +4,7 @@ import axios from "axios";
 import QuestionList from "../HomeMainBar/QuestionList";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import { motion, AnimatePresence } from "framer-motion";
+import AskQuestionButton from "../HomeMainBar/AskQuestionButton";
 
 const sortingOptions = ["Newest", "Name", "Unanswered"];
 
@@ -64,14 +65,7 @@ const QuestionMainBar = () => {
         >
           All Questions
         </motion.h1>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link
-            to={user === null ? "/Login" : "/AskQuestion"}
-            className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white px-4 py-2 rounded-lg"
-          >
-            Ask Question
-          </Link>
-        </motion.div>
+        <AskQuestionButton />
       </div>
 
       <motion.div
