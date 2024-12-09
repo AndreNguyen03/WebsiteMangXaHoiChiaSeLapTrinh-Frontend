@@ -7,6 +7,7 @@ import HotQuestion from "./HotQuestion";
 import { useSelector } from "react-redux";
 import TagBox from "../UserProfileMainBar/TagBox";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 const container = {
   hidden: { opacity: 0 },
@@ -22,6 +23,7 @@ const RightSideBar = () => {
   const [hotPosts, sethotPosts] = useState([]);
   const [watchedTags, setWatchedTags] = useState([]);
   const authState = useSelector((state) => state.auth);
+  const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
   //gethosposts
   useEffect(() => {
@@ -61,6 +63,9 @@ const RightSideBar = () => {
       setWatchedTags(null);
     }
   }, [authState.isAuthenticated, authState.user]);
+
+  // Kiểm tra xem đường dẫn có phải là /questions/tags/:tagId không
+  const isTagPage = location.pathname.startsWith("/questions/tags");
 
   return (
     <motion.div
@@ -131,7 +136,10 @@ const RightSideBar = () => {
           ))}
         </motion.div>
       </motion.div>
-      {authState.isAuthenticated ? <TagBox tags={watchedTags} /> : null}
+      {/* Kiểm tra và chỉ hiển thị TagBox nếu không phải là trang tag */}
+      {!isTagPage && authState.isAuthenticated ? (
+        <TagBox tags={watchedTags} />
+      ) : null}
     </motion.div>
   );
 };

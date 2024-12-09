@@ -1,92 +1,122 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
-import QuestionList from "../HomeMainBar/QuestionList";
-import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import AskQuestionButton from "../HomeMainBar/AskQuestionButton";
+import QuestionList from "../HomeMainBar/QuestionList"; // Giả sử bạn đã có component này
+import SortingGroupBar from "../SortingGroupBar/SortingGroupBar"; // Giả sử bạn đã có component này
+import AskQuestionButton from "../HomeMainBar/AskQuestionButton"; // Giả sử bạn đã có component này
+import { useSelector } from "react-redux";
 
 const sortingOptions = ["Newest", "Name", "Unanswered"];
 
 const QuestionWithTagMainBar = () => {
-  const user = 1;
-  const [isUserWatchingTag, setUserWatchingTag] = useState(false);
-
+  const authState = useSelector((state) => state.auth);
   const { tagId } = useParams();
-  console.log(tagId);
-
+  const [isUserWatchingTag, setUserWatchingTag] = useState(false);
+  const [userWatchedTags, setUserWatchedTags] = useState([]);
   const [posts, setPosts] = useState([]);
   const [sorting, setSorting] = useState("Newest");
-
   const [tag, setTag] = useState({});
 
-  const handleWatchTag = () => {
-    setUserWatchingTag(!isUserWatchingTag);
-  };
+  // Hàm lấy thông tin các tag mà người dùng đang theo dõi
+  useEffect(() => {
+    if (authState.user) {
+      axios
+        .get(
+          `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${authState.user}`
+        )
+        .then((response) => {
+          const watchedTags = response.data;
+          setUserWatchedTags(watchedTags);
 
+          // Kiểm tra nếu tag hiện tại có trong danh sách watched tags của người dùng
+          const isWatching = watchedTags.some((tag) => tag.id === tagId);
+          setUserWatchingTag(isWatching);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching watched tags!", error);
+        });
+    }
+  }, [tagId]);
+
+  // Lấy thông tin về tag hiện tại
   useEffect(() => {
     axios
-      .get(`http://localhost:5114/api/Posts/getbytagid?id=${tagId}`) // Gọi API
+      .get(`http://localhost:5114/api/Tags/${tagId}`)
       .then((response) => {
-        console.log(response.data);
-
-        // Chuyển đổi dữ liệu API theo định dạng custom
-        const mappedData = response.data.map((post) => ({
-          id: post.id, // Đổi id thành customId
-          title: post.title, // Đổi title thành customTitle
-          body: post.tryAndExpecting, // Đổi content thành customContent
-          createdAt: post.createdAt, // Đổi createdAt thành customDate
-          views: post.views, // Đổi views thành customViews
-          upvote: post.upvote, // Đổi upvote thành customUpvote
-          downvote: post.downvote, // Đổi downvote thành customDownvote
-          posttags: post.posttags, // Đổi posttags thành customTags
-          user: {
-            gravatar: "https://placehold.co/600x400/png",
-            username: "test",
-          }, // Đổi user thành customUser
-          answers: post.answers, // Đổi answers thành customAnswers
-        }));
-
-        setPosts(mappedData); // Lưu vào state custom
+        setTag(response.data);
       })
       .catch((error) => {
-        console.error("There was an error fetching the posts!", error);
+        console.error("There was an error fetching the tag details!", error);
       });
-  }, []);
+  }, [tagId]);
 
+  // Lấy thông tin bài viết theo tag
   useEffect(() => {
     axios
-      .get(`http://localhost:5114/api/Tags/${tagId}`) // Gọi API
+      .get(`http://localhost:5114/api/Posts/getbytagid?id=${tagId}`)
       .then((response) => {
-        console.log(response.data);
-
-        // Chuyển đổi dữ liệu API theo định dạng custom
-        const mappedData = {
-          id: response.data.id, // Đổi id thành customId
-          tagname: response.data.tagname, // Đổi title thành customTitle
-          description: response.data.description, // Đổi content thành customContent
-        };
-
-        setTag(mappedData); // Lưu vào state custom
+        const mappedData = response.data.map((post) => ({
+          id: post.id,
+          title: post.title,
+          body: post.tryAndExpecting,
+          createdAt: post.createdAt,
+          views: post.views,
+          upvote: post.upvote,
+          downvote: post.downvote,
+          posttags: post.posttags,
+          user: post.user,
+          answers: post.answers,
+        }));
+        setPosts(mappedData);
       })
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);
       });
   }, [tagId]);
 
-  const filteredPosts = posts.sort((a, b) => {
+  // Hàm xử lý Watch tag
+  const handleWatchTag = () => {
+    axios
+      .post(
+        `http://localhost:5114/api/Tags/watch?userId=${authState.user}&tagId=${tagId}`
+      )
+      .then(() => {
+        setUserWatchingTag(true);
+        setUserWatchedTags((prevTags) => [...prevTags, { id: tagId }]);
+      })
+      .catch((error) => {
+        console.error("There was an error watching the tag!", error);
+      });
+  };
+
+  // Hàm xử lý Unwatch tag
+  const handleUnwatchTag = () => {
+    axios
+      .delete(
+        `http://localhost:5114/api/Tags/unwatch?userId=${authState.user}&tagId=${tagId}`
+      )
+      .then(() => {
+        setUserWatchingTag(false);
+        setUserWatchedTags((prevTags) =>
+          prevTags.filter((tag) => tag.id !== tagId)
+        );
+      })
+      .catch((error) => {
+        console.error("There was an error unwatching the tag!", error);
+      });
+  };
+
+  // Sắp xếp các bài viết theo lựa chọn
+  const sortedPosts = posts.sort((a, b) => {
     if (sorting === "Newest") {
-      // Sắp xếp theo thời gian mới nhất
       return new Date(b.createdAt) - new Date(a.createdAt);
     }
     if (sorting === "Name") {
-      // Sắp xếp theo tên bài viết
       return a.title.localeCompare(b.title);
     }
     if (sorting === "Unanswered") {
-      // Sắp xếp các bài chưa được trả lời (answers = 0)
       return a.answers.length - b.answers.length;
     }
     return 0; // Mặc định không thay đổi thứ tự
@@ -98,70 +128,59 @@ const QuestionWithTagMainBar = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div
-        className="grid grid-rows-2 mb-4"
-        initial={{ y: -20 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
-        <div className="flex justify-between items-center">
-          <motion.h1
-            className="text-xl font-bold"
-            initial={{ x: -20 }}
-            animate={{ x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            {tag.tagname}
-          </motion.h1>
-          <AskQuestionButton />
-        </div>
-        <motion.p
-          className="line-clamp-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+      <div className="flex justify-between items-center mb-4">
+        <motion.h1
+          className="text-xl font-bold"
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         >
-          {tag.description}
-        </motion.p>
-      </motion.div>
+          {tag.tagname}
+        </motion.h1>
+        <AskQuestionButton />
+      </div>
+      <p className="line-clamp-2">{tag.description}</p>
 
       <motion.div
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 0.3, delay: 0.5 }}
+        transition={{ duration: 0.3 }}
       >
-        {isUserWatchingTag ? (
-          <motion.div
-            className="w-fit"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              outline
-              gradientDuoTone="greenToBlue"
-              size="md"
-              pill
-              onClick={handleWatchTag}
+        <div className="flex mt-2 gap-2">
+          {!isUserWatchingTag && authState.isAuthenticated && (
+            <motion.div
+              className="w-fit"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Watching
-            </Button>
-          </motion.div>
-        ) : (
-          <motion.div
-            className="w-fit"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              gradientMonochrome="cyan"
-              size="md"
-              pill
-              onClick={handleWatchTag}
+              <Button
+                gradientMonochrome="cyan"
+                size="md"
+                pill
+                onClick={handleWatchTag}
+              >
+                Watch
+              </Button>
+            </motion.div>
+          )}
+          {isUserWatchingTag && (
+            <motion.div
+              className="w-fit"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Watch
-            </Button>
-          </motion.div>
-        )}
+              <Button
+                gradientDuoTone="tealToLime"
+                size="md"
+                pill
+                outline
+                onClick={handleUnwatchTag}
+              >
+                Unwatch
+              </Button>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
 
       <motion.div
@@ -179,27 +198,6 @@ const QuestionWithTagMainBar = () => {
             active={sorting}
             onChange={setSorting}
           />
-          <motion.button
-            className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500 hover:bg-blue-50 transition-colors duration-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6 mr-2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-              />
-            </svg>
-            Filter
-          </motion.button>
         </div>
       </motion.div>
 
@@ -210,8 +208,8 @@ const QuestionWithTagMainBar = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
         >
-          {filteredPosts.length > 0 ? (
-            <QuestionList posts={filteredPosts} />
+          {sortedPosts.length > 0 ? (
+            <QuestionList posts={sortedPosts} />
           ) : (
             <motion.p
               className="text-gray-600 text-center p-4"
