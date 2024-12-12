@@ -2,6 +2,25 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
+// Function to format date to dd/mm/yy
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+
+  // Check if the date is valid
+  if (isNaN(date.getTime())) {
+    return dateString; // Return original string if date is invalid
+  }
+
+  // Pad single digit numbers with leading zero
+  const pad = (num) => num.toString().padStart(2, "0");
+
+  const day = pad(date.getDate());
+  const month = pad(date.getMonth() + 1); // getMonth() returns 0-11
+  const year = date.getFullYear().toString().slice(-2); // Get last two digits of year
+
+  return `${day}/${month}/${year}`;
+};
+
 const Post = ({ post }) => {
   return (
     <motion.div
@@ -30,7 +49,7 @@ const Post = ({ post }) => {
         transition={{ delay: 0.2 }}
         className="ml-4 flex-shrink-0"
       >
-        <span className="text-[#86868b] text-sm">{post.date}</span>
+        <span className="text-[#86868b] text-sm">{formatDate(post.date)}</span>
       </motion.div>
     </motion.div>
   );

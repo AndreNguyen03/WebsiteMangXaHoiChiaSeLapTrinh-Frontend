@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
+
 import SearchBar from "../SearchBar/SearchBar";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import Tag from "./Tag";
-import axios from "axios";
-const sortingOptions = ["Popular", "Name"];
+
+const sortingOptions = ["Phổ biến", "Tên"];
+
 const TagMainBar = () => {
   const [search, setSearch] = useState("");
-  const [sorting, setSorting] = useState("Popular");
+  const [sorting, setSorting] = useState("Phổ biến");
   const [tags, setTags] = useState([]);
+
   useEffect(() => {
     axios
       .get("http://localhost:5114/api/Tags")
@@ -17,16 +21,18 @@ const TagMainBar = () => {
         setTags(response.data);
       })
       .catch((error) => {
-        console.error("There was an error fetching the tags!", error);
+        console.error("Đã xảy ra lỗi khi tải thẻ!", error);
       });
   }, []);
+
   const filteredTags = tags
     .filter((tag) => tag.tagname.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
-      if (sorting === "Popular") return b.posttags.length - a.posttags.length;
-      if (sorting === "Name") return a.tagname.localeCompare(b.tagname);
+      if (sorting === "Phổ biến") return b.posttags.length - a.posttags.length;
+      if (sorting === "Tên") return a.tagname.localeCompare(b.tagname);
       return Math.random() - 0.5;
     });
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -36,6 +42,7 @@ const TagMainBar = () => {
       },
     },
   };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -49,7 +56,7 @@ const TagMainBar = () => {
             animate={{ y: 0, opacity: 1 }}
             className="text-xl font-bold mb-2"
           >
-            Tags
+            Thẻ
           </motion.h1>
           <motion.p
             initial={{ y: -10, opacity: 0 }}
@@ -57,9 +64,9 @@ const TagMainBar = () => {
             transition={{ delay: 0.2 }}
             className="text-gray-600 mb-8"
           >
-            A tag is a keyword or label that categorizes your question with
-            other, similar questions. Using the right tags makes it easier for
-            others to find and answer your question.
+            Thẻ là từ khóa hoặc nhãn phân loại câu hỏi của bạn với những câu hỏi
+            tương tự. Sử dụng các thẻ đúng giúp người khác dễ dàng tìm và trả
+            lời câu hỏi của bạn.
           </motion.p>
           <motion.div
             initial={{ y: -10, opacity: 0 }}
@@ -71,7 +78,7 @@ const TagMainBar = () => {
               <SearchBar
                 value={search}
                 onChange={setSearch}
-                placeholder="Filter by tag name"
+                placeholder="Lọc theo tên thẻ"
               />
             </div>
             <div className="flex justify-center">
@@ -97,4 +104,5 @@ const TagMainBar = () => {
     </motion.div>
   );
 };
+
 export default TagMainBar;

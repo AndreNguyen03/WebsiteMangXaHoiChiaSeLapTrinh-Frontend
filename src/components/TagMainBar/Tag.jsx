@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+
 const Tag = ({ tag }) => {
   const item = {
     hidden: { opacity: 0, y: 20 },
@@ -30,7 +31,7 @@ const Tag = ({ tag }) => {
             animate={{ scale: 1 }}
             className="text-xs text-tag-count bg-white px-2 py-0.5 rounded-full"
           >
-            {tag.posttags.length.toLocaleString()} questions
+            {tag.posttags.length.toLocaleString()} câu hỏi
           </motion.span>
         </motion.div>
         <p className="text-sm text-gray-600 line-clamp-4">{tag.description}</p>
@@ -38,4 +39,5 @@ const Tag = ({ tag }) => {
     </motion.div>
   );
 };
+
 export default Tag;

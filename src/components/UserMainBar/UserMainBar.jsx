@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
+
 import SearchBar from "../SearchBar/SearchBar";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
 import User from "./User";
-import axios from "axios";
-const sortingOptions = ["New Users", "Name", "Most Answers", "Most Questions"];
+
+const sortingOptions = [
+  "Người Dùng Mới",
+  "Tên",
+  "Nhiều Câu Trả Lời Nhất",
+  "Nhiều Câu Hỏi Nhất",
+];
+
 const UserMainBar = () => {
   const [search, setSearch] = useState("");
-  const [sorting, setSorting] = useState("New Users");
+  const [sorting, setSorting] = useState("Người Dùng Mới");
   const [users, setUsers] = useState([]);
+
   useEffect(() => {
     axios
       .get("http://localhost:5114/api/Users")
@@ -17,22 +26,25 @@ const UserMainBar = () => {
         setUsers(response.data);
       })
       .catch((error) => {
-        console.error("There was an error fetching the users!", error);
+        console.error("Đã xảy ra lỗi khi tải người dùng!", error);
       });
   }, []);
+
   const filteredUsers = users
     .filter((user) =>
       user.username.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
-      if (sorting === "Name") return a.username.localeCompare(b.username);
-      if (sorting === "New Users")
+      if (sorting === "Tên") return a.username.localeCompare(b.username);
+      if (sorting === "Người Dùng Mới")
         return new Date(b.createdAt) - new Date(a.createdAt);
-      if (sorting === "Most Answers")
+      if (sorting === "Nhiều Câu Trả Lời Nhất")
         return b.answers.length - a.answers.length;
-      if (sorting === "Most Questions") return b.posts.length - a.posts.length;
+      if (sorting === "Nhiều Câu Hỏi Nhất")
+        return b.posts.length - a.posts.length;
       return 0;
     });
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -42,6 +54,7 @@ const UserMainBar = () => {
       },
     },
   };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -55,7 +68,7 @@ const UserMainBar = () => {
             animate={{ y: 0, opacity: 1 }}
             className="text-xl font-bold mb-4"
           >
-            Users
+            Người Dùng
           </motion.h1>
           <motion.div
             initial={{ y: -10, opacity: 0 }}
@@ -67,7 +80,7 @@ const UserMainBar = () => {
               <SearchBar
                 value={search}
                 onChange={setSearch}
-                placeholder="Filter by user"
+                placeholder="Lọc theo tên người dùng"
               />
             </div>
             <div className="flex justify-center">
@@ -93,4 +106,5 @@ const UserMainBar = () => {
     </motion.div>
   );
 };
+
 export default UserMainBar;

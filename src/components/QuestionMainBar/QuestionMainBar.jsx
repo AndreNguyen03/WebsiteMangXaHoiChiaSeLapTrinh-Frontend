@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+
 import QuestionList from "../HomeMainBar/QuestionList";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
-import { motion, AnimatePresence } from "framer-motion";
 import AskQuestionButton from "../HomeMainBar/AskQuestionButton";
 
-const sortingOptions = ["Newest", "Name", "Unanswered"];
+const sortingOptions = ["Mới nhất", "Tên", "Chưa trả lời"];
 
 const QuestionMainBar = () => {
   const user = 1;
   const [posts, setPosts] = useState([]);
-  const [sorting, setSorting] = useState("Newest");
+  const [sorting, setSorting] = useState("Mới nhất");
 
   useEffect(() => {
     axios
@@ -33,18 +34,18 @@ const QuestionMainBar = () => {
         setPosts(mappedData);
       })
       .catch((error) => {
-        console.error("There was an error fetching the posts!", error);
+        console.error("Đã xảy ra lỗi khi tải bài đăng!", error);
       });
   }, []);
 
   const filteredPosts = posts.sort((a, b) => {
-    if (sorting === "Newest") {
+    if (sorting === "Mới nhất") {
       return new Date(b.createdAt) - new Date(a.createdAt);
     }
-    if (sorting === "Name") {
+    if (sorting === "Tên") {
       return a.title.localeCompare(b.title);
     }
-    if (sorting === "Unanswered") {
+    if (sorting === "Chưa trả lời") {
       return a.answers.length - b.answers.length;
     }
     return 0;
@@ -63,7 +64,7 @@ const QuestionMainBar = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
         >
-          All Questions
+          Tất cả câu hỏi
         </motion.h1>
         <AskQuestionButton />
       </div>
@@ -75,7 +76,7 @@ const QuestionMainBar = () => {
         transition={{ delay: 0.3 }}
       >
         <motion.span className="text-lg" whileHover={{ scale: 1.05 }}>
-          {posts.length} questions
+          {posts.length} câu hỏi
         </motion.span>
         <motion.div
           className="flex flex-col sm:flex-row items-center gap-2"
@@ -88,7 +89,7 @@ const QuestionMainBar = () => {
             active={sorting}
             onChange={setSorting}
           />
-          <motion.button
+          {/* <motion.button
             className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500 hover:bg-blue-50 transition-colors duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -107,8 +108,8 @@ const QuestionMainBar = () => {
                 d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
               />
             </svg>
-            Filter
-          </motion.button>
+            Lọc
+          </motion.button> */}
         </motion.div>
       </motion.div>
 
@@ -128,7 +129,7 @@ const QuestionMainBar = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.6 }}
             >
-              There's currently no question available. Please check back later.
+              Hiện tại chưa có câu hỏi nào. Vui lòng kiểm tra lại sau.
             </motion.p>
           )}
         </motion.div>

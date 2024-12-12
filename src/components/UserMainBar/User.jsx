@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Avatar } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+
 const User = ({ user }) => {
   const [avatarSize, setAvatarSize] = useState("md");
+
   const updateAvatarSize = () => {
     const width = window.innerWidth;
     if (width < 768) {
@@ -14,6 +16,7 @@ const User = ({ user }) => {
       setAvatarSize("md");
     }
   };
+
   useEffect(() => {
     updateAvatarSize();
     window.addEventListener("resize", updateAvatarSize);
@@ -21,10 +24,12 @@ const User = ({ user }) => {
       window.removeEventListener("resize", updateAvatarSize);
     };
   }, []);
+
   const formatDate = (dateString) => {
     const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+
   const item = {
     hidden: { opacity: 0, y: 20 },
     show: {
@@ -35,6 +40,7 @@ const User = ({ user }) => {
       },
     },
   };
+
   return (
     <motion.div variants={item}>
       <Link to={`/users/${user.id}`}>
@@ -63,7 +69,7 @@ const User = ({ user }) => {
                 transition={{ delay: 0.3 }}
                 className="text-xs text-gray-500 dark:text-gray-400"
               >
-                Joined in {formatDate(user.createdAt)}
+                Tham gia từ {formatDate(user.createdAt)}
               </motion.div>
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -71,7 +77,7 @@ const User = ({ user }) => {
                 transition={{ delay: 0.4 }}
                 className="text-xs text-gray-500 dark:text-gray-400"
               >
-                {user.posts.length} questions
+                {user.posts.length} câu hỏi
               </motion.div>
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
@@ -79,7 +85,7 @@ const User = ({ user }) => {
                 transition={{ delay: 0.5 }}
                 className="text-xs text-gray-500 dark:text-gray-400"
               >
-                {user.answers.length} answers
+                {user.answers.length} câu trả lời
               </motion.div>
             </motion.div>
           </Avatar>
@@ -88,4 +94,5 @@ const User = ({ user }) => {
     </motion.div>
   );
 };
+
 export default User;

@@ -50,7 +50,7 @@ const HomeMainBar = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
         >
-          Các bài đăng thú vị dành cho bạn
+          Các câu hỏi thú vị dành cho bạn
         </motion.h1>
         <AskQuestionButton />
       </div>

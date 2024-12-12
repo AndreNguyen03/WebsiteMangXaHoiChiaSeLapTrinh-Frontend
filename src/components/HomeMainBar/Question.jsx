@@ -1,8 +1,10 @@
 import React from "react";
-import "./Question.css";
 import { Link, useLocation } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 import { motion } from "framer-motion";
+
+import "./Question.css";
 
 const Question = ({ question }) => {
   const location = useLocation().pathname;
@@ -20,13 +22,13 @@ const Question = ({ question }) => {
         transition={{ duration: 0.3 }}
       >
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
-          {question.upvote - question.downvote} votes
+          {question.upvote - question.downvote} phiếu bầu
         </motion.p>
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
-          {question.answers.length} answers
+          {question.answers.length} câu trả lời
         </motion.p>
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
-          {question.views} views
+          {question.views} lượt xem
         </motion.p>
       </motion.div>
       <motion.div
@@ -67,17 +69,17 @@ const Question = ({ question }) => {
               {tag.tag.tagname}
             </motion.span>
           ))}
-
           <motion.span className="ml-auto" whileHover={{ scale: 1.02 }}>
             <img
               src={question.user.gravatar}
-              alt="avatar"
+              alt="ảnh đại diện"
               className="mr-2 relative inline-block size-6 !rounded-full object-cover object-center"
             />
             {question.user.username}
             <span className="text-gray-400 ml-2">
               {formatDistanceToNow(new Date(question.createdAt), {
                 addSuffix: true,
+                locale: vi,
               })}
             </span>
           </motion.span>
