@@ -3,6 +3,7 @@ import logo from "../../assets/logo.png";
 import { useNavigate, Link } from "react-router-dom";
 import { TextInput } from "flowbite-react";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const SignUp = () => {
   const handleSubmit = () => {
     navigate(`/VerifyCode?email=${encodeURIComponent(email)}&type=signup`);
   };
+
+  // Variants for animations
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -20,6 +23,7 @@ const SignUp = () => {
       },
     },
   };
+
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -30,6 +34,7 @@ const SignUp = () => {
       },
     },
   };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -48,14 +53,18 @@ const SignUp = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.5 }}
           src={logo}
-          alt="Stack Overflow logo"
+          alt="Logo Stack Overflow"
           className="h-32 mb-4"
         />
         <ul className="space-y-2 ml-4 mb-4">
           {[
-            { icon: "question-circle", text: "Get unstuck - ask a question!" },
-            { icon: "tag", text: "Save your favorite posts, tags and filters" },
-            { icon: "trophy", text: "Answer questions and earn reputation" },
+            /* Translated list items */
+            { icon: "question-circle", text: "Được giúp đỡ - đặt câu hỏi!" },
+            {
+              icon: "tag",
+              text: "Lưu bài đăng, thẻ và bộ lọc yêu thích của bạn",
+            },
+            { icon: "trophy", text: "Trả lời câu hỏi và kiếm điểm uy tín" },
           ].map((item, index) => (
             <motion.li
               key={index}
@@ -85,7 +94,7 @@ const SignUp = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-2xl font-bold mb-4"
           >
-            Create your account
+            Tạo tài khoản của bạn
           </motion.h2>
           <form onSubmit={handleSubmit}>
             <motion.div
@@ -113,7 +122,7 @@ const SignUp = () => {
               animate="visible"
               className="mb-4"
             >
-              <label className="block text-gray-700 mb-2">Password</label>
+              <label className="block text-gray-700 mb-2">Mật khẩu</label>
               <TextInput
                 id="password"
                 type="password"
@@ -130,15 +139,7 @@ const SignUp = () => {
               type="submit"
               className="w-full bg-blue-500 text-white py-2 rounded mb-4 hover:bg-blue-600 transition-colors duration-200"
             >
-              Sign up
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="button"
-              className="w-full border border-gray-300 text-gray-700 py-2 rounded mb-4 flex items-center justify-center hover:bg-gray-50 transition-colors duration-200"
-            >
-              <i className="fab fa-google mr-2"></i> Sign up with Google
+              Đăng ký
             </motion.button>
           </form>
           <motion.p
@@ -147,12 +148,12 @@ const SignUp = () => {
             transition={{ delay: 0.5 }}
             className="text-center text-sm text-gray-700 mt-4"
           >
-            Already have an account?{" "}
+            Bạn đã có tài khoản?{" "}
             <Link
               to="/Login"
               className="text-blue-500 hover:text-blue-600 transition-colors duration-200"
             >
-              Log in
+              Đăng nhập
             </Link>
           </motion.p>
         </motion.div>
@@ -160,4 +161,5 @@ const SignUp = () => {
     </motion.div>
   );
 };
+
 export default SignUp;

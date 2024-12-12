@@ -8,7 +8,7 @@ import SortingGroupBar from "../SortingGroupBar/SortingGroupBar"; // Giả sử 
 import AskQuestionButton from "../HomeMainBar/AskQuestionButton"; // Giả sử bạn đã có component này
 import { useSelector } from "react-redux";
 
-const sortingOptions = ["Newest", "Name", "Unanswered"];
+const sortingOptions = ["Mới nhất", "Tên", "Chưa trả lời"]; // Translated sorting options
 
 const QuestionWithTagMainBar = () => {
   const authState = useSelector((state) => state.auth);
@@ -16,7 +16,7 @@ const QuestionWithTagMainBar = () => {
   const [isUserWatchingTag, setUserWatchingTag] = useState(false);
   const [userWatchedTags, setUserWatchedTags] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [sorting, setSorting] = useState("Newest");
+  const [sorting, setSorting] = useState("Mới nhất"); // Default sorting translated
   const [tag, setTag] = useState({});
 
   // Hàm lấy thông tin các tag mà người dùng đang theo dõi
@@ -110,13 +110,13 @@ const QuestionWithTagMainBar = () => {
 
   // Sắp xếp các bài viết theo lựa chọn
   const sortedPosts = posts.sort((a, b) => {
-    if (sorting === "Newest") {
+    if (sorting === "Mới nhất") {
       return new Date(b.createdAt) - new Date(a.createdAt);
     }
-    if (sorting === "Name") {
+    if (sorting === "Tên") {
       return a.title.localeCompare(b.title);
     }
-    if (sorting === "Unanswered") {
+    if (sorting === "Chưa trả lời") {
       return a.answers.length - b.answers.length;
     }
     return 0; // Mặc định không thay đổi thứ tự
@@ -159,7 +159,7 @@ const QuestionWithTagMainBar = () => {
                 pill
                 onClick={handleWatchTag}
               >
-                Watch
+                Theo dõi
               </Button>
             </motion.div>
           )}
@@ -176,7 +176,7 @@ const QuestionWithTagMainBar = () => {
                 outline
                 onClick={handleUnwatchTag}
               >
-                Unwatch
+                Bỏ theo dõi
               </Button>
             </motion.div>
           )}
@@ -190,7 +190,7 @@ const QuestionWithTagMainBar = () => {
         transition={{ duration: 0.5, delay: 0.6 }}
       >
         <motion.span className="text-lg" whileHover={{ scale: 1.05 }}>
-          {posts.length} questions
+          {posts.length} câu hỏi
         </motion.span>
         <div className="flex flex-col sm:flex-row items-center gap-2">
           <SortingGroupBar
@@ -217,7 +217,7 @@ const QuestionWithTagMainBar = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              There's currently no question available. Please check back later.
+              Hiện tại không có câu hỏi nào. Vui lòng kiểm tra lại sau.
             </motion.p>
           )}
         </motion.div>

@@ -10,7 +10,7 @@ const AskQuestionButton = () => {
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <Link
         to={!authState.isAuthenticated ? "/Login" : "/AskQuestion"}
-        className="bg-blue-500 hover:bg-blue-600 transition-colors duration-200 text-white px-4 py-2 rounded-lg"
+        className="from-blue-600 bg-gradient-to-r to-cyan-500 transform hover:-translate-y-0.5 transition-all duration-200 text-white px-4 py-2 rounded-lg"
       >
         Tạo câu hỏi
       </Link>
