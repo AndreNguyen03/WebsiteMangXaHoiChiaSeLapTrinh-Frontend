@@ -18,7 +18,6 @@ const QuestionMainBar = () => {
     axios
       .get("http://localhost:5114/api/Posts")
       .then((response) => {
-        console.log(response.data);
         const mappedData = response.data.map((post) => ({
           id: post.id,
           title: post.title,

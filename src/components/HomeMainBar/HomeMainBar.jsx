@@ -14,8 +14,6 @@ const HomeMainBar = () => {
     axios
       .get("http://localhost:5114/api/Posts/gethomepost") // Gọi API
       .then((response) => {
-        console.log(response.data);
-
         // Chuyển đổi dữ liệu API theo định dạng custom
         const mappedData = response.data.map((post) => ({
           id: post.id,

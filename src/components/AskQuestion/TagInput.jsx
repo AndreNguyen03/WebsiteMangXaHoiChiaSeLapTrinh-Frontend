@@ -14,7 +14,7 @@ const TagInput = ({ selectedTags, setSelectedTags, error, renderError }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSuggestOpen, setIsSuggestOpen] = useState(false);
   const dispatch = useDispatch();
-  const tempTags = useSelector((state) => state.tempTags);
+  const tempTags = useSelector((state) => state.tempTags.tempTags);
 
   // Fetch available tags from the API
   useEffect(() => {
@@ -33,6 +33,10 @@ const TagInput = ({ selectedTags, setSelectedTags, error, renderError }) => {
     };
     fetchAvailableTags();
   }, []);
+
+  useEffect(() => {
+    console.log("Temp Tags đã cập nhật:", tempTags);
+  }, [tempTags]);
 
   const handleSearchTag = (e) => {
     setSearchTag(e.target.value);
@@ -55,8 +59,10 @@ const TagInput = ({ selectedTags, setSelectedTags, error, renderError }) => {
     const newTag = {
       tagname: newTagName,
       description: newTagDescription,
+      isTemp: true,
     };
     dispatch(addTempTag(newTag));
+    // Chờ Redux cập nhật xong và log lại trạng thái.
     setSelectedTags((prevTags) => [...prevTags, newTag]);
     setIsModalOpen(false);
     setNewTagName("");
@@ -92,9 +98,9 @@ const TagInput = ({ selectedTags, setSelectedTags, error, renderError }) => {
         />
         {selectedTags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
-            {selectedTags.map((tag) => (
+            {selectedTags.map((tag, index) => (
               <span
-                key={tag.id}
+                key={index}
                 className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm hover:bg-gray-300 transition-colors duration-200"
               >
                 {tag.tagname}
@@ -142,8 +148,11 @@ const TagInput = ({ selectedTags, setSelectedTags, error, renderError }) => {
           onClose={() => setIsModalOpen(false)}
           size="md"
         >
-          <ModalHeader onClose={() => setIsModalOpen(false)}>
-            <h3 className="text-lg font-medium">Thêm thẻ mới</h3>
+          <ModalHeader
+            className="text-lg font-medium"
+            onClose={() => setIsModalOpen(false)}
+          >
+            Thêm thẻ mới
           </ModalHeader>
           <ModalBody>
             <div className="space-y-4">

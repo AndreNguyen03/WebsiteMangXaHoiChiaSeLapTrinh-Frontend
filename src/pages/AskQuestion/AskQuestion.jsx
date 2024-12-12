@@ -15,7 +15,7 @@ import Alert from "./Alert";
 const AskQuestion = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const tempTags = useSelector((state) => state.tempTags);
+  const tempTags = useSelector((state) => state.tempTags.tempTags);
   const authState = useSelector((state) => state.auth);
   const [selectedTags, setSelectedTags] = useState([]); // List các tag đã chọn
   const [newQuestion, setNewQuestion] = useState({
@@ -95,11 +95,14 @@ const AskQuestion = () => {
 
     if (tempTags.length > 0) {
       // Log danh sách temp tags trước khi lưu
-      console.log("Temp Tags trước khi lưu:", tempTags);
+      // console.log("Temp Tags trước khi lưu:", tempTags);
       // Add các temp tag vào database trước
       const newTagIds = await addTempTagsToDatabase(tempTags);
       // Kết hợp các tagId đã chọn và mới thêm
-      const allTagIds = [...selectedTags.map((tag) => tag.id), ...newTagIds];
+      const allTagIds = [
+        ...selectedTags.filter((tag) => !tag.isTemp).map((tag) => tag.id),
+        ...newTagIds,
+      ];
       // Log dữ liệu câu hỏi trước khi lưu
       console.log("Dữ liệu câu hỏi cần lưu:", {
         ...newQuestion,
@@ -133,7 +136,8 @@ const AskQuestion = () => {
           });
         })
       );
-      return responses.map((response) => response.data.id);
+      const tagsID = responses.map((response) => response.data.id);
+      return tagsID;
     } catch (error) {
       console.error("Error adding temp tags to database:", error);
       return [];

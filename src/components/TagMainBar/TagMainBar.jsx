@@ -17,7 +17,6 @@ const TagMainBar = () => {
     axios
       .get("http://localhost:5114/api/Tags")
       .then((response) => {
-        console.log(response.data);
         setTags(response.data);
       })
       .catch((error) => {
