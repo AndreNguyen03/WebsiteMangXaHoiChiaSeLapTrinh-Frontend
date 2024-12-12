@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import SearchBar from "../../SearchBar/SearchBar";
 import AddTagModal from "./AddTagModal";
 import UpdateTagModal from "./UpdateTagModal";
+import DeleteTagModal from "./DeleteTagModal";
 import ToastNotification from "../../ToastNotification/ToastNotification";
 import { Table, Button, Toast } from "flowbite-react";
 import axios from "axios";
@@ -12,6 +13,7 @@ const TagManageMainBar = () => {
   const [search, setSearch] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedTag, setSelectedTag] = useState(null);
   const [toastType, setToastType] = useState(""); // "success" hoặc "error"
   const [toastMessage, setToastMessage] = useState("");
@@ -55,6 +57,11 @@ const TagManageMainBar = () => {
   const handleEditClick = (tag) => {
     setSelectedTag(tag);
     setShowUpdateModal(true);
+  };
+
+  const handleDeleteClick = (tag) => {
+    setSelectedTag(tag);
+    setShowDeleteModal(true);
   };
 
   const handleShowToast = (type, message) => {
@@ -175,7 +182,11 @@ const TagManageMainBar = () => {
                     >
                       Edit
                     </Button>
-                    <Button outline gradientDuoTone="pinkToOrange">
+                    <Button
+                      onClick={() => handleDeleteClick(tag)}
+                      outline
+                      gradientDuoTone="pinkToOrange"
+                    >
                       Delete
                     </Button>
                   </Table.Cell>
@@ -198,6 +209,14 @@ const TagManageMainBar = () => {
         onUpdate={fetchTags}
         onShowToast={handleShowToast}
       />
+      <DeleteTagModal
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        tagID={selectedTag?.id}
+        onDelete={fetchTags}
+        onShowToast={handleShowToast}
+      ></DeleteTagModal>
+
       {showToast && (
         <div className="fixed bottom-4 right-4">
           <ToastNotification

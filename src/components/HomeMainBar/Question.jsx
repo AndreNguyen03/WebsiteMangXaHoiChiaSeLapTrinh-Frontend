@@ -3,16 +3,39 @@ import { Link, useLocation } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 import "./Question.css";
 
-const Question = ({ question }) => {
+const Question = ({ question, watchedTags }) => {
   const location = useLocation().pathname;
+  const [validWatchedTags, setValidWatchedTags] = useState(watchedTags || []); // Lưu danh sách watchedTags hợp lệ
+
+  // useEffect để cập nhật validWatchedTags nếu watchedTags thay đổi
+  useEffect(() => {
+    if (watchedTags) {
+      setValidWatchedTags(watchedTags);
+    } else {
+      setValidWatchedTags([]); // Đặt giá trị mặc định nếu watchedTags là null
+    }
+  }, [watchedTags]);
+
+  // Kiểm tra nếu có tagId trong watchedTags trùng với tagId của câu hỏi
+  const isWatched = question.posttags.some((tag) =>
+    validWatchedTags.some((watchedTag) => watchedTag.id === tag.tag.id)
+  );
 
   return (
     <motion.div
       className="flex items-baseline mb-4"
-      whileHover={{ backgroundColor: "rgba(0,0,0,0.01)" }}
+      style={{
+        backgroundColor: isWatched ? "rgba(0, 255, 0, 0.1)" : "transparent", // Đặt màu nền nếu là watched
+      }}
+      whileHover={{
+        backgroundColor: isWatched
+          ? "rgba(0, 255, 0, 0.2)"
+          : "rgba(0,0,0,0.01)",
+      }} // Đổi màu khi hover
       transition={{ duration: 0.2 }}
     >
       <motion.div
