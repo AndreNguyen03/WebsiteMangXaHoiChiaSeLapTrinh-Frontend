@@ -24,56 +24,33 @@ import RoleManagement from "./pages/Admin/RoleManagement/RoleManagement";
 const AllRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Home></Home>}></Route>
-      <Route path="/Login" element={<Login></Login>}></Route>
-      <Route path="/SignUp" element={<SignUp></SignUp>}></Route>
-      <Route path="/VerifyCode" element={<VerifyCode></VerifyCode>}></Route>
-      <Route
-        path="/ForgotPassword"
-        element={<ForgotPassword></ForgotPassword>}
-      ></Route>
-      <Route
-        path="/ResetPassword"
-        element={<ResetPassword></ResetPassword>}
-      ></Route>
-      <Route path="/Questions" element={<Question></Question>}></Route>
-      <Route path="/AskQuestion" element={<AskQuestion></AskQuestion>}></Route>
-      <Route path="/Questions/:id" element={<DisplayQuestion />}></Route>
-      <Route path="/Tags" element={<Tags></Tags>}></Route>
-      <Route
-        path="/Questions/tags/:tagId"
-        element={<QuestionsWithTag></QuestionsWithTag>}
-      ></Route>
-      <Route path="/Users" element={<Users></Users>}></Route>
-      <Route
-        path="/Users/:userID"
-        element={<UserProfile></UserProfile>}
-      ></Route>
-      <Route path="/Admin" element={<HomeDashboard></HomeDashboard>}></Route>
-      <Route
-        path="/Admin/questions"
-        element={<QuestionManagement></QuestionManagement>}
-      ></Route>
-      <Route
-        path="/Admin/answers"
-        element={<AnswerManagement></AnswerManagement>}
-      ></Route>
-      <Route
-        path="/Admin/comments"
-        element={<CommentManagement></CommentManagement>}
-      ></Route>
-      <Route
-        path="/Admin/tags"
-        element={<TagManagement></TagManagement>}
-      ></Route>
-      <Route
-        path="/Admin/users"
-        element={<UserManagement></UserManagement>}
-      ></Route>
-      <Route
-        path="/Admin/roles"
-        element={<RoleManagement></RoleManagement>}
-      ></Route>
+      {/* Auth Routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/Login" element={<Login />} />
+      <Route path="/SignUp" element={<SignUp />} />
+      <Route path="/VerifyCode" element={<VerifyCode />} />
+      <Route path="/ForgotPassword" element={<ForgotPassword />} />
+      <Route path="/ResetPassword" element={<ResetPassword />} />
+
+      {/* Questions and Tags */}
+      <Route path="/Questions" element={<Question />} />
+      <Route path="/Questions/:postId" element={<DisplayQuestion />} />
+      <Route path="/AskQuestion" element={<AskQuestion />} />
+      <Route path="/Tags" element={<Tags />} />
+      <Route path="/Questions/tags/:tagId" element={<QuestionsWithTag />} />
+
+      {/* User Routes */}
+      <Route path="/Users" element={<Users />} />
+      <Route path="/Users/:userID" element={<UserProfile />} />
+
+      {/* Admin Routes */}
+      <Route path="/Admin" element={<HomeDashboard />} />
+      <Route path="/Admin/questions" element={<QuestionManagement />} />
+      <Route path="/Admin/answers" element={<AnswerManagement />} />
+      <Route path="/Admin/comments" element={<CommentManagement />} />
+      <Route path="/Admin/tags" element={<TagManagement />} />
+      <Route path="/Admin/users" element={<UserManagement />} />
+      <Route path="/Admin/roles" element={<RoleManagement />} />
     </Routes>
   );
 };
