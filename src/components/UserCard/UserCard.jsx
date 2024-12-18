@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import Avatar from "../Avatar/Avatar"; // Import the Avatar component
 
 const UserCard = ({
   userid,
-  initials,
+  gravatar, // Add gravatar prop
   name,
   time,
   type = "question",
@@ -11,7 +12,6 @@ const UserCard = ({
 }) => {
   const bgColor = type === "question" ? "bg-blue-50" : "bg-green-50";
   const textColor = type === "question" ? "text-blue-600" : "text-green-600";
-  const avatarBg = type === "question" ? "bg-blue-500" : "bg-green-500";
 
   return (
     <motion.div
@@ -23,10 +23,17 @@ const UserCard = ({
       <div
         className={`${bgColor} rounded-lg p-3 inline-flex items-center gap-3`}
       >
-        <div
-          className={`w-8 h-8 ${avatarBg} rounded-full flex items-center justify-center text-white`}
-        >
-          {initials}
+        {/* Display Avatar with gravatar or fallback */}
+        <div className="w-12 h-12 rounded-full overflow-hidden">
+          {gravatar ? (
+            <Avatar
+              img={user.gravatar}
+              size={avatarSize}
+              className="justify-evenly border p-2 shadow-none transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-gray-400"
+            />
+          ) : (
+            <Avatar gravatar="https://placehold.co/600x400.png" /> // Default avatar
+          )}
         </div>
         <div>
           {userid ? (

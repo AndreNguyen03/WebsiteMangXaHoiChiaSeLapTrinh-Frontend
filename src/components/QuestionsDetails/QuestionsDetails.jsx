@@ -5,6 +5,8 @@ import QuestionHeader from "../QuestionHeader/QuestionHeader";
 import VoteButtons from "../VoteButtons/VoteButtons";
 import UserCard from "../UserCard/UserCard";
 import AnswerForm from "../AnswerForm/AnswerForm";
+import { comment } from "postcss";
+import AddComment from "../AddComment/AddComment";
 
 const QuestionDetails = ({ postId }) => {
   const [question, setQuestion] = useState(null);
@@ -36,6 +38,7 @@ const QuestionDetails = ({ postId }) => {
           posttags: data.posttags,
           user: data.user,
           answers: data.answers,
+          comments: data.comments,
         };
         setQuestion(mappedData);
         setLoading(false);
@@ -94,14 +97,50 @@ const QuestionDetails = ({ postId }) => {
                 </div>
               </div>
               <UserCard
-                initials={
-                  question.user?.username?.charAt(0).toUpperCase() || "U"
-                }
+                userid={question.user?.id}
                 name={question.user?.username || "Unknown User"}
                 time={`asked ${new Date(
                   question.createdAt || Date.now()
                 ).toLocaleString()}`}
                 type="question"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mt-8"
+            >
+              <h3 className="text-lg font-semibold mb-4">Comments</h3>
+              {question.comments && question.comments.length > 0 ? (
+                question.comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="bg-white rounded-lg shadow-sm p-4 mb-4"
+                  >
+                    <p className="text-gray-800">{comment.body}</p>
+                    <small className="text-gray-600">
+                      Commented at{" "}
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </small>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600">No comments yet.</p>
+              )}
+
+              {/* Add Comment Component */}
+              <AddComment
+                parentId={postId}
+                onCommentAdded={(newComment) => {
+                  // Update question comments with the new comment
+                  setQuestion((prevQuestion) => ({
+                    ...prevQuestion,
+                    comments: [...prevQuestion.comments, newComment],
+                  }));
+                }}
+                apiEndpoint={`http://localhost:5114/api/Comment/post/${postId}`}
               />
             </motion.div>
 
@@ -127,13 +166,13 @@ const QuestionDetails = ({ postId }) => {
                       </div>
                     </div>
                     <UserCard
-                      initials={answer.userId?.charAt(0).toUpperCase() || "U"}
-                      name={`User ${answer.userId}`}
+                      userid={answer.userId}
+                      gravatar={answer.user?.gravatar || null} // Pass gravatar here
+                      name={answer.user?.username || `User ${answer.userId}`}
                       time={`answered ${new Date(
-                        answer.createdAt || Date.now()
+                        answer.createdAt
                       ).toLocaleString()}`}
                       type="answer"
-                      userid={answer.userId}
                     />
                   </div>
                 ))
@@ -142,7 +181,17 @@ const QuestionDetails = ({ postId }) => {
               )}
             </motion.div>
 
-            <AnswerForm />
+            <AnswerForm
+              postId={postId}
+              userId={question.user?.id || "Anonymous"}
+              onAnswerSubmitted={(newAnswer) => {
+                // Update answers list with the new answer
+                setQuestion((prevQuestion) => ({
+                  ...prevQuestion,
+                  answers: [...prevQuestion.answers, newAnswer],
+                }));
+              }}
+            />
           </div>
         </div>
       </div>
