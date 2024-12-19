@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import LeftSideBar from "../../components/LeftSideBar/LeftSideBar";
 import RightSideBar from "../../components/RightSideBar/RightSideBar";
 import QuestionDetails from "../../components/QuestionsDetails/QuestionsDetails";
+import "./Questions.css";
+
 const DisplayQuestion = () => {
   const { postId } = useParams(); // Fetch postId from the route parameter
 
