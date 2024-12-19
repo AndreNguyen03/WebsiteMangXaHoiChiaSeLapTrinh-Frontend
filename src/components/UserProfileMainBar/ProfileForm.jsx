@@ -1,34 +1,33 @@
 import { useState } from "react";
-import { Button } from "flowbite-react";
-import { TextInput } from "flowbite-react";
-import { Toast } from "flowbite-react";
+import { Button, TextInput, Toast } from "flowbite-react";
 
 const ProfileForm = ({ formData, handleInputChange, handleProfileUpdate }) => {
   return (
     <form onSubmit={handleProfileUpdate} className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="username" className="text-sm font-medium">
-          Username
+          Tên đăng nhập
         </label>
         <TextInput
           id="username"
           name="username"
           value={formData.username}
           onChange={handleInputChange}
-          placeholder="Enter username"
+          placeholder="Nhập tên đăng nhập"
         />
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="displayName" className="text-sm font-medium">
-          Display Name
+        <label htmlFor="avatar" className="text-sm font-medium">
+          Avatar URL
         </label>
         <TextInput
-          id="displayName"
-          name="displayName"
-          value={formData.displayName}
+          id="avatar"
+          name="gravatar" // Đồng bộ với formData.gravatar
+          type="text" // Sử dụng type phù hợp
+          value={formData.gravatar}
           onChange={handleInputChange}
-          placeholder="Enter display name"
+          placeholder="Nhập avatar URL"
         />
       </div>
 
@@ -37,12 +36,13 @@ const ProfileForm = ({ formData, handleInputChange, handleProfileUpdate }) => {
           Email
         </label>
         <TextInput
+          disabled
           id="email"
           name="email"
           type="email"
           value={formData.email}
           onChange={handleInputChange}
-          placeholder="Enter email"
+          placeholder="Nhập email"
         />
       </div>
 
@@ -51,7 +51,7 @@ const ProfileForm = ({ formData, handleInputChange, handleProfileUpdate }) => {
         type="submit"
         className="w-full text-white"
       >
-        Save Changes
+        Lưu thay đổi
       </Button>
     </form>
   );

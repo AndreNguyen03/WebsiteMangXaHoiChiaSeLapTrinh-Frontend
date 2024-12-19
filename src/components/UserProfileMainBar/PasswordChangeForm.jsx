@@ -1,5 +1,4 @@
-import { Button } from "flowbite-react";
-import { TextInput } from "flowbite-react";
+import { Button, TextInput } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 const PasswordChangeForm = ({
@@ -11,7 +10,7 @@ const PasswordChangeForm = ({
     <form onSubmit={handlePasswordChange} className="mt-4 space-y-2">
       <div className="space-y-2">
         <label htmlFor="currentPassword" className="text-sm font-medium">
-          Current Password
+          Mật khẩu hiện tại
         </label>
         <TextInput
           id="currentPassword"
@@ -19,7 +18,7 @@ const PasswordChangeForm = ({
           name="currentPassword"
           value={passwordData.currentPassword}
           onChange={handlePasswordInputChange}
-          placeholder="Enter current password"
+          placeholder="Nhập mật khẩu hiện tại"
         />
       </div>
 
@@ -28,13 +27,13 @@ const PasswordChangeForm = ({
           to="/ForgotPassword"
           className="text-sm text-blue-500 hover:text-blue-600"
         >
-          Forgot Password?
+          Quên mật khẩu?
         </Link>
       </div>
 
       <div className="space-y-2">
         <label htmlFor="newPassword" className="text-sm font-medium">
-          New Password
+          Mật khẩu mới
         </label>
         <TextInput
           id="newPassword"
@@ -42,13 +41,13 @@ const PasswordChangeForm = ({
           name="newPassword"
           value={passwordData.newPassword}
           onChange={handlePasswordInputChange}
-          placeholder="Enter new password"
+          placeholder="Nhập mật khẩu mới"
         />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="confirmPassword" className="text-sm font-medium">
-          Confirm New Password
+          Xác nhận mật khẩu mới
         </label>
         <TextInput
           id="confirmPassword"
@@ -56,7 +55,7 @@ const PasswordChangeForm = ({
           name="confirmPassword"
           value={passwordData.confirmPassword}
           onChange={handlePasswordInputChange}
-          placeholder="Confirm new password"
+          placeholder="Xác nhận mật khẩu mới"
         />
       </div>
 
@@ -67,7 +66,7 @@ const PasswordChangeForm = ({
           size="md"
           className="w-full text-white"
         >
-          Update Password
+          Cập nhật mật khẩu
         </Button>
       </div>
     </form>
