@@ -5,14 +5,19 @@ import QuestionHeader from "../QuestionHeader/QuestionHeader";
 import VoteButtons from "../VoteButtons/VoteButtons";
 import UserCard from "../UserCard/UserCard";
 import AnswerForm from "../AnswerForm/AnswerForm";
-import { comment } from "postcss";
 import AddComment from "../AddComment/AddComment";
+import ShowComment from "../ShowComment/ShowComment";
+import { useSelector } from "react-redux";
 
 const QuestionDetails = ({ postId }) => {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Get the token from the Redux auth state
+  const { token } = useSelector((state) => state.auth);
+
+  // Fetch question details
   useEffect(() => {
     const fetchQuestion = async () => {
       if (!postId) {
@@ -23,7 +28,12 @@ const QuestionDetails = ({ postId }) => {
 
       try {
         const response = await axios.get(
-          `http://localhost:5114/api/Posts/${postId}`
+          `http://localhost:5114/api/Posts/${postId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Attach token to the request
+            },
+          }
         );
         const data = response.data;
         const mappedData = {
@@ -38,7 +48,6 @@ const QuestionDetails = ({ postId }) => {
           posttags: data.posttags,
           user: data.user,
           answers: data.answers,
-          comments: data.comments,
         };
         setQuestion(mappedData);
         setLoading(false);
@@ -49,7 +58,11 @@ const QuestionDetails = ({ postId }) => {
     };
 
     fetchQuestion();
-  }, [postId]);
+  }, [postId, token]);
+
+  const handleCommentAdded = (newComment) => {
+    // Refresh comments or notify the ShowComment component if needed
+  };
 
   if (loading) {
     return <div>Loading question...</div>;
@@ -106,6 +119,7 @@ const QuestionDetails = ({ postId }) => {
               />
             </motion.div>
 
+            {/* Show Comments for Question */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -113,37 +127,15 @@ const QuestionDetails = ({ postId }) => {
               className="mt-8"
             >
               <h3 className="text-lg font-semibold mb-4">Comments</h3>
-              {question.comments && question.comments.length > 0 ? (
-                question.comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="bg-white rounded-lg shadow-sm p-4 mb-4"
-                  >
-                    <p className="text-gray-800">{comment.body}</p>
-                    <small className="text-gray-600">
-                      Commented at{" "}
-                      {new Date(comment.createdAt).toLocaleString()}
-                    </small>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No comments yet.</p>
-              )}
-
-              {/* Add Comment Component */}
+              <ShowComment postId={postId} token={token} />
               <AddComment
                 parentId={postId}
-                onCommentAdded={(newComment) => {
-                  // Update question comments with the new comment
-                  setQuestion((prevQuestion) => ({
-                    ...prevQuestion,
-                    comments: [...prevQuestion.comments, newComment],
-                  }));
-                }}
+                onCommentAdded={handleCommentAdded}
                 apiEndpoint={`http://localhost:5114/api/Comment/post/${postId}`}
               />
             </motion.div>
 
+            {/* Show Answers */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -167,7 +159,7 @@ const QuestionDetails = ({ postId }) => {
                     </div>
                     <UserCard
                       userid={answer.userId}
-                      gravatar={answer.user?.gravatar || null} // Pass gravatar here
+                      gravatar={answer.user?.gravatar || null}
                       name={answer.user?.username || `User ${answer.userId}`}
                       time={`answered ${new Date(
                         answer.createdAt
@@ -185,7 +177,6 @@ const QuestionDetails = ({ postId }) => {
               postId={postId}
               userId={question.user?.id || "Anonymous"}
               onAnswerSubmitted={(newAnswer) => {
-                // Update answers list with the new answer
                 setQuestion((prevQuestion) => ({
                   ...prevQuestion,
                   answers: [...prevQuestion.answers, newAnswer],
