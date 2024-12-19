@@ -128,7 +128,7 @@ const QuestionWithTagMainBar = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-4">
         <motion.h1
           className="text-xl font-bold"
           initial={{ x: -20 }}

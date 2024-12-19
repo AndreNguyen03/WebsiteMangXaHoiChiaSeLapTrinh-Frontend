@@ -7,12 +7,12 @@ const Question = () => {
   return (
     <div className="container w-screen mx-auto gap-4 flex mt-4 h-fit">
       {/* LeftSideBar - Luôn nằm bên trái */}
-      <aside className="hidden md:block md:w-1/6 shadow-2xl flex-grow bg-white">
+      <aside className="w-2/12 md:block md:w-1/6 shadow-2xl flex-grow bg-white">
         <LeftSideBar />
       </aside>
 
       {/* Wrapper cho HomeMainBar và RightSideBar */}
-      <div className="flex flex-col md-lg:flex-row w-full min-h-screen h-fit md-lg:w-5/6">
+      <div className="flex flex-col md-lg:flex-row overflow-x-hidden md:w-full min-h-screen h-fit md-lg:w-5/6">
         {/* HomeMainBar - Chiếm 3/4 không gian khi md-lg */}
         <main className="w-full md-lg:w-3/4 bg-white flex-grow p-4 shadow-xl">
           <QuestionMainBar />

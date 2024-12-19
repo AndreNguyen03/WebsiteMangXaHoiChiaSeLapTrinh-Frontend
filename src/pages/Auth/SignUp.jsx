@@ -90,11 +90,6 @@ const SignUp = () => {
           {[
             /* Translated list items */
             { icon: "question-circle", text: "Được giúp đỡ - đặt câu hỏi!" },
-            {
-              icon: "tag",
-              text: "Lưu bài đăng, thẻ và bộ lọc yêu thích của bạn",
-            },
-            { icon: "trophy", text: "Trả lời câu hỏi và kiếm điểm uy tín" },
           ].map((item, index) => (
             <motion.li
               key={index}
