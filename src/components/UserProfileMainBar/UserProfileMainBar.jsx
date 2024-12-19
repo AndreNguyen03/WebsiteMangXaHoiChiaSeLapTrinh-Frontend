@@ -42,7 +42,7 @@ const UserProfileMainBar = () => {
           console.error("Lỗi khi lấy thông tin người dùng:", error)
         );
     }
-  }, [userID]);
+  }, [userID, openModal]);
 
   // Lấy câu trả lời của người dùng
   useEffect(() => {
@@ -133,7 +133,11 @@ const UserProfileMainBar = () => {
       <PostBox posts={allPosts} />
 
       {/* Modal chỉnh sửa thông tin người dùng */}
-      <UpdateUserInfoModal openModal={openModal} setOpenModal={setOpenModal} />
+      <UpdateUserInfoModal
+        user={user}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+      />
     </motion.div>
   );
 };

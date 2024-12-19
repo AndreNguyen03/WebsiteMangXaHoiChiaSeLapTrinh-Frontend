@@ -1,14 +1,14 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Toast } from "flowbite-react";
 import PasswordChangeForm from "./PasswordChangeForm";
 import ProfileForm from "./ProfileForm";
+import axios from "axios";
 
-const UpdateUserInfoModal = ({ openModal, setOpenModal }) => {
+const UpdateUserInfoModal = ({ user, openModal, setOpenModal }) => {
   const [formData, setFormData] = useState({
-    username: "",
-    displayName: "",
-    email: "",
+    username: user.username || "",
+    gravatar: user.gravatar || "",
+    email: user.email || "",
   });
 
   const [showPasswordChange, setShowPasswordChange] = useState(false);
@@ -17,6 +17,14 @@ const UpdateUserInfoModal = ({ openModal, setOpenModal }) => {
     newPassword: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    setFormData({
+      username: user.username || "",
+      gravatar: user.gravatar || "",
+      email: user.email || "",
+    });
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -28,36 +36,77 @@ const UpdateUserInfoModal = ({ openModal, setOpenModal }) => {
     setPasswordData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleProfileUpdate = (e) => {
+  const handleProfileUpdate = async (e) => {
     e.preventDefault();
-    Toast.success("Profile updated successfully!");
+
+    try {
+      const response = await axios.put(
+        `http://localhost:5114/api/Users/${user.id}`,
+        {
+          username: formData.username,
+          email: formData.email,
+          gravatar: formData.gravatar,
+        }
+      );
+
+      setOpenModal(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
+
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      Toast.error("Passwords do not match!");
+      console.log("Mật khẩu mới không khớp!");
       return;
     }
-    Toast.success("Password changed successfully!");
-    setShowPasswordChange(false);
-    setPasswordData({
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-    });
+
+    try {
+      // Gọi API validateUser
+      const validateResponse = await axios.post(
+        "http://localhost:5114/api/Auth/validateUser",
+        {
+          email: user.email,
+          password: passwordData.currentPassword,
+        }
+      );
+
+      if (validateResponse.data.status === "success") {
+        // Nếu validate thành công, gọi API changePassword
+        const changeResponse = await axios.post(
+          "http://localhost:5114/api/Auth/changePassword",
+          {
+            email: user.email,
+            newPassword: passwordData.newPassword,
+          }
+        );
+
+        console.log(changeResponse.data.message);
+        setShowPasswordChange(false);
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } else {
+        console.log("Mật khẩu hiện tại không chính xác!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi thay đổi mật khẩu:", error);
+    }
   };
 
   return (
     <Modal
       size="2xl"
       dismissible
-      className=""
       show={openModal}
       onClose={() => setOpenModal(false)}
     >
-      <Modal.Header>Edit Profile</Modal.Header>
-      <Modal.Body className="">
+      <Modal.Header>Chỉnh sửa thông tin</Modal.Header>
+      <Modal.Body>
         <ProfileForm
           formData={formData}
           handleInputChange={handleInputChange}
@@ -69,10 +118,10 @@ const UpdateUserInfoModal = ({ openModal, setOpenModal }) => {
             outline
             size="md"
             gradientDuoTone="cyanToBlue"
-            className="w-full "
+            className="w-full"
             onClick={() => setShowPasswordChange(!showPasswordChange)}
           >
-            Change Password
+            Đổi mật khẩu
           </Button>
 
           {showPasswordChange && (
