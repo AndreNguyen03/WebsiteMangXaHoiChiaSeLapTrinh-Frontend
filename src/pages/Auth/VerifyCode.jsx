@@ -2,14 +2,18 @@ import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Card } from "flowbite-react";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const VerifyCode = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState(""); // Thông báo thành công
+  const [isResending, setIsResending] = useState(false); // Trạng thái gửi lại mã
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
   const email = searchParams.get("email") || "";
-  const type = searchParams.get("type") || "reset"; // 'eset' or 'ignup'
+  const type = searchParams.get("type") || "reset"; // 'reset' hoặc 'signup'
 
   const handleChange = (index, value) => {
     if (value.length > 1) return;
@@ -31,20 +35,90 @@ const VerifyCode = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const verificationCode = code.join("");
     if (verificationCode.length !== 6) {
       setError("Vui lòng nhập đủ 6 chữ số");
       return;
     }
-    if (type === "reset") {
-      navigate("/ResetPassword");
-    } else {
-      navigate("/Login");
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5114/api/Auth/verify-code",
+        {
+          email,
+          code: verificationCode,
+        }
+      );
+
+      if (response.status === 200 && response.data.status === "success") {
+        setMessage("Xác minh thành công!");
+
+        // Điều hướng và lưu trữ thông tin
+        if (type === "reset") {
+          sessionStorage.setItem("email", email);
+          navigate("/ResetPassword");
+        } else {
+          // Lấy password từ sessionStorage và tạo username ngẫu nhiên
+          const password = sessionStorage.getItem("signupPassword");
+          const username = "User" + Math.random().toString(36).substr(2, 9); // Tạo username ngẫu nhiên
+
+          // Gọi API đăng ký người dùng
+          const registerResponse = await axios.post(
+            "http://localhost:5114/api/Auth/Register",
+            {
+              username,
+              email,
+              password,
+            }
+          );
+
+          console.log(registerResponse.data);
+
+          if (registerResponse.status === 200) {
+            navigate("/Login");
+          } else {
+            setError(
+              registerResponse.data.message || "Đăng ký không thành công."
+            );
+          }
+        }
+      } else {
+        setError(response.data.message || "Mã xác minh không chính xác.");
+      }
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại."
+      );
     }
-    // Handle verification logic here
+  };
+
+  const handleResendCode = async () => {
+    setIsResending(true);
     setError("");
+    setMessage("");
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5114/api/Auth/send-verification-code/${encodeURIComponent(
+          email
+        )}`
+      );
+
+      if (response.status === 200 && response.data.status === "success") {
+        setMessage("Mã xác minh đã được gửi lại thành công.");
+      } else {
+        setError(response.data.message || "Không thể gửi lại mã.");
+      }
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại."
+      );
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -84,6 +158,9 @@ const VerifyCode = () => {
               {error && (
                 <p className="text-sm text-red-600 text-center">{error}</p>
               )}
+              {message && (
+                <p className="text-sm text-green-600 text-center">{message}</p>
+              )}
               <button
                 type="submit"
                 className="w-full py-3 px-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
@@ -93,9 +170,13 @@ const VerifyCode = () => {
               <div className="text-center text-sm">
                 <button
                   type="button"
-                  className="text-white hover:blue-700 font-medium"
+                  onClick={handleResendCode}
+                  disabled={isResending}
+                  className={`text-white font-medium ${
+                    isResending ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
-                  Gửi lại mã
+                  {isResending ? "Đang gửi lại mã..." : "Gửi lại mã"}
                 </button>
               </div>
             </form>

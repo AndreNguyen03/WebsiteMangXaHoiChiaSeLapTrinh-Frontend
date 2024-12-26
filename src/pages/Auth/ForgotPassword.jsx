@@ -2,28 +2,60 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Card } from "flowbite-react";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState(""); // Trạng thái cho email nhập vào
+  const [isSubmitted, setIsSubmitted] = useState(false); // Trạng thái xác nhận
+  const [error, setError] = useState(""); // Trạng thái lỗi
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!email) {
-      setError("Please enter your email");
+      setError("Vui lòng nhập email"); // Thông báo lỗi khi để trống email
       return;
     }
 
-    // Handle password reset logic here
-    setIsSubmitted(true);
+    // Kiểm tra định dạng email cơ bản
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Email không hợp lệ");
+      return;
+    }
+
+    // Đặt lại trạng thái lỗi
     setError("");
 
-    // Navigate to another page after a delay (e.g., 3 seconds)
-    setTimeout(() => {
-      navigate(`/VerifyCode?email=${encodeURIComponent(email)}&type=reset`); // Change '/login' to your desired route
-    }, 3000);
+    try {
+      // Gọi API gửi mã xác nhận
+      const response = await axios.post(
+        `http://localhost:5114/api/Auth/send-verification-code/${encodeURIComponent(
+          email
+        )}`
+      );
+
+      const data = response.data;
+
+      if (response.status === 200 && data.status === "success") {
+        setIsSubmitted(true); // Đánh dấu đã gửi yêu cầu thành công
+
+        // Điều hướng tới trang xác minh sau vài giây
+        setTimeout(() => {
+          navigate(`/VerifyCode?email=${encodeURIComponent(email)}&type=reset`);
+        }, 3000);
+      } else {
+        setError(data.message || "Đã xảy ra lỗi. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      // Xử lý lỗi từ server hoặc lỗi kết nối
+      if (error.response) {
+        setError(error.response.data.message || "Đã xảy ra lỗi.");
+      } else {
+        setError("Không thể kết nối tới server. Vui lòng thử lại.");
+      }
+    }
   };
 
   return (
@@ -40,11 +72,11 @@ const ForgotPassword = () => {
               <>
                 <div className="text-center">
                   <h2 className="text-2xl font-semibold text-gray-900">
-                    Forgot your password?
+                    Quên mật khẩu?
                   </h2>
                   <p className="mt-2 text-sm text-gray-600">
-                    Enter your email address and we'll send you instructions to
-                    reset your password
+                    Nhập địa chỉ email của bạn, chúng tôi sẽ gửi mã xác mình
+                    đến.
                   </p>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -61,7 +93,7 @@ const ForgotPassword = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter your email"
+                      placeholder="Nhập email của bạn"
                     />
                   </div>
                   {error && <p className="text-sm text-red-600">{error}</p>}
@@ -69,7 +101,7 @@ const ForgotPassword = () => {
                     type="submit"
                     className="w-full py-3 px-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
                   >
-                    Send Reset Instructions
+                    Gửi mã xác minh
                   </button>
                 </form>
               </>
@@ -77,13 +109,13 @@ const ForgotPassword = () => {
               <div className="text-center space-y-4">
                 <div className="text-green-500 text-5xl mb-4">✓</div>
                 <h3 className="text-xl font-semibold text-gray-900">
-                  Check your email
+                  Kiểm tra email của bạn
                 </h3>
                 <p className="text-sm text-gray-600">
-                  We've sent password reset instructions to your email address
+                  Chúng tôi đã gửi mã xác minh đến email của bạn.
                 </p>
                 <p className="text-sm text-gray-500">
-                  Redirecting to verify code page in a few seconds...
+                  Đang chuyển hướng đến trang xác minh trong vài giây...
                 </p>
               </div>
             )}
@@ -92,7 +124,7 @@ const ForgotPassword = () => {
                 to="/login"
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
-                Back to login
+                Quay lại đăng nhập
               </Link>
             </div>
           </div>

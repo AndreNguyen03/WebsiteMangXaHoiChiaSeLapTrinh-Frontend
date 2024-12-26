@@ -109,12 +109,6 @@ const RightSideBar = () => {
             >
               Về chúng tôi
             </Link>
-            <Link
-              to="/Help"
-              className="text-blue-500 hover:scale-105 transition-transform"
-            >
-              Trợ giúp
-            </Link>
           </motion.div>
         </div>
         <motion.h2
@@ -131,9 +125,11 @@ const RightSideBar = () => {
           initial="hidden"
           animate="show"
         >
-          {hotPosts.map((post) => (
-            <HotQuestion key={post.id} post={post} />
-          ))}
+          {hotPosts && hotPosts.length > 0 ? (
+            hotPosts.map((post) => <HotQuestion key={post.id} post={post} />)
+          ) : (
+            <p>Không có bài viết nổi bật nào</p>
+          )}
         </motion.div>
       </motion.div>
       {/* Kiểm tra và chỉ hiển thị TagBox nếu không phải là trang tag */}

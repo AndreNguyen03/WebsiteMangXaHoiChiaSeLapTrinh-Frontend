@@ -82,7 +82,7 @@ const Question = ({ question, watchedTags }) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          {question.posttags.map((tag, index) => (
+          {question.posttags.slice(0, 3).map((tag, index) => (
             <motion.span
               key={index}
               className="question-tags"
@@ -92,6 +92,16 @@ const Question = ({ question, watchedTags }) => {
               {tag.tag.tagname}
             </motion.span>
           ))}
+          {question.posttags.length > 3 && (
+            <motion.span
+              className="question-tags more-tags"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.2 }}
+            >
+              ...
+            </motion.span>
+          )}
+
           <motion.span className="ml-auto" whileHover={{ scale: 1.02 }}>
             <img
               src={question.user.gravatar}

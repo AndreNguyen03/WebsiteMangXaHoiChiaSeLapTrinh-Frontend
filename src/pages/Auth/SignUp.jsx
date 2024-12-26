@@ -9,8 +9,38 @@ const SignUp = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleSubmit = () => {
-    navigate(`/VerifyCode?email=${encodeURIComponent(email)}&type=signup`);
+  const [isLoading, setIsLoading] = useState(false); // Thêm state loading
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Ngăn form gửi đi mặc định
+
+    // Lưu email và mật khẩu vào sessionStorage
+    sessionStorage.setItem("signupPassword", password);
+
+    // Bắt đầu quá trình gửi mã xác minh
+    setIsLoading(true);
+
+    try {
+      // Gửi yêu cầu gửi mã xác minh tới email
+      const response = await axios.post(
+        `http://localhost:5114/api/Auth/send-verification-code/${encodeURIComponent(
+          email
+        )}`
+      );
+
+      if (response.status === 200 && response.data.status === "success") {
+        // Chuyển hướng sang trang VerifyCode
+        navigate(`/VerifyCode?email=${encodeURIComponent(email)}&type=signup`);
+      } else {
+        alert("Không thể gửi mã xác minh. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      alert(
+        error.response?.data?.message || "Có lỗi xảy ra. Vui lòng thử lại."
+      );
+    } finally {
+      // Kết thúc quá trình gửi mã, ẩn loading
+      setIsLoading(false);
+    }
   };
 
   // Variants for animations
@@ -60,11 +90,6 @@ const SignUp = () => {
           {[
             /* Translated list items */
             { icon: "question-circle", text: "Được giúp đỡ - đặt câu hỏi!" },
-            {
-              icon: "tag",
-              text: "Lưu bài đăng, thẻ và bộ lọc yêu thích của bạn",
-            },
-            { icon: "trophy", text: "Trả lời câu hỏi và kiếm điểm uy tín" },
           ].map((item, index) => (
             <motion.li
               key={index}
@@ -142,6 +167,17 @@ const SignUp = () => {
               Đăng ký
             </motion.button>
           </form>
+          {/* Hiển thị trạng thái loading nếu đang gửi mã */}
+          {isLoading && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-center text-sm text-gray-700 mt-4"
+            >
+              Đang gửi mã xác minh, vui lòng đợi...
+            </motion.div>
+          )}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

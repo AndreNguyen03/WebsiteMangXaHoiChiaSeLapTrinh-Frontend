@@ -64,20 +64,6 @@ const Login = () => {
         variants={itemVariants}
         className="w-full max-w-sm bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300"
       >
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg flex items-center justify-center mb-4 hover:bg-gray-50 transition-colors duration-300"
-        >
-          <i className="fab fa-google mr-2"></i> Đăng nhập với Google
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center mb-6 hover:bg-blue-800 transition-colors duration-300"
-        >
-          <i className="fab fa-facebook-f mr-2"></i> Đăng nhập với Facebook
-        </motion.button>
         <motion.form variants={itemVariants}>
           <motion.div variants={itemVariants} className="mb-4">
             <label className="block text-gray-700">Email</label>
