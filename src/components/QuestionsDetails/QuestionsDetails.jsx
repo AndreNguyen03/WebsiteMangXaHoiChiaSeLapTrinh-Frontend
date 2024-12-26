@@ -14,7 +14,7 @@ const QuestionDetails = ({ postId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get the token from the Redux auth state
+  // Get the token from Redux auth state
   const { token } = useSelector((state) => state.auth);
 
   // Fetch question details
@@ -47,12 +47,17 @@ const QuestionDetails = ({ postId }) => {
           downvote: data.downvote,
           posttags: data.posttags,
           user: data.user,
-          answers: data.answers,
+          answers: data.answers || [], // Ensure answers exist
+          comments: data.comments || [], // Ensure comments exist
         };
         setQuestion(mappedData);
-        setLoading(false);
       } catch (err) {
-        setError("An error occurred. Please try again later.");
+        setError(
+          err.response?.data?.message ||
+            "An error occurred. Please try again later."
+        );
+        console.error("Error fetching question details:", err.response || err);
+      } finally {
         setLoading(false);
       }
     };
@@ -60,18 +65,33 @@ const QuestionDetails = ({ postId }) => {
     fetchQuestion();
   }, [postId, token]);
 
+  // Handles adding a new comment
   const handleCommentAdded = (newComment) => {
-    // Refresh comments or notify the ShowComment component if needed
+    setQuestion((prev) => ({
+      ...prev,
+      comments: [...(prev.comments || []), newComment], // Add new comment
+    }));
   };
 
+  // Handles submitting a new answer
+  const handleAnswerSubmitted = (newAnswer) => {
+    setQuestion((prev) => ({
+      ...prev,
+      answers: [...(prev.answers || []), newAnswer], // Add new answer
+    }));
+  };
+
+  // Loading state
   if (loading) {
     return <div>Loading question...</div>;
   }
 
+  // Error state
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-red-500">{error}</div>;
   }
 
+  // Check if question is not found
   if (!question) {
     return <div>Question not found.</div>;
   }
@@ -127,6 +147,7 @@ const QuestionDetails = ({ postId }) => {
               className="mt-8"
             >
               <h3 className="text-lg font-semibold mb-4">Comments</h3>
+              {/* Ensure the ShowComment component can handle postId and token */}
               <ShowComment postId={postId} token={token} />
               <AddComment
                 parentId={postId}
@@ -176,12 +197,7 @@ const QuestionDetails = ({ postId }) => {
             <AnswerForm
               postId={postId}
               userId={question.user?.id || "Anonymous"}
-              onAnswerSubmitted={(newAnswer) => {
-                setQuestion((prevQuestion) => ({
-                  ...prevQuestion,
-                  answers: [...prevQuestion.answers, newAnswer],
-                }));
-              }}
+              onAnswerSubmitted={handleAnswerSubmitted}
             />
           </div>
         </div>
