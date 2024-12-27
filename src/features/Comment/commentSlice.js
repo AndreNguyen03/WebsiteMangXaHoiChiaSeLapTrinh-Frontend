@@ -1,62 +1,92 @@
-// src/features/Comment/commentSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axiosInstance from "../../utils/axiosInstance"; // Import the axios instance with interceptors
+import axiosInstance from "../../utils/axiosInstance";
 
-// Action to fetch comments
+// Fetch comments for a specific post (question)
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
-  async (questionId) => {
-    const response = await axiosInstance.get(`/Comment/post/${questionId}`);
-    return response.data; // Return the fetched comments
+  async ({ postId, token }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.get(`/Comment/post/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data; // Return fetched comments data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message); // Handle errors
+    }
   }
 );
 
-// Action to add a comment
+// Add a comment to a specific post (question)
 export const addComment = createAsyncThunk(
   "comments/addComment",
-  async ({ questionId, commentText }) => {
-    const response = await axiosInstance.post(`/Comment/post/${questionId}`, {
-      text: commentText,
-    });
-    return response.data; // Return the newly added comment
+  async ({ postId, commentText, token }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        `/Comment/post/${postId}`,
+        { body: commentText },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data; // Return added comment data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message); // Handle errors
+    }
   }
 );
 
+// Initial state for the comments slice
+const initialState = {
+  comments: [],
+  status: "idle", // "idle", "loading", "succeeded", "failed"
+  error: null,
+};
+
+// The comment slice
 const commentSlice = createSlice({
   name: "comments",
-  initialState: {
-    comments: [],
-    status: "idle", // idle, loading, succeeded, failed
-    error: null,
+  initialState,
+  reducers: {
+    clearComments: (state) => {
+      state.comments = [];
+      state.error = null;
+    },
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
-      // Handling fetchComments action
+      // Handle fetchComments actions
       .addCase(fetchComments.pending, (state) => {
         state.status = "loading";
       })
       .addCase(fetchComments.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.comments = action.payload; // Set the fetched comments
+        state.comments = action.payload; // Set fetched comments
       })
       .addCase(fetchComments.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload; // Set error message
       })
-      // Handling addComment action
+      
+      // Handle addComment actions
       .addCase(addComment.pending, (state) => {
         state.status = "loading";
       })
       .addCase(addComment.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.comments.push(action.payload); // Add the new comment to the list
+        state.comments.push(action.payload); // Add new comment to the list
       })
       .addCase(addComment.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message;
+        state.error = action.payload; // Set error message
       });
   },
 });
+
+// Export actions and selectors
+export const { clearComments } = commentSlice.actions;
 
 export default commentSlice.reducer;

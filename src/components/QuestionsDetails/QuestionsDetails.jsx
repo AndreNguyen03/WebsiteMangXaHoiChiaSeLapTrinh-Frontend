@@ -35,6 +35,7 @@ const QuestionDetails = ({ postId }) => {
             },
           }
         );
+
         const data = response.data;
         const mappedData = {
           id: data.id,
@@ -50,7 +51,9 @@ const QuestionDetails = ({ postId }) => {
           answers: data.answers || [], // Ensure answers exist
           comments: data.comments || [], // Ensure comments exist
         };
+
         setQuestion(mappedData);
+        setError(null); // Clear any previous error
       } catch (err) {
         setError(
           err.response?.data?.message ||
@@ -83,117 +86,153 @@ const QuestionDetails = ({ postId }) => {
 
   // Loading state
   if (loading) {
-    return <div>Loading question...</div>;
+    return <div className="text-center text-gray-500">Loading question...</div>;
   }
 
   // Error state
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-center text-red-500">{error}</div>;
   }
 
   // Check if question is not found
   if (!question) {
-    return <div>Question not found.</div>;
+    return <div className="text-center text-gray-500">Question not found.</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Header */}
+        {/* Header */}
         <QuestionHeader
           title={question.title}
           views={question.views}
           createdAt={question.createdAt}
         />
 
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1">
+        {/* Main Content */}
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Left Column: Question and Details */}
+          <div className="flex-1 space-y-8">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white rounded-lg shadow-sm p-6"
+              className="bg-white rounded-lg shadow-lg p-6"
             >
-              <div className="flex gap-4">
+              {/* Vote Buttons */}
+              <div className="flex gap-6 items-start">
                 <VoteButtons
                   votes={(question.upvote || 0) - (question.downvote || 0)}
                 />
+
+                {/* Question Content */}
                 <div className="flex-1">
-                  <p className="text-gray-800 mb-4">
+                  <p className="text-lg text-gray-800 mb-6">
                     {question.tryAndExpecting || "No content provided"}
                   </p>
+
                   <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
-                    <code className="text-sm">
+                    <code className="text-sm text-gray-700">
                       {question.detailProblem ||
                         "No additional details provided."}
                     </code>
                   </pre>
                 </div>
               </div>
-              <UserCard
-                userid={question.user?.id}
-                name={question.user?.username || "Unknown User"}
-                time={`asked ${new Date(
-                  question.createdAt || Date.now()
-                ).toLocaleString()}`}
-                type="question"
-              />
+
+              {/* User Info */}
+              <div className="mt-6">
+                <UserCard
+                  userid={question.user?.id}
+                  name={question.user?.username || "Unknown User"}
+                  time={`asked ${new Date(
+                    question.createdAt || Date.now()
+                  ).toLocaleString()}`}
+                  type="question"
+                />
+              </div>
             </motion.div>
 
-            {/* Show Comments for Question */}
+            {/* Comments Section */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               className="mt-8"
             >
-              <h3 className="text-lg font-semibold mb-4">Comments</h3>
-              {/* Ensure the ShowComment component can handle postId and token */}
+              <h3 className="text-xl font-semibold mb-4 text-gray-800">
+                Comments
+              </h3>
               <ShowComment postId={postId} token={token} />
-              <AddComment
-                parentId={postId}
-                onCommentAdded={handleCommentAdded}
-                apiEndpoint={`http://localhost:5114/api/Comment/post/${postId}`}
-              />
+              <AddComment postId={postId} onCommentAdded={handleCommentAdded} />
             </motion.div>
 
-            {/* Show Answers */}
+            {/* Answers Section */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.6 }}
               className="mt-8"
             >
-              <h2 className="text-lg font-semibold mb-4">Answers</h2>
+              <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+                Answers
+              </h2>
               {question.answers.length > 0 ? (
                 question.answers.map((answer) => (
                   <div
                     key={answer.id}
-                    className="bg-white rounded-lg shadow-sm p-6 mb-4"
+                    className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-300"
                   >
-                    <div className="flex gap-4">
-                      <VoteButtons
-                        votes={(answer.upvote || 0) - (answer.downvote || 0)}
-                      />
+                    <div className="flex gap-6">
+                      {/* Vote Buttons */}
+                      <div className="flex flex-col items-center justify-start w-16 bg-gray-100 p-3 rounded-lg shadow-md mr-6">
+                        <button className="text-gray-600 text-xl hover:text-blue-500 mb-2">
+                          <i className="fa fa-arrow-up"></i>
+                        </button>
+                        <div className="text-xl font-semibold text-gray-900 mb-2">
+                          {(answer.upvote || 0) - (answer.downvote || 0)}
+                        </div>
+                        <button className="text-gray-600 text-xl hover:text-red-500 mb-2">
+                          <i className="fa fa-arrow-down"></i>
+                        </button>
+                      </div>
+
+                      {/* Answer Content */}
                       <div className="flex-1">
-                        <p className="text-gray-800 mb-4">{answer.body}</p>
+                        <p className="text-lg text-gray-800 mb-4 leading-relaxed">
+                          {answer.body}
+                        </p>
                       </div>
                     </div>
-                    <UserCard
-                      userid={answer.userId}
-                      gravatar={answer.user?.gravatar || null}
-                      name={answer.user?.username || `User ${answer.userId}`}
-                      time={`answered ${new Date(
-                        answer.createdAt
-                      ).toLocaleString()}`}
-                      type="answer"
-                    />
+
+                    {/* Answer User Info */}
+                    <div className="flex items-center gap-6 mt-6">
+                      <img
+                        src={
+                          answer.user?.gravatar ||
+                          "https://www.gravatar.com/avatar/placeholder"
+                        }
+                        alt={answer.user?.username || "Anonymous"}
+                        className="w-12 h-12 rounded-full"
+                      />
+                      <div>
+                        <span className="font-semibold text-gray-800">
+                          {answer.user?.username || `User ${answer.userId}`}
+                        </span>
+                        <p className="text-sm text-gray-500">
+                          Answered {new Date(answer.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600">No answers yet.</p>
+                <p className="text-gray-600 italic">No answers yet.</p>
               )}
             </motion.div>
 
+            {/* Answer Form */}
             <AnswerForm
               postId={postId}
               userId={question.user?.id || "Anonymous"}
