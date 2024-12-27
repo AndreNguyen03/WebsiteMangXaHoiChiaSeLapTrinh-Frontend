@@ -4,10 +4,11 @@ import "./RightSideBar.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import HotQuestion from "./HotQuestion";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import TagBox from "../UserProfileMainBar/TagBox";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import { fetchWatchedTags } from "../../features/WatchedTags/WatchedTags";
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,6 +24,8 @@ const RightSideBar = () => {
   const [hotPosts, sethotPosts] = useState([]);
   const [watchedTags, setWatchedTags] = useState([]);
   const authState = useSelector((state) => state.auth);
+  const tags = useSelector((state) => state.watchedTags.tags);
+  const dispatch = useDispatch();
   const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
 
   //gethosposts
@@ -44,25 +47,9 @@ const RightSideBar = () => {
       });
   }, []);
 
-  //getwatchtag
   useEffect(() => {
-    if (authState.user) {
-      axios
-        .get(
-          `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${authState.user}`
-        )
-        .then((response) => {
-          const mappedData = response.data.map((tag) => ({
-            id: tag.id,
-            name: tag.tagname,
-          }));
-          setWatchedTags(mappedData);
-        })
-        .catch((error) => console.error("Error fetching watched tag", error));
-    } else {
-      setWatchedTags(null);
-    }
-  }, [authState.isAuthenticated, authState.user]);
+    dispatch(fetchWatchedTags(authState.user));
+  }, [authState.user]);
 
   // Kiểm tra xem đường dẫn có phải là /questions/tags/:tagId không
   const isTagPage = location.pathname.startsWith("/questions/tags");
@@ -133,9 +120,7 @@ const RightSideBar = () => {
         </motion.div>
       </motion.div>
       {/* Kiểm tra và chỉ hiển thị TagBox nếu không phải là trang tag */}
-      {!isTagPage && authState.isAuthenticated ? (
-        <TagBox tags={watchedTags} />
-      ) : null}
+      {!isTagPage && authState.isAuthenticated ? <TagBox /> : null}
     </motion.div>
   );
 };

@@ -22,7 +22,6 @@ const UserMainBar = () => {
     axios
       .get("http://localhost:5114/api/Users")
       .then((response) => {
-        console.log(response.data);
         setUsers(response.data);
       })
       .catch((error) => {

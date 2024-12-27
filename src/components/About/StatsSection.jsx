@@ -46,7 +46,7 @@ const StatsSection = () => {
 
         {/* Kiểm tra xem stats có dữ liệu không */}
         {stats.length === 0 ? (
-          <div>Đang tải dữ liệu...</div>
+          <div className="text-center">Đang tải dữ liệu...</div>
         ) : (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8"

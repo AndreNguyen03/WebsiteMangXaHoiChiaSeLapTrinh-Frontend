@@ -8,6 +8,7 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState(""); // Trạng thái cho email nhập vào
   const [isSubmitted, setIsSubmitted] = useState(false); // Trạng thái xác nhận
   const [error, setError] = useState(""); // Trạng thái lỗi
+  const [isLoading, setIsLoading] = useState(false); // Trạng thái tải
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,7 +28,7 @@ const ForgotPassword = () => {
 
     // Đặt lại trạng thái lỗi
     setError("");
-
+    setIsLoading(true); // Đặt trạng thái tải
     try {
       // Gọi API gửi mã xác nhận
       const response = await axios.post(
@@ -55,6 +56,8 @@ const ForgotPassword = () => {
       } else {
         setError("Không thể kết nối tới server. Vui lòng thử lại.");
       }
+    } finally {
+      setIsLoading(false); // Đặt trạng thái tải về false
     }
   };
 
@@ -98,10 +101,11 @@ const ForgotPassword = () => {
                   </div>
                   {error && <p className="text-sm text-red-600">{error}</p>}
                   <button
+                    disabled={isLoading}
                     type="submit"
                     className="w-full py-3 px-4 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
                   >
-                    Gửi mã xác minh
+                    {isLoading ? "Đang gửi..." : "Gửi mã xác minh"}
                   </button>
                 </form>
               </>

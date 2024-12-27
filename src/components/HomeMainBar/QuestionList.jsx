@@ -3,7 +3,8 @@ import Question from "./Question";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchWatchedTags } from "../../features/WatchedTags/WatchedTags";
 
 const container = {
   hidden: { opacity: 0 },
@@ -17,27 +18,15 @@ const container = {
 
 const QuestionList = ({ posts }) => {
   const authState = useSelector((state) => state.auth);
+  const tags = useSelector((state) => state.watchedTags.tags);
+
   const [watchedTags, setWatchedTags] = useState(null);
+  const dispatch = useDispatch();
 
   //getwatchtag
   useEffect(() => {
-    if (authState.user) {
-      axios
-        .get(
-          `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${authState.user}`
-        )
-        .then((response) => {
-          const mappedData = response.data.map((tag) => ({
-            id: tag.id,
-            name: tag.tagname,
-          }));
-          setWatchedTags(mappedData);
-        })
-        .catch((error) => console.error("Error fetching watched tag", error));
-    } else {
-      setWatchedTags(null);
-    }
-  }, [authState.isAuthenticated, authState.user]);
+    dispatch(fetchWatchedTags(authState.user));
+  }, [authState.user]);
 
   return (
     <motion.div variants={container} initial="hidden" animate="show">
@@ -48,11 +37,7 @@ const QuestionList = ({ posts }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Question
-            key={question.id}
-            question={question}
-            watchedTags={watchedTags}
-          />
+          <Question key={question.id} question={question} watchedTags={tags} />
           <hr className="h-0.5 border-t-0 bg-gray-100" />
         </motion.div>
       ))}

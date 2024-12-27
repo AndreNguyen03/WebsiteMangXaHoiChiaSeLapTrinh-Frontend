@@ -7,6 +7,7 @@ import Avatar from "../Avatar/Avatar.jsx";
 import logo from "../../assets/logo_side.png";
 
 import { logout } from "../../features/Auth/Auth";
+import { clearWatchedTags } from "../../features/WatchedTags/WatchedTags.jsx";
 import "./Navbar.css";
 
 const Navbar = () => {
@@ -18,29 +19,32 @@ const Navbar = () => {
   // Hàm đăng xuất
   const handleLogout = () => {
     dispatch(logout()); // Xóa thông tin người dùng khỏi Redux
+    dispatch(clearWatchedTags()); // Xóa danh sách tag theo dõi khỏi Redux
     navigate("/Login"); // Chuyển hướng sang trang đăng nhập
   };
 
-  // Gọi API để lấy thông tin người dùng
   useEffect(() => {
-    if (authState.user) {
-      axios
-        .get(`http://localhost:5114/api/Users/${authState.user}`)
-        .then((response) => {
+    const fetchUser = async () => {
+      if (authState.user) {
+        try {
+          const response = await axios.get(
+            `http://localhost:5114/api/Users/${authState.user}`
+          );
           setUser({
             id: response.data.id,
             username: response.data.username,
             gravatar: response.data.gravatar,
           });
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Lỗi khi tải thông tin người dùng:", error);
-          setUser(null); // Đặt người dùng về null nếu gặp lỗi
-        });
-    } else {
-      setUser(null);
-    }
-  }, [authState.user]);
+          setUser(null);
+        }
+      } else {
+        //setUser(null);
+      }
+    };
+    fetchUser();
+  }, [authState.user]); // Lắng nghe cả hai thay đổi
 
   return (
     <nav className="bg-white shadow-sm w-screen m-0 sticky top-0 z-50">
@@ -58,7 +62,7 @@ const Navbar = () => {
         </div>
 
         {/* Thanh tìm kiếm và hành động của người dùng */}
-        <div className="flex  justify-between items-center flex-grow ml-6 gap-8">
+        <div className="flex justify-between items-center flex-grow ml-6 gap-8">
           <div className="relative flex items-center w-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -91,7 +95,7 @@ const Navbar = () => {
             </>
           ) : (
             // Hiển thị nút đăng nhập nếu chưa đăng nhập
-            <Link to="/Login" className="nav-item-btn ">
+            <Link to="/Login" className="nav-item-btn">
               Đăng nhập
             </Link>
           )}
