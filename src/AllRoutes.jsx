@@ -13,6 +13,7 @@ import Tags from "./pages/Tags/Tags";
 import QuestionsWithTag from "./pages/QuestionsWithTag/QuestionsWithTag";
 import Users from "./pages/Users/Users";
 import UserProfile from "./pages/UserProfile/UserProfile";
+import About from "./pages/About/About";
 import HomeDashboard from "./pages/Admin/HomeDashboard/HomeDashboard";
 import QuestionManagement from "./pages/Admin/QuestionManagement/QuestionManagement";
 import AnswerManagement from "./pages/Admin/AnswerManagement/AnswerManagement";
@@ -26,6 +27,7 @@ const AllRoutes = () => {
     <Routes>
       {/* Auth Routes */}
       <Route path="/" element={<Home />} />
+      <Route path="/About" element={<About />} />
       <Route path="/Login" element={<Login />} />
       <Route path="/SignUp" element={<SignUp />} />
       <Route path="/VerifyCode" element={<VerifyCode />} />
