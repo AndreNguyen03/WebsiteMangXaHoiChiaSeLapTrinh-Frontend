@@ -9,6 +9,8 @@ import logo from "../../assets/logo_side.png";
 import { logout } from "../../features/Auth/Auth";
 import { clearWatchedTags } from "../../features/WatchedTags/WatchedTags.jsx";
 import "./Navbar.css";
+import "./SearchInput.jsx";
+import SearchInput from "./SearchInput.jsx";
 
 const Navbar = () => {
   const authState = useSelector((state) => state.auth); // Lấy trạng thái xác thực từ Redux
@@ -76,11 +78,7 @@ const Navbar = () => {
                 clipRule="evenodd"
               />
             </svg>
-            <input
-              type="text"
-              className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md pl-10 pr-3 py-2 focus:outline-orange-200 focus:border-slate-400 hover:border-slate-300 shadow-sm"
-              placeholder="Tìm kiếm..."
-            />
+            <SearchInput></SearchInput>
           </div>
 
           {authState.isAuthenticated && user ? (
