@@ -11,6 +11,7 @@ import AskQuestion from "./pages/AskQuestion/AskQuestion";
 import DisplayQuestion from "./pages/DisplayQuestions/DisplayQuestion";
 import Tags from "./pages/Tags/Tags";
 import QuestionsWithTag from "./pages/QuestionsWithTag/QuestionsWithTag";
+import QuestionsWithKeyWord from "./pages/QuestionWithKeyWord/QuestionWithKeyWord";
 import Users from "./pages/Users/Users";
 import UserProfile from "./pages/UserProfile/UserProfile";
 import About from "./pages/About/About";
@@ -40,6 +41,10 @@ const AllRoutes = () => {
       <Route path="/AskQuestion" element={<AskQuestion />} />
       <Route path="/Tags" element={<Tags />} />
       <Route path="/Questions/tags/:tagId" element={<QuestionsWithTag />} />
+      <Route
+        path="/Questions/keyword/:keyword"
+        element={<QuestionsWithKeyWord />}
+      />
 
       {/* User Routes */}
       <Route path="/Users" element={<Users />} />

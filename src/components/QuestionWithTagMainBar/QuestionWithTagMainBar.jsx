@@ -1,44 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
 import QuestionList from "../HomeMainBar/QuestionList"; // Giả sử bạn đã có component này
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar"; // Giả sử bạn đã có component này
 import AskQuestionButton from "../HomeMainBar/AskQuestionButton"; // Giả sử bạn đã có component này
-import { useSelector } from "react-redux";
+import {
+  fetchWatchedTags,
+  watchTag,
+  unwatchTag,
+} from "../../features/WatchedTags/WatchedTags";
+import axios from "axios";
 
 const sortingOptions = ["Mới nhất", "Tên", "Chưa trả lời"]; // Translated sorting options
 
 const QuestionWithTagMainBar = () => {
-  const authState = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const { tagId } = useParams();
-  const [isUserWatchingTag, setUserWatchingTag] = useState(false);
-  const [userWatchedTags, setUserWatchedTags] = useState([]);
+  const authState = useSelector((state) => state.auth);
+  const watchedTags = useSelector((state) => state.watchedTags.tags);
+  const isLoading = useSelector((state) => state.watchedTags.loading);
+
   const [posts, setPosts] = useState([]);
   const [sorting, setSorting] = useState("Mới nhất"); // Default sorting translated
   const [tag, setTag] = useState({});
 
-  // Hàm lấy thông tin các tag mà người dùng đang theo dõi
+  // Kiểm tra xem tag hiện tại có nằm trong danh sách watchedTags hay không
+  const isUserWatchingTag = watchedTags.some((tag) => tag.id === tagId);
+
+  // Fetch danh sách tag mà người dùng đang theo dõi khi component được mount
   useEffect(() => {
     if (authState.user) {
-      axios
-        .get(
-          `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${authState.user}`
-        )
-        .then((response) => {
-          const watchedTags = response.data;
-          setUserWatchedTags(watchedTags);
-
-          // Kiểm tra nếu tag hiện tại có trong danh sách watched tags của người dùng
-          const isWatching = watchedTags.some((tag) => tag.id === tagId);
-          setUserWatchingTag(isWatching);
-        })
-        .catch((error) => {
-          console.error("There was an error fetching watched tags!", error);
-        });
+      dispatch(fetchWatchedTags(authState.user));
     }
-  }, [tagId]);
+  }, [authState.user, dispatch]);
 
   // Lấy thông tin về tag hiện tại
   useEffect(() => {
@@ -78,34 +74,16 @@ const QuestionWithTagMainBar = () => {
 
   // Hàm xử lý Watch tag
   const handleWatchTag = () => {
-    axios
-      .post(
-        `http://localhost:5114/api/Tags/watch?userId=${authState.user}&tagId=${tagId}`
-      )
-      .then(() => {
-        setUserWatchingTag(true);
-        setUserWatchedTags((prevTags) => [...prevTags, { id: tagId }]);
-      })
-      .catch((error) => {
-        console.error("There was an error watching the tag!", error);
-      });
+    if (authState.user) {
+      dispatch(watchTag({ userId: authState.user, tagId }));
+    }
   };
 
   // Hàm xử lý Unwatch tag
   const handleUnwatchTag = () => {
-    axios
-      .delete(
-        `http://localhost:5114/api/Tags/unwatch?userId=${authState.user}&tagId=${tagId}`
-      )
-      .then(() => {
-        setUserWatchingTag(false);
-        setUserWatchedTags((prevTags) =>
-          prevTags.filter((tag) => tag.id !== tagId)
-        );
-      })
-      .catch((error) => {
-        console.error("There was an error unwatching the tag!", error);
-      });
+    if (authState.user) {
+      dispatch(unwatchTag({ userId: authState.user, tagId }));
+    }
   };
 
   // Sắp xếp các bài viết theo lựa chọn
@@ -158,6 +136,7 @@ const QuestionWithTagMainBar = () => {
                 size="md"
                 pill
                 onClick={handleWatchTag}
+                disabled={isLoading}
               >
                 Theo dõi
               </Button>
@@ -175,6 +154,7 @@ const QuestionWithTagMainBar = () => {
                 pill
                 outline
                 onClick={handleUnwatchTag}
+                disabled={isLoading}
               >
                 Bỏ theo dõi
               </Button>

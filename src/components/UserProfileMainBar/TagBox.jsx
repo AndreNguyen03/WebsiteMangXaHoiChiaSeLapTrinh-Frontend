@@ -2,8 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Button } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchWatchedTags,
+  watchTag,
+  unwatchTag,
+} from "../../features/WatchedTags/WatchedTags";
 import axios from "axios";
+import { use } from "react";
 
 const container = {
   hidden: { opacity: 0 },
@@ -20,14 +26,19 @@ const item = {
   show: { opacity: 1, scale: 1 },
 };
 
-const TagBox = ({ tags }) => {
+const TagBox = () => {
+  const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
+  const { tags, loading } = useSelector((state) => state.watchedTags);
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
-  const [availableTags, setAvailableTags] = useState([]);
   const [newTag, setNewTag] = useState("");
   const [suggestedTags, setSuggestedTags] = useState([]);
-  const [tagsList, setTagsList] = useState(tags);
+  const [availableTags, setAvailableTags] = useState([]);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  // Local state for immediate UI update
+  const [localTags, setLocalTags] = useState([]);
 
   // Lấy userid từ URL nếu đang ở /users/{userid}
   const isUserProfilePage = location.pathname.startsWith("/users/");
@@ -51,10 +62,33 @@ const TagBox = ({ tags }) => {
       });
   }, []);
 
+  useEffect(() => {}, []);
+
+  // useEffect(() => {
+  //   // Khi component được mount
+  //   setIsFirstLoad(false);
+
+  //   // Cleanup function khi component unmounted
+  //   return () => {
+  //     setIsFirstLoad(true); // Reset isFirstLoad về trạng thái ban đầu
+  //   };
+  // }, []);
+
   useEffect(() => {
-    // Cập nhật tagsList khi props tags thay đổi
-    setTagsList(tags);
-  }, [tags]);
+    const fetchData = async () => {
+      const result = await dispatch(
+        fetchWatchedTags(userIdInUrl || authState.user)
+      );
+      if (result.error) {
+        console.error("Lỗi khi fetch watched tags:", result.error);
+        return;
+      }
+      //console.log(result.payload);
+      setLocalTags(result.payload); // Set dữ liệu ngay sau khi fetch xong
+    };
+
+    fetchData();
+  }, [userIdInUrl]);
 
   // Cập nhật danh sách gợi ý tag khi người dùng nhập vào
   useEffect(() => {
@@ -71,36 +105,15 @@ const TagBox = ({ tags }) => {
 
   // Hàm để thêm tag vào danh sách
   const addTag = (tag) => {
-    // Gửi yêu cầu đến API watch khi người dùng chọn tag
-    axios
-      .post(
-        `http://localhost:5114/api/Tags/watch?userId=${authState.user}&tagId=${tag.id}`
-      )
-      .then(() => {
-        // Cập nhật danh sách tag trong UI ngay khi tag được thêm
-        if (!tagsList.find((t) => t.id === tag.id)) {
-          setTagsList([...tagsList, tag]);
-        }
-      })
-      .catch((error) => {
-        console.error("There was an error adding the tag!", error);
-      });
+    dispatch(watchTag({ userId: authState.user, tagId: tag.id }));
+    if (localTags.find((t) => t.id === tag.id)) return;
+    setLocalTags([...localTags, { id: tag.id, name: tag.name }]); // Ensure both id and name are included
   };
 
   // Hàm để xoá tag khỏi danh sách
   const removeTag = (tagId) => {
-    // Gửi yêu cầu đến API unwatch khi người dùng xoá tag
-    axios
-      .delete(
-        `http://localhost:5114/api/Tags/unwatch?userId=${authState.user}&tagId=${tagId}`
-      )
-      .then(() => {
-        // Cập nhật danh sách tag trong UI ngay khi tag được xoá
-        setTagsList(tagsList.filter((tag) => tag.id !== tagId));
-      })
-      .catch((error) => {
-        console.error("There was an error unwatching the tag!", error);
-      });
+    dispatch(unwatchTag({ userId: authState.user, tagId }));
+    setLocalTags(localTags.filter((tag) => tag.id !== tagId)); // Update UI immediately
   };
 
   return (
@@ -123,7 +136,6 @@ const TagBox = ({ tags }) => {
         >
           Các thẻ đã theo dõi
         </motion.h3>
-        {/* Điều kiện hiển thị nút "Chỉnh sửa" */}
         {isUserProfilePage && userIdInUrl === authState.user ? (
           <Button
             outline
@@ -192,7 +204,16 @@ const TagBox = ({ tags }) => {
         initial="hidden"
         animate="show"
       >
-        {!tagsList || tagsList.length === 0 ? (
+        {loading === true ? (
+          <motion.p
+            className="text-gray-500"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            Đang tải...
+          </motion.p>
+        ) : !localTags || localTags.length === 0 ? (
           <motion.p
             className="text-gray-500"
             initial={{ opacity: 0 }}
@@ -202,7 +223,7 @@ const TagBox = ({ tags }) => {
             Không có thẻ nào
           </motion.p>
         ) : (
-          tagsList.map((tag, index) => (
+          localTags.map((tag, index) => (
             <motion.div
               key={index}
               variants={item}
