@@ -3,8 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 
-import Avatar from "../Avatar/Avatar.jsx";
+//import Avatar from "../Avatar/Avatar.jsx";
 import logo from "../../assets/logo_side.png";
+import { Avatar } from "flowbite-react";
 
 import { logout } from "../../features/Auth/Auth";
 import { clearWatchedTags } from "../../features/WatchedTags/WatchedTags.jsx";
@@ -85,7 +86,13 @@ const Navbar = () => {
             <>
               {/* Hiển thị ảnh đại diện và nút đăng xuất nếu đã đăng nhập */}
               <Link to={`/users/${user.id}`}>
-                <Avatar gravatar={user.gravatar} />
+                <Avatar
+                  img={user.gravatar}
+                  size="md"
+                  alt={user.username}
+                ></Avatar>
+
+                {/* <Avatar gravatar={user.gravatar} /> */}
               </Link>
               <button className="nav-item-btn" onClick={handleLogout}>
                 Đăng xuất

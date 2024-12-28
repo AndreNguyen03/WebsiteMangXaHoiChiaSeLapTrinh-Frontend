@@ -5,7 +5,7 @@ const Avatar = ({ gravatar }) => {
     <img
       src={gravatar}
       alt="https://placehold.co/600x400.png"
-      class="relative inline-block h-12 w-12 !rounded-full object-cover object-center"
+      class="relative inline-block size-12 rounded-full object-cover object-center"
     />
   );
 };
