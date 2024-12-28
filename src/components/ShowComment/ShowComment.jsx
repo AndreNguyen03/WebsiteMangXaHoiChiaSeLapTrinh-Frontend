@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchComments } from "../../features/Comment/commentSlice"; // Assuming you have a Redux slice
+import { fetchComments } from "../../features/Comment/commentSlice"; // Path to your slice
 
 const ShowComment = ({ postId }) => {
   const dispatch = useDispatch();
@@ -43,16 +43,14 @@ const ShowComment = ({ postId }) => {
       {status === "succeeded" && comments.length > 0 ? (
         <div className="space-y-4">
           {comments.map((comment) => (
-            <div key={comment.id} className="bg-white shadow-md rounded-lg p-4">
+            <div
+              key={comment.id}
+              className="bg-gray-50 shadow-md rounded-lg p-4 hover:shadow-lg transition"
+            >
               <p className="text-gray-800">{comment.body}</p>
-              <div className="mt-2 flex items-center justify-between">
-                <small className="text-sm text-gray-500">
-                  {/* Display userId as a placeholder; you can replace this with a real username */}
-                  By User ID: {comment.userId}
-                </small>
-                <small className="text-xs text-gray-400">
-                  {new Date(comment.createdAt).toLocaleString()}
-                </small>
+              <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
+                <span>By: {comment.username || "Unknown User"}</span>
+                <span>{new Date(comment.createdAt).toLocaleString()}</span>
               </div>
             </div>
           ))}

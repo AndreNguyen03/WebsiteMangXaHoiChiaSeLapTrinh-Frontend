@@ -10,5 +10,6 @@ export const store = configureStore({
     auth: authReducer,
     tempTags: tempTagsReducer,
     comment: commentReducer,
+    watchedTags: watchedTagsReducer
   },
 });
