@@ -14,14 +14,14 @@ const QuestionDetails = ({ postId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Get the token from Redux auth state
+  // Lấy token từ Redux auth state
   const { token } = useSelector((state) => state.auth);
 
-  // Fetch question details
+  // Lấy thông tin chi tiết câu hỏi
   useEffect(() => {
     const fetchQuestion = async () => {
       if (!postId) {
-        setError("Post ID is missing");
+        setError("Thiếu ID bài viết");
         setLoading(false);
         return;
       }
@@ -31,7 +31,7 @@ const QuestionDetails = ({ postId }) => {
           `http://localhost:5114/api/Posts/${postId}`,
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Attach token to the request
+              Authorization: `Bearer ${token}`, // Đính kèm token vào yêu cầu
             },
           }
         );
@@ -48,18 +48,17 @@ const QuestionDetails = ({ postId }) => {
           downvote: data.downvote,
           posttags: data.posttags,
           user: data.user,
-          answers: data.answers || [], // Ensure answers exist
-          comments: data.comments || [], // Ensure comments exist
+          answers: data.answers || [], // Đảm bảo có danh sách câu trả lời
+          comments: data.comments || [], // Đảm bảo có danh sách bình luận
         };
 
         setQuestion(mappedData);
-        setError(null); // Clear any previous error
+        setError(null); // Xóa lỗi cũ nếu có
       } catch (err) {
         setError(
-          err.response?.data?.message ||
-            "An error occurred. Please try again later."
+          err.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại sau."
         );
-        console.error("Error fetching question details:", err.response || err);
+        console.error("Lỗi khi lấy chi tiết câu hỏi:", err.response || err);
       } finally {
         setLoading(false);
       }
@@ -68,41 +67,42 @@ const QuestionDetails = ({ postId }) => {
     fetchQuestion();
   }, [postId, token]);
 
-  // Handles adding a new comment
+  // Xử lý thêm bình luận mới
   const handleCommentAdded = (newComment) => {
     setQuestion((prev) => ({
       ...prev,
-      comments: [...(prev.comments || []), newComment], // Add new comment
+      comments: [...(prev.comments || []), newComment], // Thêm bình luận mới
     }));
   };
 
-  // Handles submitting a new answer
+  // Xử lý thêm câu trả lời mới
   const handleAnswerSubmitted = (newAnswer) => {
     setQuestion((prev) => ({
       ...prev,
-      answers: [...(prev.answers || []), newAnswer], // Add new answer
+      answers: [...(prev.answers || []), newAnswer], // Thêm câu trả lời mới
     }));
   };
 
-  // Loading state
+  // Trạng thái loading
   if (loading) {
-    return <div className="text-center text-gray-500">Loading question...</div>;
+    return <div className="text-center text-gray-500">Đang tải câu hỏi...</div>;
   }
 
-  // Error state
+  // Trạng thái lỗi
   if (error) {
     return <div className="text-center text-red-500">{error}</div>;
   }
 
-  // Check if question is not found
+  // Kiểm tra nếu câu hỏi không tìm thấy
   if (!question) {
-    return <div className="text-center text-gray-500">Question not found.</div>;
+    return (
+      <div className="text-center text-gray-500">Không tìm thấy câu hỏi.</div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
         {/* Header */}
         <QuestionHeader
           title={question.title}
@@ -110,9 +110,9 @@ const QuestionDetails = ({ postId }) => {
           createdAt={question.createdAt}
         />
 
-        {/* Main Content */}
+        {/* Nội dung chính */}
         <div className="flex flex-col md:flex-row gap-8">
-          {/* Left Column: Question and Details */}
+          {/* Cột trái: Nội dung câu hỏi */}
           <div className="flex-1 space-y-8">
             <motion.div
               initial={{ opacity: 0 }}
@@ -120,33 +120,32 @@ const QuestionDetails = ({ postId }) => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-white rounded-lg shadow-lg p-6"
             >
-              {/* Vote Buttons */}
+              {/* Nút bầu chọn */}
               <div className="flex gap-6 items-start">
                 <VoteButtons
                   votes={(question.upvote || 0) - (question.downvote || 0)}
                 />
 
-                {/* Question Content */}
+                {/* Nội dung câu hỏi */}
                 <div className="flex-1">
                   <p className="text-lg text-gray-800 mb-6">
-                    {question.tryAndExpecting || "No content provided"}
+                    {question.tryAndExpecting || "Không có nội dung."}
                   </p>
 
                   <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
                     <code className="text-sm text-gray-700">
-                      {question.detailProblem ||
-                        "No additional details provided."}
+                      {question.detailProblem || "Không có chi tiết bổ sung."}
                     </code>
                   </pre>
                 </div>
               </div>
 
-              {/* User Info */}
+              {/* Thông tin người dùng */}
               <div className="mt-6">
                 <UserCard
                   userid={question.user?.id}
-                  name={question.user?.username || "Unknown User"}
-                  time={`asked ${new Date(
+                  name={question.user?.username || "Người dùng ẩn danh"}
+                  time={`đã hỏi vào ${new Date(
                     question.createdAt || Date.now()
                   ).toLocaleString()}`}
                   type="question"
@@ -154,7 +153,7 @@ const QuestionDetails = ({ postId }) => {
               </div>
             </motion.div>
 
-            {/* Comments Section */}
+            {/* Phần bình luận */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -162,13 +161,13 @@ const QuestionDetails = ({ postId }) => {
               className="mt-8"
             >
               <h3 className="text-xl font-semibold mb-4 text-gray-800">
-                Comments
+                Bình luận
               </h3>
               <ShowComment postId={postId} token={token} />
               <AddComment postId={postId} onCommentAdded={handleCommentAdded} />
             </motion.div>
 
-            {/* Answers Section */}
+            {/* Phần câu trả lời */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -176,7 +175,7 @@ const QuestionDetails = ({ postId }) => {
               className="mt-8"
             >
               <h2 className="text-2xl font-semibold mb-6 text-gray-800">
-                Answers
+                Câu trả lời
               </h2>
               {question.answers.length > 0 ? (
                 question.answers.map((answer) => (
@@ -185,7 +184,7 @@ const QuestionDetails = ({ postId }) => {
                     className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-300"
                   >
                     <div className="flex gap-6">
-                      {/* Vote Buttons */}
+                      {/* Nút bầu chọn */}
                       <div className="flex flex-col items-center justify-start w-16 bg-gray-100 p-3 rounded-lg shadow-md mr-6">
                         <button className="text-gray-600 text-xl hover:text-blue-500 mb-2">
                           <i className="fa fa-arrow-up"></i>
@@ -198,7 +197,7 @@ const QuestionDetails = ({ postId }) => {
                         </button>
                       </div>
 
-                      {/* Answer Content */}
+                      {/* Nội dung câu trả lời */}
                       <div className="flex-1">
                         <p className="text-lg text-gray-800 mb-4 leading-relaxed">
                           {answer.body}
@@ -206,36 +205,38 @@ const QuestionDetails = ({ postId }) => {
                       </div>
                     </div>
 
-                    {/* Answer User Info */}
+                    {/* Thông tin người dùng */}
                     <div className="flex items-center gap-6 mt-6">
                       <img
                         src={
                           answer.user?.gravatar ||
                           "https://www.gravatar.com/avatar/placeholder"
                         }
-                        alt={answer.user?.username || "Anonymous"}
+                        alt={answer.user?.username || "Người ẩn danh"}
                         className="w-12 h-12 rounded-full"
                       />
                       <div>
                         <span className="font-semibold text-gray-800">
-                          {answer.user?.username || `User ${answer.userId}`}
+                          {answer.user?.username ||
+                            `Người dùng ${answer.userId}`}
                         </span>
                         <p className="text-sm text-gray-500">
-                          Answered {new Date(answer.createdAt).toLocaleString()}
+                          Đã trả lời vào{" "}
+                          {new Date(answer.createdAt).toLocaleString()}
                         </p>
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600 italic">No answers yet.</p>
+                <p className="text-gray-600 italic">Chưa có câu trả lời nào.</p>
               )}
             </motion.div>
 
-            {/* Answer Form */}
+            {/* Form trả lời */}
             <AnswerForm
               postId={postId}
-              userId={question.user?.id || "Anonymous"}
+              userId={question.user?.id || "Người dùng ẩn danh"}
               onAnswerSubmitted={handleAnswerSubmitted}
             />
           </div>

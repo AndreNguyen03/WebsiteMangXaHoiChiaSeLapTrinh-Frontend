@@ -10,12 +10,12 @@ const AnswerForm = ({ postId, userId, onAnswerSubmitted }) => {
     e.preventDefault();
 
     if (!answer.trim()) {
-      setError("Answer cannot be empty.");
+      setError("Câu trả lời không được để trống.");
       return;
     }
 
     if (!userId) {
-      setError("You must be logged in to submit an answer.");
+      setError("Bạn phải đăng nhập để gửi câu trả lời.");
       return;
     }
 
@@ -25,15 +25,15 @@ const AnswerForm = ({ postId, userId, onAnswerSubmitted }) => {
 
       const response = await axios.post("http://localhost:5114/api/Answers", {
         body: answer,
-        userId: userId, // Pass userId
-        postId: postId, // Pass postId
+        userId: userId, // Gửi userId
+        postId: postId, // Gửi postId
       });
 
       if (onAnswerSubmitted) onAnswerSubmitted(response.data);
 
       setAnswer("");
     } catch (err) {
-      setError("Error submitting your answer.");
+      setError("Có lỗi xảy ra khi gửi câu trả lời.");
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ const AnswerForm = ({ postId, userId, onAnswerSubmitted }) => {
       <textarea
         value={answer}
         onChange={(e) => setAnswer(e.target.value)}
-        placeholder="Type your answer here..."
+        placeholder="Nhập câu trả lời của bạn..."
         className="w-full p-4 border rounded-lg"
       />
       {error && <p className="text-red-500 mt-2">{error}</p>}
@@ -53,7 +53,7 @@ const AnswerForm = ({ postId, userId, onAnswerSubmitted }) => {
         disabled={loading}
         className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
       >
-        {loading ? "Submitting..." : "Submit Answer"}
+        {loading ? "Đang gửi..." : "Gửi câu trả lời"}
       </button>
     </form>
   );
