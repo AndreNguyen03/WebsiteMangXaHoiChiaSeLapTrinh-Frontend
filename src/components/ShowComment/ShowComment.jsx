@@ -4,7 +4,7 @@ import { fetchComments } from "../../features/Comment/commentSlice"; // Assuming
 
 const ShowComment = ({ postId }) => {
   const dispatch = useDispatch();
-  const { comments, status, error } = useSelector((state) => state.comments);
+  const { comments, status, error } = useSelector((state) => state.comment);
 
   // Fetch token from Redux or localStorage as a fallback
   const token =

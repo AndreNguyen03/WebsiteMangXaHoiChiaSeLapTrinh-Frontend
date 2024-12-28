@@ -5,7 +5,7 @@ import { addComment } from "../../features/Comment/commentSlice"; // Assuming yo
 const AddComment = ({ postId, onCommentAdded }) => {
   const [commentText, setCommentText] = useState("");
   const dispatch = useDispatch();
-  const { status } = useSelector((state) => state.comments);
+  const { status } = useSelector((state) => state.comment);
   const { token } = useSelector((state) => state.auth); // Assuming token is in Redux auth state
 
   // If you're using localStorage, fallback to it:
