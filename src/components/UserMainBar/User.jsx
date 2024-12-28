@@ -62,7 +62,10 @@ const User = ({ user }) => {
               transition={{ delay: 0.2 }}
               className="space-y-1 font-medium"
             >
-              <div>{user.username}</div>
+              <div className="truncate whitespace-nowrap overflow-hidden max-w-[100px]">
+                {user.username}
+              </div>
+
               <motion.div
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
