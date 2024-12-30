@@ -4,11 +4,10 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchWatchedTags,
-  watchTag,
-  unwatchTag,
-} from "../../features/WatchedTags/WatchedTags";
-import { fetchIgnoredTags } from "../../features/IgnoreTags/IgnoreTags";
+  fetchIgnoredTags,
+  ignoreTag,
+  unignoreTag,
+} from "../../features/IgnoreTags/IgnoreTags";
 import axios from "axios";
 
 const container = {
@@ -26,21 +25,16 @@ const item = {
   show: { opacity: 1, scale: 1 },
 };
 
-const TagBox = () => {
+const IgnoreTagBox = () => {
   const dispatch = useDispatch();
   const authState = useSelector((state) => state.auth);
-  const { tags, loading } = useSelector((state) => state.watchedTags);
-  const { tags: ignoredTags } = useSelector((state) => state.ignoredTags);
+  const { tags, loading } = useSelector((state) => state.ignoredTags);
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
   const [newTag, setNewTag] = useState("");
   const [suggestedTags, setSuggestedTags] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-
-  // Local state for immediate UI update
   const [localTags, setLocalTags] = useState([]);
-  const [tempIgnoreTags, setTempIgnoreTags] = useState([]);
 
   // Lấy userid từ URL nếu đang ở /users/{userid}
   const isUserProfilePage = location.pathname.startsWith("/users/");
@@ -48,49 +42,34 @@ const TagBox = () => {
     ? location.pathname.split("/")[2]
     : null;
 
-  // Fetch available tags từ API, excluding ignored tags
+  // Fetch available tags từ API
   useEffect(() => {
-    const fetchAvailableTags = async () => {
-      try {
-        const response = await axios.get("http://localhost:5114/api/Tags");
+    axios
+      .get("http://localhost:5114/api/Tags")
+      .then((response) => {
         const mappedData = response.data.map((tag) => ({
           id: tag.id,
           name: tag.tagname,
         }));
-        const filteredTags = mappedData.filter(
-          (tag) => !ignoredTags.some((ignoredTag) => ignoredTag.id === tag.id)
-        );
-        setAvailableTags(filteredTags);
-      } catch (error) {
+        setAvailableTags(mappedData);
+      })
+      .catch((error) => {
         console.error("There was an error fetching the tags!", error);
-      }
-    };
-
-    if (ignoredTags.length != tempIgnoreTags.length) {
-      setTempIgnoreTags(ignoredTags);
-      fetchData();
-      fetchAvailableTags();
-    }
-  }, [ignoredTags]);
-
-  useEffect(() => {}, []);
-
-  const fetchData = async () => {
-    const result = await dispatch(
-      fetchWatchedTags(userIdInUrl || authState.user)
-    );
-    if (result.error) {
-      console.error("Lỗi khi fetch watched tags:", result.error);
-      return;
-    }
-    //setLocalTags(result.payload); // Set dữ liệu ngay sau khi fetch xongc
-
-    if (result.payload.length !== localTags.length) {
-      setLocalTags(result.payload); // Set dữ liệu ngay sau khi fetch xongc
-    }
-  };
+      });
+  }, []);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const result = await dispatch(
+        fetchIgnoredTags(userIdInUrl || authState.user)
+      );
+      if (result.error) {
+        console.error("Lỗi khi fetch ignored tags:", result.error);
+        return;
+      }
+      setLocalTags(result.payload);
+    };
+
     fetchData();
   }, [userIdInUrl]);
 
@@ -107,21 +86,17 @@ const TagBox = () => {
     }
   }, [newTag, availableTags]);
 
-  useEffect(() => {
-    dispatch(fetchIgnoredTags(authState.user));
-  }, [dispatch, authState.user]);
-
   // Hàm để thêm tag vào danh sách
   const addTag = (tag) => {
-    dispatch(watchTag({ userId: authState.user, tagId: tag.id }));
+    dispatch(ignoreTag({ userId: authState.user, tagId: tag.id }));
     if (localTags.find((t) => t.id === tag.id)) return;
-    setLocalTags([...localTags, { id: tag.id, name: tag.name }]); // Ensure both id and name are included
+    setLocalTags([...localTags, { id: tag.id, name: tag.name }]);
   };
 
   // Hàm để xoá tag khỏi danh sách
   const removeTag = (tagId) => {
-    dispatch(unwatchTag({ userId: authState.user, tagId }));
-    setLocalTags(localTags.filter((tag) => tag.id !== tagId)); // Update UI immediately
+    dispatch(unignoreTag({ userId: authState.user, tagId }));
+    setLocalTags(localTags.filter((tag) => tag.id !== tagId));
   };
 
   return (
@@ -142,7 +117,7 @@ const TagBox = () => {
           className="text-lg font-semibold"
           whileHover={{ scale: 1.05 }}
         >
-          Các thẻ đã theo dõi
+          Các thẻ bị bỏ qua
         </motion.h3>
         {isUserProfilePage && userIdInUrl === authState.user ? (
           <Button
@@ -261,4 +236,4 @@ const TagBox = () => {
   );
 };
 
-export default TagBox;
+export default IgnoreTagBox;

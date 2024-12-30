@@ -4,12 +4,14 @@ import tempTagsReducer from "./features/TempTags/TempTags";
 import { comment } from "postcss";
 import commentReducer from "./features/Comment/commentSlice";
 import watchedTagsReducer from "./features/WatchedTags/WatchedTags";
+import ignoredTagsReducer from "./features/IgnoreTags/IgnoreTags";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     tempTags: tempTagsReducer,
     comment: commentReducer,
-    watchedTags: watchedTagsReducer
+    watchedTags: watchedTagsReducer,
+    ignoredTags: ignoredTagsReducer,
   },
 });

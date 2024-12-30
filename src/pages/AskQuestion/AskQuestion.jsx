@@ -17,6 +17,7 @@ const AskQuestion = () => {
   const navigate = useNavigate();
   const tempTags = useSelector((state) => state.tempTags.tempTags);
   const authState = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(false); // Trạng thái tải dữ liệu
   const [selectedTags, setSelectedTags] = useState([]); // List các tag đã chọn
   const [newQuestion, setNewQuestion] = useState({
     title: "",
@@ -116,12 +117,6 @@ const AskQuestion = () => {
       // Nếu không có temp tag, chỉ cần lưu câu hỏi với các tag đã chọn
       const allTagIds = selectedTags.map((tag) => tag.id);
 
-      // Log dữ liệu câu hỏi trước khi lưu
-      console.log("Dữ liệu câu hỏi cần lưu:", {
-        ...newQuestion,
-        tagIds: allTagIds,
-      });
-
       await postQuestionToDatabase(newQuestion, allTagIds);
     }
   };
@@ -145,6 +140,7 @@ const AskQuestion = () => {
   };
 
   const postQuestionToDatabase = async (question, tagIds) => {
+    setIsLoading(true);
     try {
       // Chuẩn bị dữ liệu gửi đi
       const formData = new FormData();
@@ -178,11 +174,14 @@ const AskQuestion = () => {
 
       // Kiểm tra phản hồi thành công từ API
       if (response.status === 200) {
-        console.log("Câu hỏi đã được đăng thành công!");
+        alert("Câu hỏi đã được đăng thành công!");
         navigate("/"); // Điều hướng về trang chủ
       }
     } catch (error) {
-      console.error("Error posting question to database:", error);
+      alert("Có lỗi khi đăng câu hỏi: :", error);
+    } finally {
+      // Kết thúc quá trình tải dữ liệu
+      setIsLoading(false);
     }
   };
 
@@ -241,23 +240,7 @@ const AskQuestion = () => {
         error={errors.expectations}
         renderError={renderError}
       />
-      {/* Tags */}
-      {/* <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300"
-      >
-        <label
-          className="block text-gray-800 text-lg font-semibold mb-2"
-          htmlFor="tags"
-        >
-          Thẻ
-        </label>
-        <p className="text-gray-600 text-sm mb-3">
-          Thêm tối đa 5 thẻ để mô tả câu hỏi của bạn. Phân tách các thẻ bằng dấu
-          cách.
-        </p> */}
+
       <TagInput
         selectedTags={selectedTags}
         error={errors.tags}
@@ -285,9 +268,10 @@ const AskQuestion = () => {
         <button
           className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
           type="button"
+          disabled={isLoading}
           onClick={handlePostQuestion}
         >
-          Đăng câu hỏi của bạn
+          {isLoading ? "Đang đăng..." : "Đăng câu hỏi"}
         </button>
       </motion.div>
     </motion.div>

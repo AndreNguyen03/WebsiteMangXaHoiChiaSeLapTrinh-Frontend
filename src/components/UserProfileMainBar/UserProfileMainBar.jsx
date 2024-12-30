@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 
 // Các thành phần con
 import TagBox from "./TagBox"; // Hộp hiển thị tag
+import IgnoreTagBox from "./IgnoreTagBox";
 import PostBox from "./PostBox"; // Hộp hiển thị bài đăng
 import UserInfoBox from "./UserInfoBox"; // Hộp hiển thị thông tin người dùng
 import UpdateUserInfoModal from "./UpdateUserInfoModal"; // Modal chỉnh sửa thông tin
@@ -18,7 +19,6 @@ const UserProfileMainBar = () => {
   const [posts, setPosts] = useState([]); // State lưu bài viết của người dùng
   const [answers, setAnswers] = useState([]); // State lưu câu trả lời của người dùng
   const [allPosts, setAllPosts] = useState([]); // State lưu bài viết và câu trả lời (kết hợp)
-  const [watchedTags, setWatchedTags] = useState([]); // State lưu tag đang theo dõi
   const [openModal, setOpenModal] = useState(false); // State để mở modal chỉnh sửa
 
   // Lấy thông tin người dùng
@@ -81,22 +81,6 @@ const UserProfileMainBar = () => {
     setAllPosts([...posts, ...answers]);
   }, [posts, answers]);
 
-  // Lấy tag đang theo dõi
-  useEffect(() => {
-    axios
-      .get(
-        `http://localhost:5114/api/Tags/getWatchedTagByUserId?userId=${userID}`
-      )
-      .then((response) => {
-        const mappedData = response.data.map((tag) => ({
-          id: tag.id,
-          name: tag.tagname,
-        }));
-        setWatchedTags(mappedData);
-      })
-      .catch((error) => console.error("Lỗi khi lấy tag đang theo dõi:", error));
-  }, [userID]);
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -127,7 +111,9 @@ const UserProfileMainBar = () => {
       </motion.div>
 
       {/* Hộp tag đang theo dõi */}
-      <TagBox tags={watchedTags} />
+      <TagBox />
+
+      <IgnoreTagBox></IgnoreTagBox>
 
       {/* Hộp bài viết và câu trả lời */}
       <PostBox posts={allPosts} />

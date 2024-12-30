@@ -18,15 +18,10 @@ const container = {
 
 const QuestionList = ({ posts }) => {
   const authState = useSelector((state) => state.auth);
-  const tags = useSelector((state) => state.watchedTags.tags);
+  const watchedTags = useSelector((state) => state.watchedTags.tags);
+  const ignoreTags = useSelector((state) => state.ignoredTags.tags);
 
-  const [watchedTags, setWatchedTags] = useState(null);
   const dispatch = useDispatch();
-
-  //getwatchtag
-  useEffect(() => {
-    dispatch(fetchWatchedTags(authState.user));
-  }, [authState.user]);
 
   return (
     <motion.div variants={container} initial="hidden" animate="show">
@@ -37,7 +32,12 @@ const QuestionList = ({ posts }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <Question key={question.id} question={question} watchedTags={tags} />
+          <Question
+            key={question.id}
+            question={question}
+            watchedTags={watchedTags}
+            ignoreTags={ignoreTags}
+          />
           <hr className="h-0.5 border-t-0 bg-gray-100" />
         </motion.div>
       ))}

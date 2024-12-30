@@ -1,15 +1,17 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { ThumbsUp, MessageSquare, Eye } from "lucide-react"; // Import lucide-react icons
 
 import "./Question.css";
+import { nav } from "motion/react-client";
 
-const Question = ({ question, watchedTags }) => {
+const Question = ({ question, watchedTags, ignoreTags }) => {
   const location = useLocation().pathname;
   const [validWatchedTags, setValidWatchedTags] = useState(watchedTags || []); // Lưu danh sách watchedTags hợp lệ
+  const [validIgnoreTags, setValidIgnoreTags] = useState(ignoreTags || []); // Lưu danh sách ignoreTags hợp lệ
 
   // useEffect để cập nhật validWatchedTags nếu watchedTags thay đổi
   useEffect(() => {
@@ -20,6 +22,20 @@ const Question = ({ question, watchedTags }) => {
     }
   }, [watchedTags]);
 
+  // useEffect để cập nhật validIgnoreTags nếu ignoreTags thay đổi
+  useEffect(() => {
+    if (ignoreTags) {
+      setValidIgnoreTags(ignoreTags);
+    } else {
+      setValidIgnoreTags([]); // Đặt giá trị mặc định nếu ignoreTags là null
+    }
+  }, [ignoreTags]);
+
+  // Kiểm tra nếu có tagId trong ignoreTags trùng với tagId của câu hỏi
+  const isIgnored = question.posttags.some((tag) =>
+    validIgnoreTags.some((ignoreTag) => ignoreTag.id === tag.tag.id)
+  );
+
   // Kiểm tra nếu có tagId trong watchedTags trùng với tagId của câu hỏi
   const isWatched = question.posttags.some((tag) =>
     validWatchedTags.some((watchedTag) => watchedTag.id === tag.tag.id)
@@ -27,13 +43,19 @@ const Question = ({ question, watchedTags }) => {
 
   return (
     <motion.div
-      className="flex items-baseline mb-4"
+      className="flex items-baseline"
       style={{
-        backgroundColor: isWatched ? "rgba(0, 255, 0, 0.1)" : "transparent", // Đặt màu nền nếu là watched
+        backgroundColor: isIgnored
+          ? "rgba(255, 165, 0, 0.1)" // Màu cam nếu bị ignore
+          : isWatched
+          ? "rgba(0, 255, 0, 0.1)" // Màu xanh lá nếu được watch
+          : "transparent", // Không có màu nếu không thuộc loại nào
       }}
       whileHover={{
-        backgroundColor: isWatched
-          ? "rgba(0, 255, 0, 0.2)"
+        backgroundColor: isIgnored
+          ? "rgba(255, 165, 0, 0.2)" // Hover màu cam nếu bị ignore
+          : isWatched
+          ? "rgba(0, 255, 0, 0.2)" // Hover màu xanh lá nếu được watch
           : "rgba(0,0,0,0.01)",
       }} // Đổi màu khi hover
       transition={{ duration: 0.2 }}
@@ -44,14 +66,28 @@ const Question = ({ question, watchedTags }) => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
       >
+        {/* Hiển thị icon khi màn hình nhỏ hơn md */}
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
-          {question.upvote - question.downvote} phiếu bầu
+          <span className="hidden md:inline">
+            {question.upvote - question.downvote} phiếu bầu
+          </span>
+          <span className=" md:hidden flex items-center">
+            <ThumbsUp className="mr-1" /> {question.upvote - question.downvote}
+          </span>
         </motion.p>
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
-          {question.answers.length} câu trả lời
+          <span className="hidden md:inline">
+            {question.answers.length} câu trả lời
+          </span>
+          <span className=" md:hidden flex items-center">
+            <MessageSquare className="mr-1" /> {question.answers.length}
+          </span>
         </motion.p>
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
-          {question.views} lượt xem
+          <span className="hidden md:inline">{question.views} lượt xem</span>
+          <span className=" md:hidden flex items-center">
+            <Eye className="mr-1" /> {question.views}
+          </span>
         </motion.p>
       </motion.div>
       <motion.div
@@ -64,7 +100,9 @@ const Question = ({ question, watchedTags }) => {
           to={`/Questions/${question.id}`}
           className="text-blue-500 font-medium hover:text-blue-600 transition-colors duration-200"
         >
-          {question.title}
+          <span className=" line-clamp-1 md:line-clamp-2">
+            {question.title}
+          </span>
         </Link>
         {location.startsWith("/questions") && (
           <motion.span
@@ -73,7 +111,9 @@ const Question = ({ question, watchedTags }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
           >
-            {question.body}
+            <span className=" line-clamp-1 md:line-clamp-3">
+              {question.body}
+            </span>
           </motion.span>
         )}
         <motion.div
@@ -82,7 +122,7 @@ const Question = ({ question, watchedTags }) => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.3 }}
         >
-          {question.posttags.slice(0, 3).map((tag, index) => (
+          {question.posttags.slice(0, 2).map((tag, index) => (
             <motion.span
               key={index}
               className="question-tags"
@@ -92,7 +132,7 @@ const Question = ({ question, watchedTags }) => {
               {tag.tag.tagname}
             </motion.span>
           ))}
-          {question.posttags.length > 3 && (
+          {question.posttags.length > 2 && (
             <motion.span
               className="question-tags more-tags"
               whileHover={{ scale: 1.1 }}
@@ -108,8 +148,9 @@ const Question = ({ question, watchedTags }) => {
               alt="ảnh đại diện"
               className="mr-2 relative inline-block size-6 !rounded-full object-cover object-center"
             />
-            {question.user.username}
-            <span className="text-gray-400 ml-2">
+            <span className="hidden md:inline">{question.user.username}</span>
+
+            <span className="text-gray-400 ml-2 hidden md:inline">
               {formatDistanceToNow(new Date(question.createdAt), {
                 addSuffix: true,
                 locale: vi,

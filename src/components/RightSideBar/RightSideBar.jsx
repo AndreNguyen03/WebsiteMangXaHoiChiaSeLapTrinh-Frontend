@@ -6,9 +6,11 @@ import { useState, useEffect } from "react";
 import HotQuestion from "./HotQuestion";
 import { useSelector, useDispatch } from "react-redux";
 import TagBox from "../UserProfileMainBar/TagBox";
+import IgnoreTagBox from "../UserProfileMainBar/IgnoreTagBox";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { fetchWatchedTags } from "../../features/WatchedTags/WatchedTags";
+// import { fetchWatchedTags } from "../../features/WatchedTags/WatchedTags";
+// import { fetchIgnoredTags } from "../../features/IgnoreTags/IgnoreTags";
 
 const container = {
   hidden: { opacity: 0 },
@@ -47,9 +49,9 @@ const RightSideBar = () => {
       });
   }, []);
 
-  useEffect(() => {
-    dispatch(fetchWatchedTags(authState.user));
-  }, [authState.user]);
+  // useEffect(() => {
+  //   dispatch(fetchWatchedTags(authState.user));
+  // }, [authState.user]);
 
   // Kiểm tra xem đường dẫn có phải là /questions/tags/:tagId không
   const isTagPage = location.pathname.startsWith("/questions/tags");
@@ -121,6 +123,8 @@ const RightSideBar = () => {
       </motion.div>
       {/* Kiểm tra và chỉ hiển thị TagBox nếu không phải là trang tag */}
       {!isTagPage && authState.isAuthenticated ? <TagBox /> : null}
+      {/* Kiểm tra và chỉ hiển thị IgnoreTagBox nếu không phải là trang tag */}
+      {!isTagPage && authState.isAuthenticated ? <IgnoreTagBox /> : null}
     </motion.div>
   );
 };
