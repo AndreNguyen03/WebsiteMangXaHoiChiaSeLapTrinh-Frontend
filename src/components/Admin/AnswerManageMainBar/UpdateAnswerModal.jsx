@@ -26,11 +26,14 @@ const UpdateAnswerModal = ({
       })
       .then(() => {
         onClose(); // Đóng modal trước khi hiện toast
-        onShowToast("success", "Answer updated successfully!");
+        onShowToast("success", "Câu trả lời đã được cập nhật thành công!");
         onUpdate(); // Làm mới dữ liệu
       })
       .catch(() => {
-        onShowToast("error", "Failed to update answer. Please try again.");
+        onShowToast(
+          "error",
+          "Câu trả lời cập nhật thất bại. Vui lòng thử lại."
+        );
         console.error("Error updating answer:", error);
       });
   };
@@ -45,25 +48,25 @@ const UpdateAnswerModal = ({
       <Modal.Body>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Answer ID
+            Mã câu trả lời
           </label>
           <TextInput value={answerData.id} readOnly />
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            User ID
+            Mã người dùng
           </label>
           <TextInput value={answerData.userId} readOnly />
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Post ID
+            Mã câu hỏi
           </label>
           <TextInput value={answerData.postId} readOnly />
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Answer Body
+            Nội dung
           </label>
           <TextInput
             type="text"
@@ -72,10 +75,21 @@ const UpdateAnswerModal = ({
           />
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={handleUpdate}>Save</Button>
-        <Button color="gray" onClick={onClose}>
-          Cancel
+      <Modal.Footer className="grid grid-cols-2">
+        <Button
+          gradientMonochrome="lime"
+          className="text-white"
+          onClick={handleUpdate}
+        >
+          Lưu
+        </Button>
+        <Button
+          gradientMonochrome="failure"
+          outline
+          color="gray"
+          onClick={onClose}
+        >
+          Huỷ
         </Button>
       </Modal.Footer>
     </Modal>

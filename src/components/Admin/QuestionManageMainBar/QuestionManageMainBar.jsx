@@ -4,6 +4,7 @@ import axios from "axios";
 
 import ToastNotification from "../../ToastNotification/ToastNotification";
 import UpdatePostModal from "./UpdatePostModal";
+import DeletePostModal from "./DeletePostModal";
 import SearchBar from "../../SearchBar/SearchBar";
 
 const QuestionManageMainBar = () => {
@@ -12,7 +13,9 @@ const QuestionManageMainBar = () => {
   const [posts, setPosts] = useState([]);
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+
   const [toastType, setToastType] = useState(""); // "success" hoặc "error"
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
@@ -89,16 +92,8 @@ const QuestionManageMainBar = () => {
   };
 
   const handleDeleteClick = (post) => {
-    axios
-      .delete(`http://localhost:5114/api/Posts/${post.id}`)
-      .then(() => {
-        fetchPosts(); // Làm mới danh sách sau khi xóa thành công
-        handleShowToast("success", "Xóa câu hỏi thành công!");
-      })
-      .catch((error) => {
-        console.error("Lỗi khi xóa bài viết:", error);
-        handleShowToast("error", "Xóa câu hỏi thất bại. Vui lòng thử lại.");
-      });
+    setSelectedPost(post);
+    setShowDeleteModal(true);
   };
 
   const handleShowToast = (type, message) => {
@@ -228,6 +223,13 @@ const QuestionManageMainBar = () => {
         onUpdate={fetchPosts}
         onShowToast={handleShowToast}
       />
+      <DeletePostModal
+        show={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        postID={selectedPost?.id}
+        onDelete={fetchPosts}
+        onShowToast={handleShowToast}
+      ></DeletePostModal>
       {showToast && (
         <div className="fixed bottom-4 right-4">
           <ToastNotification

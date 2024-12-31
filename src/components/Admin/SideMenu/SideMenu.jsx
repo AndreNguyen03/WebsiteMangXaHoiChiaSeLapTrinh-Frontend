@@ -4,16 +4,23 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import logo from "../../../assets/logo_side.png";
 import logosmall from "../../../assets/logo_long.png";
 
+import { useDispatch } from "react-redux";
+import { logout } from "../../../features/Auth/Auth";
+import { clearAuthCookies } from "../../../features/Cookies/CookiesHelper";
+
 const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   const handleSignOut = () => {
-    // Add your sign-out logic here
-    console.log("Sign out");
+    clearAuthCookies();
+    dispatch(logout());
+    navigate("/login");
   };
 
   const sidebarItems = [
@@ -22,7 +29,6 @@ const SideMenu = () => {
     { icon: AnswersIcon, label: "Answers", to: "/admin/answers" },
     { icon: TagsIcon, label: "Tags", to: "/admin/tags" },
     { icon: UsersIcon, label: "Users", to: "/admin/users" },
-    { icon: RolesIcon, label: "Roles", to: "/admin/roles" },
   ];
 
   return (

@@ -16,11 +16,11 @@ const AddTagModal = ({ show, onClose, onAdd, onShowToast }) => {
       })
       .then((response) => {
         onClose(); // Đóng modal trước khi hiện toast
-        onShowToast("success", "Tag added successfully!");
+        onShowToast("success", "Thêm thẻ thành công.");
         onAdd(); // Làm mới dữ liệu
       })
       .catch((error) => {
-        onShowToast("error", "Failed to add tag. Please try again.");
+        onShowToast("error", "Thêm thẻ thất bại.");
         console.error("Error adding tag:", error);
       });
   };
@@ -52,37 +52,37 @@ const AddTagModal = ({ show, onClose, onAdd, onShowToast }) => {
       )}
 
       <Modal show={show} onClose={onClose}>
-        <Modal.Header>Add New Tag</Modal.Header>
+        <Modal.Header>Thêm thẻ mới</Modal.Header>
         <Modal.Body>
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Tag Name
+                Tên thẻ
               </label>
               <TextInput
                 type="text"
                 value={tagname}
                 onChange={(e) => setTagname(e.target.value)}
-                placeholder="Enter tag name"
+                placeholder="Nhập tên thẻ"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Description
+                Mô tả
               </label>
               <TextInput
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter description"
+                placeholder="Nhập mô tả"
               />
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleAddTag}>Add Tag</Button>
+          <Button onClick={handleAddTag}>Thêm</Button>
           <Button color="gray" onClick={onClose}>
-            Cancel
+            Huỷ
           </Button>
         </Modal.Footer>
       </Modal>
