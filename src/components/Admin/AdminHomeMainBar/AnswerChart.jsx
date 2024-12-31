@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { LineChart, lineElementClasses } from "@mui/x-charts/LineChart";
 import axios from "axios";
 
-const QuestionChart = ({ type }) => {
+const AnswerChart = ({ type }) => {
   const [data, setData] = useState([]);
   const [xLabels, setXLabels] = useState([]);
 
@@ -15,17 +15,17 @@ const QuestionChart = ({ type }) => {
       // Chọn API URL và thiết lập nhãn theo `type`
       switch (type) {
         case "1 Năm":
-          apiUrl = "http://localhost:5114/api/Report/Post1Year";
+          apiUrl = "http://localhost:5114/api/Report/Answer1Year";
           labels = Array.from({ length: 12 }, (_, i) => `Tháng ${i + 1}`);
           groupByKey = "month"; // Nhóm theo tháng
           break;
         case "1 Tháng":
-          apiUrl = "http://localhost:5114/api/Report/Post30Days";
+          apiUrl = "http://localhost:5114/api/Report/Answer30Days";
           labels = ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"];
           groupByKey = "week"; // Nhóm theo tuần
           break;
         case "Hôm nay":
-          apiUrl = "http://localhost:5114/api/Report/PostToday";
+          apiUrl = "http://localhost:5114/api/Report/AnswerToday";
           labels = Array.from({ length: 24 }, (_, i) => `${i}h`);
           groupByKey = "hour"; // Nhóm theo giờ
           break;
@@ -72,7 +72,7 @@ const QuestionChart = ({ type }) => {
       series={[
         {
           data: data,
-          label: "Số lượng câu hỏi",
+          label: "Số lượng câu trả lời",
           area: true,
           showMark: false,
         },
@@ -87,4 +87,4 @@ const QuestionChart = ({ type }) => {
   );
 };
 
-export default QuestionChart;
+export default AnswerChart;
