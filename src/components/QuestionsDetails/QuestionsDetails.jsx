@@ -7,6 +7,7 @@ import UserCard from "../UserCard/UserCard";
 import AnswerForm from "../AnswerForm/AnswerForm";
 import AddComment from "../AddComment/AddComment";
 import ShowComment from "../ShowComment/ShowComment";
+import UserAnswerCard from "./UserAnswerCard";
 import { useSelector } from "react-redux";
 
 const QuestionDetails = ({ postId }) => {
@@ -65,6 +66,27 @@ const QuestionDetails = ({ postId }) => {
     };
 
     fetchQuestion();
+
+    // Gọi API cập nhật view sau 15 giây
+    const timer = setTimeout(async () => {
+      try {
+        await axios.post(
+          `http://localhost:5114/api/Posts/track-view/${postId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Cập nhật lượt xem thành công!");
+      } catch (err) {
+        console.error("Lỗi khi cập nhật lượt xem:", err.response || err);
+      }
+    }, 15000);
+
+    // Dọn dẹp timeout khi component unmount
+    return () => clearTimeout(timer);
   }, [postId, token]);
 
   // Xử lý thêm bình luận mới
@@ -85,18 +107,24 @@ const QuestionDetails = ({ postId }) => {
 
   // Trạng thái loading
   if (loading) {
-    return <div className="text-center text-gray-500">Đang tải câu hỏi...</div>;
+    return (
+      <div className="text-center min-h-screen text-gray-500">
+        Đang tải câu hỏi...
+      </div>
+    );
   }
 
   // Trạng thái lỗi
   if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
+    return <div className="text-center min-h-screen text-red-500">{error}</div>;
   }
 
   // Kiểm tra nếu câu hỏi không tìm thấy
   if (!question) {
     return (
-      <div className="text-center text-gray-500">Không tìm thấy câu hỏi.</div>
+      <div className="text-center min-h-screen text-gray-500">
+        Không tìm thấy câu hỏi.
+      </div>
     );
   }
 
@@ -143,6 +171,7 @@ const QuestionDetails = ({ postId }) => {
               {/* Thông tin người dùng */}
               <div className="mt-6">
                 <UserCard
+                  gravatar={question.user?.gravatar}
                   userid={question.user?.id}
                   name={question.user?.username || "Người dùng ẩn danh"}
                   time={`đã hỏi vào ${new Date(
@@ -185,7 +214,7 @@ const QuestionDetails = ({ postId }) => {
                   >
                     <div className="flex gap-6">
                       {/* Nút bầu chọn */}
-                      <div className="flex flex-col items-center justify-start w-16 bg-gray-100 p-3 rounded-lg shadow-md mr-6">
+                      {/* <div className="flex flex-col items-center justify-start w-16 bg-gray-100 p-3 rounded-lg shadow-md mr-6">
                         <button className="text-gray-600 text-xl hover:text-blue-500 mb-2">
                           <i className="fa fa-arrow-up"></i>
                         </button>
@@ -195,7 +224,7 @@ const QuestionDetails = ({ postId }) => {
                         <button className="text-gray-600 text-xl hover:text-red-500 mb-2">
                           <i className="fa fa-arrow-down"></i>
                         </button>
-                      </div>
+                      </div> */}
 
                       {/* Nội dung câu trả lời */}
                       <div className="flex-1">
@@ -206,26 +235,10 @@ const QuestionDetails = ({ postId }) => {
                     </div>
 
                     {/* Thông tin người dùng */}
-                    <div className="flex items-center gap-6 mt-6">
-                      <img
-                        src={
-                          answer.user?.gravatar ||
-                          "https://www.gravatar.com/avatar/placeholder"
-                        }
-                        alt={answer.user?.username || "Người ẩn danh"}
-                        className="w-12 h-12 rounded-full"
-                      />
-                      <div>
-                        <span className="font-semibold text-gray-800">
-                          {answer.user?.username ||
-                            `Người dùng ${answer.userId}`}
-                        </span>
-                        <p className="text-sm text-gray-500">
-                          Đã trả lời vào{" "}
-                          {new Date(answer.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+                    <UserAnswerCard
+                      userId={answer.userId}
+                      createdAt={answer.createdAt}
+                    ></UserAnswerCard>
                   </div>
                 ))
               ) : (
@@ -236,7 +249,7 @@ const QuestionDetails = ({ postId }) => {
             {/* Form trả lời */}
             <AnswerForm
               postId={postId}
-              userId={question.user?.id || "Người dùng ẩn danh"}
+              // userId={question.user?.id || "Người dùng ẩn danh"}
               onAnswerSubmitted={handleAnswerSubmitted}
             />
           </div>

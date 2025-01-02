@@ -7,6 +7,7 @@ const AddComment = ({ postId, onCommentAdded }) => {
   const dispatch = useDispatch();
   const { status } = useSelector((state) => state.comment);
   const { token } = useSelector((state) => state.auth); // Giả sử token có trong Redux auth state
+  const auth = useSelector((state) => state.auth);
 
   // Nếu bạn sử dụng localStorage, có thể fallback vào nó:
   // const token = localStorage.getItem("jwtToken");
@@ -28,24 +29,34 @@ const AddComment = ({ postId, onCommentAdded }) => {
   };
 
   return (
-    <div>
-      <textarea
-        value={commentText}
-        onChange={(e) => setCommentText(e.target.value)}
-        placeholder="Thêm bình luận..."
-        rows="4"
-        cols="50"
-        className="border rounded p-2"
-      />
-      <div className="mt-2">
-        <button
-          onClick={handleAddComment}
-          disabled={status === "loading"}
-          className="bg-blue-500 text-white py-1 px-4 rounded"
-        >
-          {status === "loading" ? "Đang đăng..." : "Đăng bình luận"}
-        </button>
-      </div>
+    <div className="grid">
+      {auth.isAuthenticated ? (
+        <>
+          <textarea
+            value={commentText}
+            onChange={(e) => setCommentText(e.target.value)}
+            placeholder="Thêm bình luận..."
+            rows="4"
+            cols="50"
+            className="border rounded p-2"
+          />
+          <div className="mt-2">
+            <button
+              onClick={handleAddComment}
+              disabled={status === "loading"}
+              className="bg-blue-500 text-white py-1 px-4 rounded"
+            >
+              {status === "loading" ? "Đang đăng..." : "Đăng bình luận"}
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="text-gray-500 italic">
+          Vui lòng{" "}
+          <span className="text-blue-500 font-semibold">đăng nhập</span> để đăng
+          bình luận.
+        </div>
+      )}
     </div>
   );
 };

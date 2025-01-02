@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import Avatar from "../Avatar/Avatar"; // Import the Avatar component
+import { Avatar } from "flowbite-react";
+//import Avatar from "../Avatar/Avatar"; // Import the Avatar component
 
 const UserCard = ({
   userid,
@@ -24,15 +25,11 @@ const UserCard = ({
         className={`${bgColor} rounded-lg p-3 inline-flex items-center gap-3`}
       >
         {/* Display Avatar with gravatar or fallback */}
-        <div className="w-12 h-12 rounded-full overflow-hidden">
+        <div className="">
           {gravatar ? (
-            <Avatar
-              img={user.gravatar}
-              size={avatarSize}
-              className="justify-evenly border p-2 shadow-none transition-all duration-300 cursor-pointer hover:shadow-lg hover:shadow-gray-400"
-            />
+            <Avatar img={gravatar} size="md" alt={name}></Avatar>
           ) : (
-            <Avatar gravatar="https://placehold.co/600x400.png" /> // Default avatar
+            <Avatar img="https://placehold.co/600x400.png" /> // Default avatar
           )}
         </div>
         <div>

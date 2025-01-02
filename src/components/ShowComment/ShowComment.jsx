@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchComments } from "../../features/Comment/commentSlice"; // Đường dẫn tới slice của bạn
+import axios from "axios";
 
 const ShowComment = ({ postId }) => {
   const dispatch = useDispatch();
   const { comments, status, error } = useSelector((state) => state.comment);
+
+  const [usernames, setUsernames] = useState({});
 
   // Lấy token từ Redux hoặc fallback vào localStorage
   const token =
@@ -24,13 +27,45 @@ const ShowComment = ({ postId }) => {
     }
   }, [dispatch, postId, token]);
 
-  if (!postId || !token) {
-    return (
-      <div className="text-red-500 text-center p-4">
-        Không có token hoặc thiếu Post ID.
-      </div>
-    );
-  }
+  // Lấy username cho từng userId
+  useEffect(() => {
+    const fetchUsernames = async () => {
+      const uniqueUserIds = [...new Set(comments.map((c) => c.userId))];
+
+      // Lọc ra các userId chưa được tải
+      const userIdsToFetch = uniqueUserIds.filter(
+        (userId) => !usernames[userId]
+      );
+
+      if (userIdsToFetch.length === 0) return;
+
+      const newUsernames = { ...usernames };
+
+      for (const userId of userIdsToFetch) {
+        try {
+          const response = await axios.get(
+            `http://localhost:5114/api/Users/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          newUsernames[userId] = response.data.username || "Không rõ";
+        } catch (error) {
+          console.error(`Lỗi khi lấy username cho userId: ${userId}`, error);
+          newUsernames[userId] = "Không rõ";
+        }
+      }
+
+      // Cập nhật state chỉ khi có userId mới được fetch
+      setUsernames(newUsernames);
+    };
+
+    if (comments.length > 0) {
+      fetchUsernames();
+    }
+  }, [comments, token]);
 
   return (
     <div className="p-4">
@@ -49,7 +84,9 @@ const ShowComment = ({ postId }) => {
             >
               <p className="text-gray-800">{comment.body}</p>
               <div className="mt-2 flex items-center justify-between text-sm text-gray-600">
-                <span>Người dùng: {comment.username || "Không rõ"}</span>
+                <span>
+                  Người dùng: {usernames[comment.userId] || "Đang tải..."}
+                </span>
                 <span>{new Date(comment.createdAt).toLocaleString()}</span>
               </div>
             </div>
