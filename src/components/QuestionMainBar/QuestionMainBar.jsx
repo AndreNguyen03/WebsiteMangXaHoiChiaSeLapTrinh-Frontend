@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import { Spinner } from "flowbite-react";
 
 import QuestionList from "../HomeMainBar/QuestionList";
 import SortingGroupBar from "../SortingGroupBar/SortingGroupBar";
@@ -13,8 +14,10 @@ const QuestionMainBar = () => {
   const user = 1;
   const [posts, setPosts] = useState([]);
   const [sorting, setSorting] = useState("Mới nhất");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get("http://localhost:5114/api/Posts")
       .then((response) => {
@@ -34,6 +37,9 @@ const QuestionMainBar = () => {
       })
       .catch((error) => {
         console.error("Đã xảy ra lỗi khi tải bài đăng!", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -88,27 +94,6 @@ const QuestionMainBar = () => {
             active={sorting}
             onChange={setSorting}
           />
-          {/* <motion.button
-            className="flex items-center py-1.5 px-3 border border-blue-500 rounded text-blue-500 hover:bg-blue-50 transition-colors duration-200"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6 mr-2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-              />
-            </svg>
-            Lọc
-          </motion.button> */}
         </motion.div>
       </motion.div>
 
@@ -119,16 +104,28 @@ const QuestionMainBar = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          {filteredPosts.length > 0 ? (
+          {isLoading ? (
+            <motion.div
+              className="flex flex-col items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Spinner color="info" size="xl"></Spinner>
+              <p className="text-gray-600 mt-4">
+                Đang tải câu hỏi, vui lòng chờ...
+              </p>
+            </motion.div>
+          ) : filteredPosts.length > 0 ? (
             <QuestionList posts={filteredPosts} />
           ) : (
             <motion.p
               className="text-gray-600 text-center p-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.4 }}
             >
-              Hiện tại chưa có câu hỏi nào. Vui lòng kiểm tra lại sau.
+              Hiện tại không có câu hỏi nào. Vui lòng quay lại sau.
             </motion.p>
           )}
         </motion.div>

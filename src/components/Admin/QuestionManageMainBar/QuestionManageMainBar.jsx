@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Pagination, Dropdown } from "flowbite-react";
+import { Table, Button, Pagination, Dropdown, Spinner } from "flowbite-react";
 import axios from "axios";
 
 import ToastNotification from "../../ToastNotification/ToastNotification";
 import UpdatePostModal from "./UpdatePostModal";
 import DeletePostModal from "./DeletePostModal";
+import ReportDetailModal from "./ReportDetailModal";
 import SearchBar from "../../SearchBar/SearchBar";
 
 const QuestionManageMainBar = () => {
@@ -14,6 +15,7 @@ const QuestionManageMainBar = () => {
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
 
   const [toastType, setToastType] = useState(""); // "success" hoặc "error"
@@ -21,7 +23,9 @@ const QuestionManageMainBar = () => {
   const [showToast, setShowToast] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const columns = [
     { headerName: "Mã câu hỏi", key: "id" },
@@ -30,6 +34,7 @@ const QuestionManageMainBar = () => {
     { headerName: "Đã thử và mong đợi", key: "tryAndExpecting" },
     { headerName: "Mã người đăng", key: "userId" },
     { headerName: "Lượt xem", key: "views" },
+    { headerName: "Số lần báo cáo", key: "noOfReports" },
     { headerName: "Tạo vào lúc", key: "createdAt", isDate: true },
     { headerName: "Cập nhật vào lúc", key: "updatedAt", isDate: true },
     ...(showActions
@@ -47,6 +52,7 @@ const QuestionManageMainBar = () => {
   }, []);
 
   const fetchPosts = () => {
+    setIsLoading(true);
     axios
       .get("http://localhost:5114/api/Posts")
       .then((response) => {
@@ -58,6 +64,7 @@ const QuestionManageMainBar = () => {
           createdAt: post.createdAt,
           updatedAt: post.updatedAt,
           views: post.views,
+          noOfReports: post.noOfReports,
           userId: post.userId,
         }));
 
@@ -65,6 +72,9 @@ const QuestionManageMainBar = () => {
       })
       .catch((error) => {
         console.error("There was an error fetching the posts!", error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -94,6 +104,11 @@ const QuestionManageMainBar = () => {
   const handleDeleteClick = (post) => {
     setSelectedPost(post);
     setShowDeleteModal(true);
+  };
+
+  const handleReportClick = (post) => {
+    setSelectedPost(post);
+    setShowReportModal(true);
   };
 
   const handleShowToast = (type, message) => {
@@ -148,50 +163,77 @@ const QuestionManageMainBar = () => {
             {columns.map((column, index) => (
               <Table.HeadCell
                 key={index}
-                className="bg-blue-200 text-gray-600 text-xs"
+                className="bg-blue-200 whitespace-nowrap text-gray-600 text-xs"
               >
                 {column.headerName}
               </Table.HeadCell>
             ))}
           </Table.Head>
           <Table.Body className="divide-y">
-            {paginatedPosts.map((post) => (
-              <Table.Row
-                key={post.id}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {post.id}
-                </Table.Cell>
-                <Table.Cell>{post.title}</Table.Cell>
-                <Table.Cell>{post.detailProblem}</Table.Cell>
-                <Table.Cell className="line-clamp-1">
-                  {post.tryAndExpecting}
-                </Table.Cell>
-                <Table.Cell>{post.userId}</Table.Cell>
-                <Table.Cell>{post.views}</Table.Cell>
-                <Table.Cell>{formatDate(post.createdAt)}</Table.Cell>
-                <Table.Cell>{formatDate(post.updatedAt)}</Table.Cell>
-                {showActions && (
-                  <Table.Cell className="flex gap-2">
+            {isLoading ? (
+              <tr>
+                <td colSpan="100%" className="text-center p-4">
+                  <Spinner color="info" size="xl"></Spinner>
+                  <p className="text-gray-600 mt-4">
+                    Đang tải câu hỏi, vui lòng chờ...
+                  </p>
+                </td>
+              </tr>
+            ) : (
+              paginatedPosts.map((post) => (
+                <Table.Row
+                  key={post.id}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {post.id}
+                  </Table.Cell>
+                  <Table.Cell className="min-w-52">{post.title}</Table.Cell>
+                  <Table.Cell className="">
+                    <span className="text-gray-500 text-ellipsis overflow-hidden line-clamp-2 dark:text-gray-400">
+                      {post.detailProblem}
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell className="text-ellipsis overflow-hidden line-clamp-2">
+                    <span className="text-gray-500 text-ellipsis overflow-hidden line-clamp-2 dark:text-gray-400">
+                      {post.tryAndExpecting}
+                    </span>
+                  </Table.Cell>
+                  <Table.Cell>{post.userId}</Table.Cell>
+                  <Table.Cell>{post.views}</Table.Cell>
+                  <Table.Cell className="flex items-center gap-2 min-w-52">
+                    <span>{post.noOfReports}</span>
                     <Button
                       outline
-                      gradientDuoTone="tealToLime"
-                      onClick={() => handleEditClick(post)}
+                      gradientDuoTone="greenToBlue"
+                      onClick={() => handleReportClick(post)}
                     >
-                      Sửa
-                    </Button>
-                    <Button
-                      onClick={() => handleDeleteClick(post)}
-                      outline
-                      gradientDuoTone="pinkToOrange"
-                    >
-                      Xóa
+                      Xem chi tiết
                     </Button>
                   </Table.Cell>
-                )}
-              </Table.Row>
-            ))}
+                  <Table.Cell>{formatDate(post.createdAt)}</Table.Cell>
+                  <Table.Cell>{formatDate(post.updatedAt)}</Table.Cell>
+                  {showActions && (
+                    <Table.Cell className="flex items-center gap-2">
+                      <Button
+                        outline
+                        gradientDuoTone="tealToLime"
+                        onClick={() => handleEditClick(post)}
+                      >
+                        Sửa
+                      </Button>
+                      <Button
+                        onClick={() => handleDeleteClick(post)}
+                        outline
+                        gradientDuoTone="pinkToOrange"
+                      >
+                        Xóa
+                      </Button>
+                    </Table.Cell>
+                  )}
+                </Table.Row>
+              ))
+            )}
           </Table.Body>
         </Table>
       </div>
@@ -230,6 +272,13 @@ const QuestionManageMainBar = () => {
         onDelete={fetchPosts}
         onShowToast={handleShowToast}
       ></DeletePostModal>
+      <ReportDetailModal
+        show={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        postId={selectedPost?.id}
+        onShowToast={handleShowToast}
+        onReportDelete={fetchPosts}
+      ></ReportDetailModal>
       {showToast && (
         <div className="fixed bottom-4 right-4">
           <ToastNotification

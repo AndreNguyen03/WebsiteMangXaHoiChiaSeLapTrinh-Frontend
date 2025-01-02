@@ -12,6 +12,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const authState = useSelector((state) => state.auth);
+  const userRole = useSelector((state) => state.auth.userRole);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,9 +21,9 @@ const Login = () => {
 
   useEffect(() => {
     if (authState.isAuthenticated) {
-      navigate("/"); // Đường dẫn trang Chủ
+      navigate("/"); // Nếu là người dùng
     }
-  }, [authState.isAuthenticated, navigate]);
+  }, [authState.isAuthenticated, navigate, userRole]);
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },

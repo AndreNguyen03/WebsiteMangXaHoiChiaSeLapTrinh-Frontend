@@ -1,19 +1,119 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+
+import ReportModal from "./ReportModal";
 import QuestionHeader from "../QuestionHeader/QuestionHeader";
 import VoteButtons from "../VoteButtons/VoteButtons";
 import UserCard from "../UserCard/UserCard";
 import AnswerForm from "../AnswerForm/AnswerForm";
 import AddComment from "../AddComment/AddComment";
 import ShowComment from "../ShowComment/ShowComment";
+import ReportButton from "./ReportButton";
 import UserAnswerCard from "./UserAnswerCard";
-import { useSelector } from "react-redux";
 
 const QuestionDetails = ({ postId }) => {
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  //Vote
+  const [isUpvoted, setIsUpvoted] = useState(false);
+  const [isDownvoted, setIsDownvoted] = useState(false);
+  const [upVotes, setUpVotes] = useState(0);
+  const [downVotes, setDownVotes] = useState(0);
+
+  const auth = useSelector((state) => state.auth);
+  const userId = auth.user;
+
+  const fetchVote = async () => {
+    if (!userId) {
+      return;
+    }
+    try {
+      const response = await axios.get(
+        `http://localhost:5114/api/Vote/votedetail?postId=${postId}&userId=${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Đính kèm token vào yêu cầu
+          },
+        }
+      );
+
+      const data = response.data;
+      setUpVotes(data.upVotes);
+      setDownVotes(data.downVotes);
+
+      console.log("Vote data: ", data);
+      if (data.voteType === 1) {
+        setIsUpvoted(true);
+        setIsDownvoted(false);
+      } else if (data.voteType === -1) {
+        setIsUpvoted(false);
+        setIsDownvoted(true);
+      } else {
+        setIsUpvoted(false);
+        setIsDownvoted(false);
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Đã xảy ra lỗi. Vui lòng thử lại sau."
+      );
+      console.error("Lỗi khi lấy chi tiết câu hỏi:", err.response || err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchVote();
+  }, [userId]);
+
+  useEffect(() => {}, [isDownvoted]);
+
+  const handleVoteClick = async (voteType) => {
+    if (!userId) {
+      alert("Bạn cần đăng nhập để bình chọn.");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5114/api/Vote/vote", {
+        userId,
+        postId,
+        voteType,
+      });
+
+      if (response.status === 200) {
+        fetchVote();
+      } else {
+      }
+    } catch (error) {
+      console.error("Error while voting:", error);
+    }
+  };
+
+  //Report
+  const [showReportModal, setShowReportModal] = useState(false);
+  const handleReportSuccess = () => {};
+
+  const [isReported, setIsReported] = useState(false);
+  const fetchReport = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5114/api/Report/checkUserReport?userId=${userId}&postId=${postId}`
+      );
+      const data = response.data;
+      setIsReported(data.isReported);
+    } catch (error) {
+      console.error("Error fetching report: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReport();
+  }, [handleReportSuccess]);
 
   // Lấy token từ Redux auth state
   const { token } = useSelector((state) => state.auth);
@@ -150,17 +250,27 @@ const QuestionDetails = ({ postId }) => {
             >
               {/* Nút bầu chọn */}
               <div className="flex gap-6 items-start">
-                <VoteButtons
-                  votes={(question.upvote || 0) - (question.downvote || 0)}
-                />
+                <div className="flex flex-col items-center gap-2">
+                  <VoteButtons
+                    onVoteClick={handleVoteClick}
+                    Upvoted={isUpvoted}
+                    DownVoted={isDownvoted}
+                    votes={(upVotes || 0) - (downVotes || 0)}
+                  />
+                  <ReportButton
+                    auth={auth}
+                    onClick={() => setShowReportModal(true)}
+                    isReported={isReported}
+                  />
+                </div>
 
                 {/* Nội dung câu hỏi */}
-                <div className="flex-1">
-                  <p className="text-lg text-gray-800 mb-6">
+                <div className="flex-1  ">
+                  <p className="text-lg text-gray-800 mb-6 text-wrap ">
                     {question.tryAndExpecting || "Không có nội dung."}
                   </p>
 
-                  <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto">
+                  <pre className="bg-gray-50 p-4 rounded-lg text-wrap ">
                     <code className="text-sm text-gray-700">
                       {question.detailProblem || "Không có chi tiết bổ sung."}
                     </code>
@@ -213,19 +323,6 @@ const QuestionDetails = ({ postId }) => {
                     className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-300"
                   >
                     <div className="flex gap-6">
-                      {/* Nút bầu chọn */}
-                      {/* <div className="flex flex-col items-center justify-start w-16 bg-gray-100 p-3 rounded-lg shadow-md mr-6">
-                        <button className="text-gray-600 text-xl hover:text-blue-500 mb-2">
-                          <i className="fa fa-arrow-up"></i>
-                        </button>
-                        <div className="text-xl font-semibold text-gray-900 mb-2">
-                          {(answer.upvote || 0) - (answer.downvote || 0)}
-                        </div>
-                        <button className="text-gray-600 text-xl hover:text-red-500 mb-2">
-                          <i className="fa fa-arrow-down"></i>
-                        </button>
-                      </div> */}
-
                       {/* Nội dung câu trả lời */}
                       <div className="flex-1">
                         <p className="text-lg text-gray-800 mb-4 leading-relaxed">
@@ -255,6 +352,13 @@ const QuestionDetails = ({ postId }) => {
           </div>
         </div>
       </div>
+      <ReportModal
+        show={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        userId={userId}
+        postId={postId}
+        onReportSuccess={handleReportSuccess}
+      ></ReportModal>
     </div>
   );
 };

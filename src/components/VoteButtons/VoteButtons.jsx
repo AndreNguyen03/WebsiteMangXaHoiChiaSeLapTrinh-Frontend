@@ -1,12 +1,33 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
-const VoteButtons = ({ votes = 1, showCheck = false }) => {
+const VoteButtons = ({
+  votes = 1,
+  showCheck = false,
+  Upvoted,
+  DownVoted,
+  onVoteClick,
+}) => {
+  const [isUpvoted, setIsUpvoted] = useState(Upvoted);
+  const [isDownVoted, setIsDownVoted] = useState(DownVoted);
+
+  useEffect(() => {
+    setIsUpvoted(Upvoted);
+    setIsDownVoted(DownVoted);
+  }, [Upvoted, DownVoted]);
+
   return (
     <div className="flex flex-col items-center gap-2">
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="text-gray-500 hover:text-blue-500"
+        onClick={() => {
+          if (isUpvoted) onVoteClick(0);
+          else onVoteClick(1);
+        }}
+        className={
+          isUpvoted ? "text-green-500" : "text-gray-500 hover:text-blue-500"
+        }
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +48,13 @@ const VoteButtons = ({ votes = 1, showCheck = false }) => {
       <motion.button
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="text-gray-500 hover:text-blue-500"
+        onClick={() => {
+          if (isDownVoted) onVoteClick(0);
+          else onVoteClick(-1);
+        }}
+        className={
+          isDownVoted ? "text-red-500" : "text-gray-500 hover:text-blue-500"
+        }
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
