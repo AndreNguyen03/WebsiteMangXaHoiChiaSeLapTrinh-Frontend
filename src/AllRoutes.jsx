@@ -49,15 +49,6 @@ const AllRoutes = () => {
       {/* User Routes */}
       <Route path="/Users" element={<Users />} />
       <Route path="/Users/:userID" element={<UserProfile />} />
-
-      {/* Admin Routes */}
-      <Route path="/Admin" element={<HomeDashboard />} />
-      <Route path="/Admin/questions" element={<QuestionManagement />} />
-      <Route path="/Admin/answers" element={<AnswerManagement />} />
-      <Route path="/Admin/comments" element={<CommentManagement />} />
-      <Route path="/Admin/tags" element={<TagManagement />} />
-      <Route path="/Admin/users" element={<UserManagement />} />
-      <Route path="/Admin/roles" element={<RoleManagement />} />
     </Routes>
   );
 };

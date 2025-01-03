@@ -11,24 +11,57 @@ const UserChart = ({ type }) => {
       let apiUrl = "";
       let labels = [];
       let groupByKey = "";
+      let currentMonth;
+      let currentYear; // Định nghĩa biến currentYear
+      let startDate; // Định nghĩa biến startDate
 
-      // Chọn API URL và thiết lập nhãn theo `type`
       switch (type) {
         case "1 Năm":
           apiUrl = "http://localhost:5114/api/Report/User1Year";
-          labels = Array.from({ length: 12 }, (_, i) => `Tháng ${i + 1}`);
-          groupByKey = "month"; // Nhóm theo tháng
+          currentMonth = new Date().getMonth(); // Lấy tháng hiện tại (0-11)
+          currentYear = new Date().getFullYear(); // Lấy năm hiện tại
+
+          labels = Array.from({ length: 12 }, (_, i) => {
+            const month = (currentMonth - 11 + i + 12) % 12; // Lùi 11 tháng và tăng dần
+            const year = currentYear + Math.floor((currentMonth - 11 + i) / 12); // Điều chỉnh năm
+            return `Tháng ${month + 1}/${year}`;
+          });
+
+          groupByKey = "month";
           break;
+
         case "1 Tháng":
           apiUrl = "http://localhost:5114/api/Report/User30Days";
-          labels = ["Tuần 1", "Tuần 2", "Tuần 3", "Tuần 4"];
-          groupByKey = "week"; // Nhóm theo tuần
+          const today = new Date();
+          startDate = new Date(today); // Gán giá trị cho startDate
+          startDate.setDate(today.getDate() - 29);
+          labels = Array.from({ length: 4 }, (_, i) => {
+            const weekStart = new Date(startDate);
+            weekStart.setDate(startDate.getDate() + i * 7);
+
+            const weekEnd = new Date(weekStart);
+            weekEnd.setDate(weekStart.getDate() + 6);
+
+            const formatDate = (date) =>
+              `${date.getDate().toString().padStart(2, "0")}/${(
+                date.getMonth() + 1
+              )
+                .toString()
+                .padStart(2, "0")}/${date.getFullYear()}`;
+
+            return `Tuần ${i + 1} (${formatDate(weekStart)} - ${formatDate(
+              weekEnd
+            )})`;
+          });
+          groupByKey = "week";
           break;
+
         case "Hôm nay":
           apiUrl = "http://localhost:5114/api/Report/UserToday";
           labels = Array.from({ length: 24 }, (_, i) => `${i}h`);
-          groupByKey = "hour"; // Nhóm theo giờ
+          groupByKey = "hour";
           break;
+
         default:
           return;
       }
@@ -44,12 +77,17 @@ const UserChart = ({ type }) => {
           let index = -1;
 
           if (groupByKey === "month") {
-            index = createdAt.getMonth(); // Tháng từ 0-11
+            const diffMonths =
+              (createdAt.getFullYear() - currentYear) * 12 +
+              (createdAt.getMonth() - currentMonth);
+            index = labels.length - 1 - Math.abs(diffMonths);
           } else if (groupByKey === "week") {
-            const day = createdAt.getDate(); // Ngày trong tháng
-            index = Math.floor((day - 1) / 7); // Tuần từ 0-3
+            const diffDays = Math.floor(
+              (createdAt - startDate) / (1000 * 60 * 60 * 24)
+            );
+            index = Math.floor(diffDays / 7);
           } else if (groupByKey === "hour") {
-            index = createdAt.getHours(); // Giờ từ 0-23
+            index = createdAt.getHours();
           }
 
           if (index >= 0 && index < groupedData.length) {

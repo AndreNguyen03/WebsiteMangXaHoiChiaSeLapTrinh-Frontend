@@ -31,7 +31,11 @@ export const login = createAsyncThunk(
   async (credentials, thunkAPI) => {
     try {
       const response = await axios.post(`${API_URL}/login`, credentials);
-      setAuthCookies(response.data.userId, response.data.jwtToken);
+      setAuthCookies(
+        response.data.userId,
+        response.data.jwtToken,
+        extractUserRole(response.data.jwtToken)
+      ); // Lưu auth cookies
       return response.data; // Trả về token từ backend
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -45,7 +49,7 @@ const authSlice = createSlice({
   initialState: {
     user: authCookies.userID,
     token: authCookies.token,
-    userRole: authCookies.token ? extractUserRole(authCookies.token) : null, // Decode token để lấy userRole
+    userRole: authCookies.userRole,
     isAuthenticated: !!authCookies.token,
     status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
     error: null,

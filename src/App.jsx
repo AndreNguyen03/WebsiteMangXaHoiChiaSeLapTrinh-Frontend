@@ -8,10 +8,12 @@ import AllAdminRoutes from "./AllAdminRoutes";
 import { BrowserRouter as Router } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getAuthCookies } from "./features/Cookies/CookiesHelper";
 
 function App() {
   const [count, setCount] = useState(0);
   const userRole = useSelector((state) => state.auth.userRole); // Lấy từ Redux
+  //const userRole = getAuthCookies().userRole; // Lấy từ cookies
 
   return (
     <div className="App">
