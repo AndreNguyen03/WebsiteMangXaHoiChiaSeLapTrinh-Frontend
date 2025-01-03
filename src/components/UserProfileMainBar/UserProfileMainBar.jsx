@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "flowbite-react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { motion } from "framer-motion";
 
@@ -12,6 +12,9 @@ import PostBox from "./PostBox"; // Hộp hiển thị bài đăng
 import UserInfoBox from "./UserInfoBox"; // Hộp hiển thị thông tin người dùng
 import UpdateUserInfoModal from "./UpdateUserInfoModal"; // Modal chỉnh sửa thông tin
 
+import { clearIgnoredTags } from "../../features/IgnoreTags/IgnoreTags";
+import { clearWatchedTags } from "../../features/WatchedTags/WatchedTags";
+
 const UserProfileMainBar = () => {
   const { userID } = useParams(); // Lấy `userID` từ tham số URL
   const authState = useSelector((state) => state.auth); // Lấy thông tin đăng nhập từ Redux
@@ -20,6 +23,7 @@ const UserProfileMainBar = () => {
   const [answers, setAnswers] = useState([]); // State lưu câu trả lời của người dùng
   const [allPosts, setAllPosts] = useState([]); // State lưu bài viết và câu trả lời (kết hợp)
   const [openModal, setOpenModal] = useState(false); // State để mở modal chỉnh sửa
+  const dispatch = useDispatch();
 
   // Lấy thông tin người dùng
   useEffect(() => {
@@ -80,6 +84,14 @@ const UserProfileMainBar = () => {
   useEffect(() => {
     setAllPosts([...posts, ...answers]);
   }, [posts, answers]);
+
+  // Cleanup khi component unmount
+  useEffect(() => {
+    return () => {
+      dispatch(clearWatchedTags()); // Gọi action clearWatchedTags
+      dispatch(clearIgnoredTags()); // Gọi action clearIgnoredTags
+    };
+  }, [dispatch]);
 
   return (
     <motion.div
