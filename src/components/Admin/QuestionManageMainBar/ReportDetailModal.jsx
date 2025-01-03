@@ -27,13 +27,16 @@ const ReportDetailModal = ({
         })
         .catch((error) => {
           console.error("Error fetching reports:", error);
-          onShowToast("Failed to load reports", "error");
           setLoading(false);
         });
+    } else {
+      // Clear data when modal is closed
+      setReports([]);
+      setLoading(true);
     }
-  }, [show, postId, onShowToast]);
+  }, [show, postId]);
 
-  // Check if there are any reports that are not processed
+  // Check if all reports are processed
   const allReportsProcessed = reports.every((report) => report.isDeleted);
 
   // Handle ignoring the report
@@ -62,10 +65,10 @@ const ReportDetailModal = ({
       );
       if (response.status === 200) {
         onShowToast(
-          "sucess",
+          "success",
           "Xác nhận báo cáo thành công và bài viết đã bị xóa"
         );
-        onReportDelete(postId); // Notify parent to update state
+        onReportDelete(postId);
         onClose();
       } else {
         throw new Error("Failed to confirm report");
@@ -95,6 +98,8 @@ const ReportDetailModal = ({
       <Modal.Body>
         {loading ? (
           <div className="text-center">Đang tải dữ liệu...</div>
+        ) : reports.length === 0 ? (
+          <div className="text-center text-gray-500">Không có báo cáo nào.</div>
         ) : (
           <Table>
             <Table.Head>
@@ -113,10 +118,7 @@ const ReportDetailModal = ({
             </Table.Head>
             <Table.Body className="divide-y">
               {reports.map((report) => (
-                <Table.Row
-                  key={report.id}
-                  className="bg-white dark:bg-gray-800 dark:border-gray-700"
-                >
+                <Table.Row key={report.id}>
                   <Table.Cell>{report.userId}</Table.Cell>
                   <Table.Cell>{report.reason}</Table.Cell>
                   <Table.Cell>
@@ -131,8 +133,7 @@ const ReportDetailModal = ({
           </Table>
         )}
       </Modal.Body>
-      {/* Conditionally render the footer buttons */}
-      {!allReportsProcessed && (
+      {!loading && reports.length > 0 && !allReportsProcessed && (
         <Modal.Footer className="grid grid-cols-2 gap-2">
           <Button color="failure" onClick={handleConfirmReport}>
             Chấp nhận báo cáo

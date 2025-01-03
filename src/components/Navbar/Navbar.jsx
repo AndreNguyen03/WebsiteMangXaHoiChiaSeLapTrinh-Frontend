@@ -9,6 +9,7 @@ import { Avatar } from "flowbite-react";
 
 import { logout } from "../../features/Auth/Auth";
 import { clearWatchedTags } from "../../features/WatchedTags/WatchedTags.jsx";
+import { clearIgnoredTags } from "../../features/IgnoreTags/IgnoreTags.js";
 import "./Navbar.css";
 import "./SearchInput.jsx";
 import SearchInput from "./SearchInput.jsx";
@@ -23,6 +24,7 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logout()); // Xóa thông tin người dùng khỏi Redux
     dispatch(clearWatchedTags()); // Xóa danh sách tag theo dõi khỏi Redux
+    dispatch(clearIgnoredTags()); // Xóa danh sách tag bị bỏ qua khỏi Redux
     navigate("/Login"); // Chuyển hướng sang trang đăng nhập
   };
 

@@ -18,9 +18,10 @@ const SideMenu = () => {
   };
 
   const handleSignOut = () => {
-    clearAuthCookies();
-    dispatch(logout());
-    navigate("/login");
+    dispatch(logout()); // Xóa thông tin người dùng khỏi Redux
+    dispatch(clearWatchedTags()); // Xóa danh sách tag theo dõi khỏi Redux
+    dispatch(clearIgnoredTags()); // Xóa danh sách tag bị bỏ qua khỏi Redux
+    navigate("/Login"); // Chuyển hướng sang trang đăng nhập
   };
 
   const sidebarItems = [

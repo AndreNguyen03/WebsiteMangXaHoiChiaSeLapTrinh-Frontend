@@ -69,10 +69,10 @@ const Question = ({ question, watchedTags, ignoreTags }) => {
         {/* Hiển thị icon khi màn hình nhỏ hơn md */}
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
           <span className="hidden md:inline">
-            {question.upvote - question.downvote} phiếu bầu
+            {question.upvote + question.downvote} phiếu bầu
           </span>
           <span className=" md:hidden flex items-center">
-            <ThumbsUp className="mr-1" /> {question.upvote - question.downvote}
+            <ThumbsUp className="mr-1" /> {question.upvote + question.downvote}
           </span>
         </motion.p>
         <motion.p className="question-properties" whileHover={{ scale: 1.05 }}>
