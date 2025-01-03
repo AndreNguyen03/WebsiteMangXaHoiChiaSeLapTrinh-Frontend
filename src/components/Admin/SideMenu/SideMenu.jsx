@@ -8,6 +8,9 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../../features/Auth/Auth";
 import { clearAuthCookies } from "../../../features/Cookies/CookiesHelper";
 
+import { clearWatchedTags } from "../../../features/WatchedTags/WatchedTags";
+import { clearIgnoredTags } from "../../../features/IgnoreTags/IgnoreTags";
+
 const SideMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
@@ -18,10 +21,10 @@ const SideMenu = () => {
   };
 
   const handleSignOut = () => {
-    dispatch(logout()); // Xóa thông tin người dùng khỏi Redux
-    dispatch(clearWatchedTags()); // Xóa danh sách tag theo dõi khỏi Redux
-    dispatch(clearIgnoredTags()); // Xóa danh sách tag bị bỏ qua khỏi Redux
-    navigate("/Login"); // Chuyển hướng sang trang đăng nhập
+    dispatch(clearWatchedTags());
+    dispatch(clearIgnoredTags());
+    dispatch(logout());
+    navigate("/login");
   };
 
   const sidebarItems = [
