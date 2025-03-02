@@ -35,7 +35,7 @@ A social networking platform designed for programmers to ask questions, share kn
 - **Additional Tools:** GitHub for version control, Visual Studio/VS Code for development
 
 ## 5. System Architecture
-| ![](./ReadmeAssets/Architech.png) |
+| ![](./ReadmeAssets/Architechture.png) |
 | :---------------------------: |
 | _Overall Architecture_ |
 
